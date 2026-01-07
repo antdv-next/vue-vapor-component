@@ -1,0 +1,11 @@
+{
+  "cSpell.ignoreWords": [
+    // 忽略的单词
+    "vitejs",
+    "selicens",
+    "vite",
+    "qrcode",
+    "tsdown",
+    "unplugin-vue",
+  ]
+}

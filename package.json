@@ -1,0 +1,36 @@
+{
+  "name": "vue-vapor-component",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:apps": "turbo run dev --filter=\"./apps/*\"",
+    "check-types": "tsc --noEmit",
+    "test": "vitest",
+    "test:u": "vitest -u",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [
+    "vue",
+    "vapor",
+    "component"
+  ],
+  "author": "selicens",
+  "license": "MIT",
+  "packageManager": "pnpm@10.26.2",
+  "devDependencies": {
+    "@antfu/eslint-config": "^6.7.3",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "^2.4.6",
+    "eslint": "^9.39.2",
+    "jsdom": "^27.4.0",
+    "less": "^4.5.1",
+    "turbo": "^2.7.3",
+    "unplugin-vue": "catalog:",
+    "vite": "catalog:",
+    "vitest": "^4.0.16",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}
