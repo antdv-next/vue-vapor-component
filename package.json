@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo run dev",
-    "dev:apps": "turbo run dev --filter=\"./apps/*\"",
+    "dev": "turbo run dev --filter=\"./apps/*\"",
     "check-types": "tsc --noEmit",
     "test": "vitest",
     "test:u": "vitest -u",
@@ -26,10 +25,10 @@
     "eslint": "^9.39.2",
     "jsdom": "^27.4.0",
     "less": "^4.5.1",
-    "turbo": "^2.7.3",
+    "turbo": "^2.7.6",
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
-    "vitest": "^4.0.16",
+    "vitest": "^4.0.18",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
   }

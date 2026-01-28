@@ -1,7 +1,10 @@
 <script setup lang="ts">
+  import { ref } from 'vue'
   import { QRCodeCanvas, QRCodeSVG } from 'qrcode'
+  import Checkbox from 'checkbox'
+
   defineOptions({ name: 'App' })
-  console.log(QRCodeCanvas)
+  const checked = ref(false)
 </script>
 
 <template>
@@ -10,6 +13,7 @@
   <hr>
   <QRCodeSVG value="https://www.baidu.com" />
   <hr>
+  <Checkbox v-model:checked="checked" @change="(e) => console.log(e)" />
 </template>
 
 <style scoped></style>

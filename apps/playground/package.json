@@ -15,7 +15,8 @@
   "license": "MIT",
   "packageManager": "pnpm@10.26.2",
   "dependencies": {
-    "qrcode": "workspace:*"
+    "qrcode": "workspace:*",
+    "checkbox": "workspace:*"
   },
   "devDependencies": {
     "vite": "catalog:",

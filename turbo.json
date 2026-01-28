@@ -13,7 +13,7 @@
     "dev": {
       "persistent": true,
       "cache": false,
-      "dependsOn": ["^build:dev"],
+      "dependsOn": ["^build"],
       "interactive": false
     }
   }
