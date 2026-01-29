@@ -1,5 +1,5 @@
 {
-  "name": "@vapor-component/checkbox",
+  "name": "@vapor-component/switch",
   "type": "module",
   "version": "0.0.1",
   "description": "",
@@ -17,7 +17,8 @@
   },
   "devDependencies": {
     "tsdown": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "@v-c/util": "1.0.9"
   },
   "packageManager": "pnpm@10.16.1"
 }

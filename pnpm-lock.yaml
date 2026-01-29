@@ -71,12 +71,15 @@ importers:
 
   apps/playground:
     dependencies:
-      checkbox:
+      '@vapor-component/checkbox':
         specifier: workspace:*
         version: link:../../packages/checkbox
-      qrcode:
+      '@vapor-component/qrcode':
         specifier: workspace:*
         version: link:../../packages/qrcode
+      '@vapor-component/switch':
+        specifier: workspace:*
+        version: link:../../packages/switch
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
@@ -110,6 +113,22 @@ importers:
         specifier: 'catalog:'
         version: 3.6.0-beta.4(typescript@5.9.3)
     devDependencies:
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.18.1(@ts-macro/tsc@0.3.6(rollup@4.57.0))(synckit@0.11.12)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3))
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2)
+
+  packages/switch:
+    dependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.4(typescript@5.9.3)
+    devDependencies:
+      '@v-c/util':
+        specifier: 1.0.9
+        version: 1.0.9(vue@3.6.0-beta.4(typescript@5.9.3))
       tsdown:
         specifier: 'catalog:'
         version: 0.18.1(@ts-macro/tsc@0.3.6(rollup@4.57.0))(synckit@0.11.12)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3))
@@ -1316,6 +1335,11 @@ packages:
   '@typescript-eslint/visitor-keys@8.54.0':
     resolution: {integrity: sha512-VFlhGSl4opC0bprJiItPQ1RfUhGDIBokcPwaFH4yiBCaNPeld/9VeXbiPO1cLyorQi1G1vL+ecBk1x8o1axORA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@v-c/util@1.0.9':
+    resolution: {integrity: sha512-zSobRRQRcwXN70iYhm8r6yOwnR1rRhAHf6f8bLOXYNNRx/mzyZwSh4UY1zfggKiLZoG3UL2ojo7lR/bRXn2Jhg==}
+    peerDependencies:
+      vue: ^3.0.0
 
   '@vitejs/plugin-vue@6.0.3':
     resolution: {integrity: sha512-TlGPkLFLVOY3T7fZrwdvKpjprR3s4fxRln0ORDo1VQ7HHyxJwTlrjKU3kpVWTlaAjIEuCTokmjkZnr8Tpc925w==}
@@ -3542,15 +3566,15 @@ snapshots:
 
   '@babel/generator@7.28.5':
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.28.6
+      '@babel/types': 7.28.6
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
 
   '@babel/helper-compilation-targets@7.27.2':
     dependencies:
@@ -3578,14 +3602,14 @@ snapshots:
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
       '@babel/traverse': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
     transitivePeerDependencies:
       - supports-color
 
@@ -3600,7 +3624,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
 
   '@babel/helper-plugin-utils@7.27.1': {}
 
@@ -3616,7 +3640,7 @@ snapshots:
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
     transitivePeerDependencies:
       - supports-color
 
@@ -3629,11 +3653,11 @@ snapshots:
   '@babel/helpers@7.28.4':
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
 
   '@babel/parser@7.28.5':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
 
   '@babel/parser@7.28.6':
     dependencies:
@@ -3687,17 +3711,17 @@ snapshots:
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.28.6
+      '@babel/types': 7.28.6
 
   '@babel/traverse@7.28.5':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.28.6
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.5
+      '@babel/types': 7.28.6
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
@@ -4431,6 +4455,10 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.54.0
       eslint-visitor-keys: 4.2.1
+
+  '@v-c/util@1.0.9(vue@3.6.0-beta.4(typescript@5.9.3))':
+    dependencies:
+      vue: 3.6.0-beta.4(typescript@5.9.3)
 
   '@vitejs/plugin-vue@6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))':
     dependencies:
@@ -6631,7 +6659,7 @@ snapshots:
       '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.28.5)
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@vue/babel-plugin-jsx': 1.5.0(@babel/core@7.28.5)
-      '@vue/compiler-dom': 3.5.25
+      '@vue/compiler-dom': 3.5.27
       kolorist: 1.8.0
       magic-string: 0.30.21
       vite: 8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2)

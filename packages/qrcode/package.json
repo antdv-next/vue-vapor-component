@@ -1,5 +1,5 @@
 {
-  "name": "qrcode",
+  "name": "@vapor-component/qrcode",
   "type": "module",
   "version": "0.0.1",
   "description": "",

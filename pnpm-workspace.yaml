@@ -11,6 +11,7 @@ catalog:
   vue: 3.6.0-beta.4
   vue-jsx-vapor: ^3.0.4
   vue-tsc: ^3.2.4
+  '@v-c/util': ^1.09
 
 onlyBuiltDependencies:
   - esbuild
