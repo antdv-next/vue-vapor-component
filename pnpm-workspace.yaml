@@ -12,6 +12,7 @@ catalog:
   vue-jsx-vapor: ^3.0.4
   vue-tsc: ^3.2.4
   '@v-c/util': ^1.09
+  prettier: ^3.8.1
 
 onlyBuiltDependencies:
   - esbuild

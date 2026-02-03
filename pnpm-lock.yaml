@@ -9,6 +9,9 @@ catalogs:
     '@vitejs/plugin-vue':
       specifier: ^6.0.3
       version: 6.0.3
+    prettier:
+      specifier: ^3.8.1
+      version: 3.8.1
     tsdown:
       specifier: ^0.18.1
       version: 0.18.1
@@ -37,7 +40,7 @@ importers:
         version: 6.7.3(@vue/compiler-sfc@3.6.0-beta.4)(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)(vitest@4.0.18(@types/node@25.0.1)(jiti@2.6.1)(jsdom@27.4.0)(less@4.5.1)(lightningcss@1.31.1)(yaml@2.8.2))
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))
+        version: 6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))
       '@vue/test-utils':
         specifier: ^2.4.6
         version: 2.4.6
@@ -50,6 +53,9 @@ importers:
       less:
         specifier: ^4.5.1
         version: 4.5.1
+      prettier:
+        specifier: 'catalog:'
+        version: 3.8.1
       turbo:
         specifier: ^2.7.6
         version: 2.7.6
@@ -83,7 +89,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))
+        version: 6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))
       vite:
         specifier: 'catalog:'
         version: 8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2)
@@ -2741,6 +2747,11 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  prettier@3.8.1:
+    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
 
@@ -4460,7 +4471,7 @@ snapshots:
     dependencies:
       vue: 3.6.0-beta.4(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.3(vite@8.0.0-beta.5(@types/node@25.0.1)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2))(vue@3.6.0-beta.4(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.53
       vite: 8.0.0-beta.5(@types/node@25.0.1)(esbuild@0.25.12)(jiti@2.6.1)(less@4.5.1)(yaml@2.8.2)
@@ -6162,6 +6173,8 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prettier@3.8.1: {}
 
   proto-list@1.2.4: {}
 
