@@ -7,8 +7,8 @@
     "build:dev": {
       "outputs": ["dist/**"]
     },
-    "check": {
-      "dependsOn": ["^check"]
+    "check-types": {
+      "dependsOn": ["^check-types"]
     },
     "dev": {
       "persistent": true,

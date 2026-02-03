@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev --filter=\"./apps/*\"",
-    "check": "tsc --incremental --noEmit",
+    "check-types": "tsc --noEmit",
     "test": "vitest",
     "test:u": "vitest -u",
     "lint": "eslint . --fix"
@@ -30,20 +30,6 @@
     "vite": "catalog:",
     "vitest": "^4.0.18",
     "vue": "catalog:",
-    "vue-tsc": "catalog:",
-    "prettier": "catalog:"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged && pnpm check",
-    "commit-msg": "node scripts/verify-commit.js"
-  },
-  "lint-staged": {
-    "*.{js,json}": [
-      "prettier --write"
-    ],
-    "*.ts?(x)": [
-      "eslint --fix",
-      "prettier --parser=typescript --write"
-    ]
+    "vue-tsc": "catalog:"
   }
 }
