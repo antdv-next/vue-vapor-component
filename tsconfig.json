@@ -1,21 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "jsx": "preserve",
-    "jsxImportSource": "vue-jsx-vapor",
+    "composite": true,
+    "target": "esnext",
     "baseUrl": ".",
-    "module": "ESNext",
+    "module": "esnext",
     "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
+    /* Linting */
     "strict": true,
-    "strictNullChecks": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "skipLibCheck": true
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "noUncheckedSideEffectImports": true
   }
-}  
+}

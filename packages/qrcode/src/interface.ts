@@ -5,7 +5,7 @@ import {
   DEFAULT_LEVEL,
   DEFAULT_MINVERSION,
   DEFAULT_NEED_MARGIN,
-  DEFAULT_SIZE
+  DEFAULT_SIZE,
 } from './utils'
 
 export type Modules = ReturnType<QrCode['getModules']>
@@ -109,5 +109,5 @@ export const defaults = {
   bgColor: DEFAULT_BACKGROUND_COLOR,
   fgColor: DEFAULT_FRONT_COLOR,
   includeMargin: DEFAULT_NEED_MARGIN,
-  minVersion: DEFAULT_MINVERSION
+  minVersion: DEFAULT_MINVERSION,
 } as any

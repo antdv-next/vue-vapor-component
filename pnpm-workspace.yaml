@@ -1,18 +1,32 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
 packages:
   - packages/*
   - apps/*
 
 catalog:
+  '@antfu/eslint-config': ^6.7.3
+  '@v-c/util': ^1.0.9
   '@vitejs/plugin-vue': ^6.0.3
+  '@vue/test-utils': ^2.4.6
+  eslint: ^9.39.2
+  jsdom: ^27.4.0
+  less: ^4.5.1
+  lint-staged: ^16.2.7
+  prettier: ^3.8.1
+  simple-git-hooks: ^2.8.0
   tsdown: ^0.18.1
+  turbo: ^2.7.6
   unplugin-vue: ^7.1.1
   vite: 8.0.0-beta.5
   vite-plugin-vue-devtools: ^8.0.5
+  vitest: ^4.0.18
   vue: 3.6.0-beta.4
-  vue-jsx-vapor: ^3.0.4
   vue-tsc: ^3.2.4
-  '@v-c/util': ^1.09
 
 onlyBuiltDependencies:
   - esbuild
   - less
+  - simple-git-hooks

@@ -9,7 +9,7 @@ import type {
   ErrorCorrectionLevel,
   Excavation,
   ImageSettings,
-  Modules
+  Modules,
 } from './interface'
 import { Ecc } from './libs/qrcodegen'
 
@@ -18,7 +18,7 @@ export const ERROR_LEVEL_MAP: ERROR_LEVEL_MAPPED_TYPE = {
   L: Ecc.LOW,
   M: Ecc.MEDIUM,
   Q: Ecc.QUARTILE,
-  H: Ecc.HIGH
+  H: Ecc.HIGH,
 } as const
 
 // =================== DEFAULT_VALUE ==========================
@@ -46,7 +46,7 @@ export function generatePath(modules: Modules, margin: number = 0) {
     row.forEach((cell, x) => {
       if (!cell && start !== null) {
         ops.push(
-          `M${start + margin} ${y + margin}h${x - start}v1H${start + margin}z`
+          `M${start + margin} ${y + margin}h${x - start}v1H${start + margin}z`,
         )
         start = null
         return
@@ -62,7 +62,7 @@ export function generatePath(modules: Modules, margin: number = 0) {
           ops.push(
             `M${start + margin},${y + margin} h${x + 1 - start}v1H${
               start + margin
-            }z`
+            }z`,
           )
         }
         return
@@ -108,7 +108,7 @@ export function getImageSettings(
   cells: Modules,
   size: number,
   margin: number,
-  imageSettings?: ImageSettings
+  imageSettings?: ImageSettings,
 ): null | {
   x: number
   y: number

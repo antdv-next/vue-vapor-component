@@ -4,6 +4,6 @@ export function commonConfig() {
   const plugins = [vue()]
 
   return {
-    plugins
+    plugins,
   }
 }

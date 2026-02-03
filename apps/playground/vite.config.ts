@@ -4,5 +4,5 @@ import vueDevtools from 'vite-plugin-vue-devtools'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevtools()]
+  plugins: [vue(), vueDevtools()],
 })

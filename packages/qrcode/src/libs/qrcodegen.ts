@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Copyright (c) Project Nayuki. (MIT License)
 // https://www.nayuki.io/page/qr-code-generator-library
 
@@ -54,7 +55,7 @@ export class Mode {
 
   private constructor(
     modeBits: number,
-    numBitsCharCount: [number, number, number]
+    numBitsCharCount: [number, number, number],
   ) {
     this.modeBits = modeBits
     this.numBitsCharCount = numBitsCharCount
@@ -140,7 +141,7 @@ export class QrSegment {
   public static makeAlphanumeric(text: string): QrSegment {
     if (!QrSegment.isAlphanumeric(text)) {
       throw new RangeError(
-        'String contains unencodable characters in alphanumeric mode'
+        'String contains unencodable characters in alphanumeric mode',
       )
     }
     const bb: number[] = []
@@ -243,7 +244,7 @@ export class QrSegment {
   // the given version. The result is infinity if a segment has too many characters to fit its length field.
   public static getTotalBits(
     segs: Readonly<QrSegment[]>,
-    version: number
+    version: number,
   ): number {
     let result: number = 0
     for (const seg of segs) {
@@ -340,7 +341,7 @@ export class QrCode {
     minVersion: number = 1,
     maxVersion: number = 40,
     mask: number = -1,
-    boostEcl: boolean = true
+    boostEcl: boolean = true,
   ): QrCode {
     if (
       !(
@@ -461,7 +462,7 @@ export class QrCode {
 
     dataCodewords: Readonly<number[]>,
 
-    oriMsk: number
+    oriMsk: number,
   ) {
     let msk = oriMsk
     this.version = version
@@ -647,7 +648,7 @@ export class QrCode {
         this.setFunctionModule(
           x + dx,
           y + dy,
-          Math.max(Math.abs(dx), Math.abs(dy)) != 1
+          Math.max(Math.abs(dx), Math.abs(dy)) != 1,
         )
       }
     }
@@ -683,7 +684,7 @@ export class QrCode {
     for (let i = 0, k = 0; i < numBlocks; i++) {
       const dat = data.slice(
         k,
-        k + shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1)
+        k + shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1),
       )
       k += dat.length
       const ecc: number[] = QrCode.reedSolomonComputeRemainder(dat, rsDiv)
@@ -961,7 +962,7 @@ export class QrCode {
   // Returns the Reed-Solomon error correction codeword for the given data and divisor polynomials.
   private static reedSolomonComputeRemainder(
     data: Readonly<number[]>,
-    divisor: Readonly<number[]>
+    divisor: Readonly<number[]>,
   ) {
     const result = divisor.map<number>(() => 0)
     for (const b of data) {
@@ -1012,7 +1013,7 @@ export class QrCode {
   private finderPenaltyTerminateAndCount(
     currentRunColor: boolean,
     oriCurrentRunLength: number,
-    runHistory: number[]
+    runHistory: number[],
   ): number {
     let currentRunLength = oriCurrentRunLength
     if (currentRunColor) {
@@ -1028,7 +1029,7 @@ export class QrCode {
   // Pushes the given value to the front and drops the last value. A helper function for getPenaltyScore().
   private finderPenaltyAddHistory(
     oriCurrentRunLength: number,
-    runHistory: number[]
+    runHistory: number[],
   ) {
     let currentRunLength = oriCurrentRunLength
     if (runHistory[0] == 0) {
@@ -1057,23 +1058,23 @@ export class QrCode {
     [
       -1, 7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30,
       28, 28, 28, 28, 30, 30, 26, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-      30, 30, 30, 30
+      30, 30, 30, 30,
     ], // Low
     [
       -1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28,
       26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-      28, 28, 28, 28, 28
+      28, 28, 28, 28, 28,
     ], // Medium
     [
       -1, 13, 22, 18, 26, 18, 24, 18, 22, 20, 24, 28, 26, 24, 20, 30, 24, 28,
       28, 26, 30, 28, 30, 30, 30, 30, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-      30, 30, 30, 30, 30
+      30, 30, 30, 30, 30,
     ], // Quartile
     [
       -1, 17, 28, 22, 16, 22, 28, 26, 26, 24, 28, 24, 28, 22, 24, 24, 30, 28,
       28, 26, 28, 30, 24, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-      30, 30, 30, 30, 30
-    ] // High
+      30, 30, 30, 30, 30,
+    ], // High
   ]
 
   private static readonly NUM_ERROR_CORRECTION_BLOCKS: number[][] = [
@@ -1081,21 +1082,22 @@ export class QrCode {
     // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40    Error correction level
     [
       -1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 6, 6, 7, 8, 8, 9, 9,
-      10, 12, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 24, 25
+      10, 12, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 24, 25,
     ], // Low
     [
       -1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17,
-      17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49
+      17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47,
+      49,
     ], // Medium
     [
       -1, 1, 1, 2, 2, 4, 4, 6, 6, 8, 8, 8, 10, 12, 16, 12, 17, 16, 18, 21, 20,
       23, 23, 25, 27, 29, 34, 34, 35, 38, 40, 43, 45, 48, 51, 53, 56, 59, 62,
-      65, 68
+      65, 68,
     ], // Quartile
     [
       -1, 1, 1, 2, 4, 4, 4, 5, 6, 8, 8, 11, 11, 16, 16, 18, 16, 19, 21, 25, 25,
       25, 34, 30, 32, 35, 37, 40, 42, 45, 48, 51, 54, 57, 60, 63, 66, 70, 74,
-      77, 81
-    ] // High
+      77, 81,
+    ], // High
   ]
 }

@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import type { ErrorCorrectionLevel, ImageSettings } from '../interface'
 import { computed } from 'vue'
 import { QrCode, QrSegment } from '../libs/qrcodegen'
@@ -29,10 +28,10 @@ export function useQRCode(ctx: Options) {
       minVersion,
       undefined,
       undefined,
-      boostLevel
+      boostLevel,
     )
   })
-  
+
   const { includeMargin, marginSize, size, imageSettings } = ctx
   const cs = memoizedQrcode.value.getModules()
   const mg = getMarginSize(includeMargin, marginSize)
@@ -43,6 +42,6 @@ export function useQRCode(ctx: Options) {
     margin: mg,
     numCells: ncs,
     calculatedImageSettings: cis,
-    qrcode: memoizedQrcode.value
+    qrcode: memoizedQrcode.value,
   }
 }

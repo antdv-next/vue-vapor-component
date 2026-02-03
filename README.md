@@ -1,26 +1,26 @@
 # vue-vapor-component
 
-vapor mode headless component.  
+vapor mode headless component.
 
 ## 目录结构
 
 ``` three
-apps  
-  |- playground  
-packages  
-  |- module-a  
-  |- module-b  
-```  
+apps
+  |- playground
+packages
+  |- module-a
+  |- module-b
+```
 
-已经有了 pnpm workspace 的 monorepo，为何还要引入 turbo？  
+已经有了 pnpm workspace 的 monorepo，为何还要引入 turbo？
 
 1. apps + packages 是一种项目组织的最佳实践，意图清晰：apps 是最终要部署的，packages 是基础设施
 2. 分工明确：pnpm 依赖管理，turbo 任务编排与缓存
 
 ## 环境与要求
 
-vue >3.6.x  
-pnpm  
+vue >3.6.x
+pnpm
 
 vapor component 需要在 script 标签中加上vapor
 
@@ -121,7 +121,7 @@ onWatchCleanup(() => xx)
 
 ```jsx
 const CompA = forwardRef((props, ref) => {
-   const inputRef = useRef(null)
+  const inputRef = useRef(null)
 
   useImperativeHandle(ref, () => ({
     focus() {
@@ -131,7 +131,7 @@ const CompA = forwardRef((props, ref) => {
   return <input ref={inputRef} />
 })
 
-const CompB = () => {
+function CompB() {
   const ref = useRef(null)
 
   function handleChange() {
@@ -162,7 +162,7 @@ const CompB = () => {
 
 <template>
   <input ref="input" />
-</template>  
+</template>
 
 <!-- use -->
 

@@ -6,6 +6,6 @@
     "vite",
     "qrcode",
     "tsdown",
-    "unplugin-vue",
+    "unplugin-vue"
   ]
 }

@@ -1,7 +1,11 @@
 {
   "name": "playground",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.26.2",
   "description": "",
+  "author": "",
+  "license": "MIT",
+  "keywords": [],
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -10,19 +14,15 @@
     "preview": "vite preview",
     "test": "vitest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "packageManager": "pnpm@10.26.2",
   "dependencies": {
-    "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/checkbox": "workspace:*",
+    "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/switch": "workspace:*"
   },
   "devDependencies": {
-    "vite": "catalog:",
-    "vue": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
-    "vite-plugin-vue-devtools": "catalog:"
+    "vite": "catalog:",
+    "vite-plugin-vue-devtools": "catalog:",
+    "vue": "catalog:"
   }
 }

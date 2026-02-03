@@ -5,7 +5,7 @@ export default mergeConfig(
   commonConfig(),
   defineProject({
     test: {
-      environment: 'jsdom'
-    }
-  })
+      environment: 'jsdom',
+    },
+  }),
 )

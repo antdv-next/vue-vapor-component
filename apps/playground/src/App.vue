@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
-  import Checkbox from '@vapor-component/checkbox'
-  import Switch from '@vapor-component/switch'
+import Checkbox from '@vapor-component/checkbox'
+import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
+import Switch from '@vapor-component/switch'
+import { ref } from 'vue'
 
-  defineOptions({ name: 'App' })
-  const checked = ref(false)
+defineOptions({ name: 'App' })
+const checked = ref(false)
 </script>
 
 <template>

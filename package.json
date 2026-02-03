@@ -1,35 +1,51 @@
 {
   "name": "vue-vapor-component",
   "version": "0.0.1",
+  "packageManager": "pnpm@10.26.2",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "turbo run dev --filter=\"./apps/*\"",
-    "check-types": "tsc --noEmit",
-    "test": "vitest",
-    "test:u": "vitest -u",
-    "lint": "eslint . --fix"
-  },
+  "author": "selicens",
+  "license": "MIT",
   "keywords": [
     "vue",
     "vapor",
     "component"
   ],
-  "author": "selicens",
-  "license": "MIT",
-  "packageManager": "pnpm@10.26.2",
+  "main": "index.js",
+  "scripts": {
+    "dev": "turbo run dev --filter=\"./apps/*\"",
+    "check-types": "vue-tsc --noEmit",
+    "test": "vitest",
+    "test:u": "vitest -u",
+    "lint": "eslint . --fix"
+  },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.7.3",
+    "@antfu/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/test-utils": "^2.4.6",
-    "eslint": "^9.39.2",
-    "jsdom": "^27.4.0",
-    "less": "^4.5.1",
-    "turbo": "^2.7.6",
+    "@vue/test-utils": "catalog:",
+    "eslint": "catalog:",
+    "jsdom": "catalog:",
+    "less": "catalog:",
+    "lint-staged": "catalog:",
+    "prettier": "catalog:",
+    "simple-git-hooks": "catalog:",
+    "turbo": "catalog:",
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
-    "vitest": "^4.0.18",
+    "vitest": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged && pnpm check-types",
+    "commit-msg": "node scripts/verify-commit.js"
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint --fix",
+      "prettier --parser=typescript --write"
+    ]
   }
 }
