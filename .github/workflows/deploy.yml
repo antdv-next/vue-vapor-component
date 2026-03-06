@@ -33,7 +33,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10  # 指定 pnpm 版本  
+          version: 10.26.2  # 指定 pnpm 版本  
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
