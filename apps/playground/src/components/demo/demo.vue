@@ -1,9 +1,7 @@
 <script setup vapor lang="ts">
-defineOptions({ name: 'Demo' })
+  defineOptions({ name: 'Demo' })
 </script>
 
-<template>
-  demo
-</template>
+<template>demo</template>
 
 <style scoped></style>

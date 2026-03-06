@@ -1,32 +1,31 @@
 {
   "name": "vue-vapor-component",
   "version": "0.0.1",
-  "packageManager": "pnpm@10.26.2",
   "description": "",
-  "author": "selicens",
-  "license": "MIT",
   "keywords": [
-    "vue",
+    "component",
     "vapor",
-    "component"
+    "vue"
   ],
+  "license": "MIT",
+  "author": "selicens",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo run dev --filter=\"./apps/*\"",
     "check-types": "vue-tsc --noEmit",
+    "dev": "turbo run dev --filter=\"./apps/*\"",
+    "format": "oxfmt",
+    "lint": "oxlint . --fix",
     "test": "vitest",
-    "test:u": "vitest -u",
-    "lint": "eslint . --fix"
+    "test:u": "vitest -u"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
-    "eslint": "catalog:",
     "jsdom": "catalog:",
     "less": "catalog:",
     "lint-staged": "catalog:",
-    "prettier": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "simple-git-hooks": "catalog:",
     "turbo": "catalog:",
     "unplugin-vue": "catalog:",
@@ -41,11 +40,12 @@
   },
   "lint-staged": {
     "*.{js,json}": [
-      "prettier --write"
+      "oxfmt --write"
     ],
     "*.ts?(x)": [
-      "eslint --fix",
-      "prettier --parser=typescript --write"
+      "oxlint --fix",
+      "oxfmt --no-error-on-unmatched-pattern"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.26.2"
 }

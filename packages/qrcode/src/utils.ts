@@ -11,6 +11,7 @@ import type {
   ImageSettings,
   Modules,
 } from './interface'
+
 import { Ecc } from './libs/qrcodegen'
 
 // =================== ERROR_LEVEL ==========================
@@ -60,9 +61,7 @@ export function generatePath(modules: Modules, margin: number = 0) {
           ops.push(`M${x + margin},${y + margin} h1v1H${x + margin}z`)
         } else {
           ops.push(
-            `M${start + margin},${y + margin} h${x + 1 - start}v1H${
-              start + margin
-            }z`,
+            `M${start + margin},${y + margin} h${x + 1 - start}v1H${start + margin}z`,
           )
         }
         return
@@ -141,7 +140,7 @@ export function getImageSettings(
     excavation = { x: floorX, y: floorY, w: ceilW, h: ceilH }
   }
 
-  const crossOrigin = imageSettings.crossOrigin
+  const { crossOrigin } = imageSettings
 
   return { x, y, h, w, excavation, opacity, crossOrigin }
 }

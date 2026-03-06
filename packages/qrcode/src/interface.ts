@@ -1,4 +1,5 @@
 import type { Ecc, QrCode } from './libs/qrcodegen'
+
 import {
   DEFAULT_BACKGROUND_COLOR,
   DEFAULT_FRONT_COLOR,
@@ -18,9 +19,7 @@ export interface Excavation {
 export type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H'
 export type CrossOrigin = 'anonymous' | 'use-credentials' | '' | undefined
 
-export type ERROR_LEVEL_MAPPED_TYPE = {
-  [index in ErrorCorrectionLevel]: Ecc
-}
+export type ERROR_LEVEL_MAPPED_TYPE = Record<ErrorCorrectionLevel, Ecc>
 
 export interface ImageSettings {
   src: string

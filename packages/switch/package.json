@@ -1,24 +1,24 @@
 {
   "name": "@vapor-component/switch",
-  "type": "module",
   "version": "0.0.1",
-  "packageManager": "pnpm@10.16.1",
   "description": "",
-  "author": "",
-  "license": "MIT",
   "keywords": [],
+  "license": "MIT",
+  "author": "",
+  "type": "module",
   "main": "src/index",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown --config-loader=unrun",
     "prepublish": "pnpm build",
     "test": "vitest"
-  },
-  "peerDependencies": {
-    "vue": "catalog:"
   },
   "devDependencies": {
     "@v-c/util": "catalog:",
     "tsdown": "catalog:",
     "vite": "catalog:"
-  }
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "packageManager": "pnpm@10.16.1"
 }

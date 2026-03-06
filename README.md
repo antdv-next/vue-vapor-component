@@ -4,7 +4,7 @@ vapor mode headless component.
 
 ## 目录结构
 
-``` three
+```three
 apps
   |- playground
 packages
@@ -24,13 +24,13 @@ pnpm
 
 vapor component 需要在 script 标签中加上vapor
 
-``` javascript
-<script setup vapor lang="ts"></script>
+```javascript
+<script setup vapor lang='ts'></script>
 ```
 
 使用virtualDom的vue项目想使用vapor组件需要在main.ts里引入`vaporInteropPlugin`
 
-``` diff
+```diff
 -- import { createApp } from 'vue'
 ++ import { createApp, vaporInteropPlugin } from 'vue'
 import App from './App.vue'
@@ -41,7 +41,7 @@ import App from './App.vue'
 
 单vaporDom的vue项目需要在main.ts里引入`createVaporApp`来替换`createApp`，如果需要混合使用则也需要引入`vaporInteropPlugin`，会拉取vdom runtime，抵消掉vapor带来的大幅缩小捆绑包的优势
 
-``` diff
+```diff
 -- import { createApp } from 'vue'
 ++ import { createVaporApp } from 'vue'
 import App from './App.vue'
@@ -105,7 +105,7 @@ useEffect(() => {
 watch(value, (newVal, oldVal, onCleanup) => {
   onCleanup(() => xx)
 })
-watchEffect((onCleanup) => {
+watchEffect(onCleanup => {
   onCleanup(() => xx)
 })
 
@@ -123,11 +123,15 @@ onWatchCleanup(() => xx)
 const CompA = forwardRef((props, ref) => {
   const inputRef = useRef(null)
 
-  useImperativeHandle(ref, () => ({
-    focus() {
-      inputRef.current?.focus()
-    }
-  }), [])
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus() {
+        inputRef.current?.focus()
+      },
+    }),
+    [],
+  )
   return <input ref={inputRef} />
 })
 
@@ -151,12 +155,12 @@ function CompB() {
 
 ```html
 <script setup>
-  defineOptions({ name: 'CompA'})
+  defineOptions({ name: 'CompA' })
 
   const inputRef = useTemplateRef('input')
 
   defineExpose({
-    focus: () => inputRef.value.focus()
+    focus: () => inputRef.value.focus(),
   })
 </script>
 
@@ -167,7 +171,7 @@ function CompB() {
 <!-- use -->
 
 <script setup>
-  defineOptions({ name: 'CompB'})
+  defineOptions({ name: 'CompB' })
 
   const inputRef = useTemplateRef('input')
 

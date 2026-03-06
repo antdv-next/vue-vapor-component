@@ -6,6 +6,14 @@
     "vite",
     "qrcode",
     "tsdown",
-    "unplugin-vue"
-  ]
+    "unplugin-vue",
+    "oxlint",
+    "oxfmt"
+  ],
+  "oxc.fmt.configPath": ".oxfmtrc.json",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always"
+  }
 }
