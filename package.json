@@ -11,6 +11,7 @@
   "author": "selicens",
   "main": "index.js",
   "scripts": {
+    "build": "turbo run build --filter=\"./apps/*\"",
     "check-types": "vue-tsc --noEmit",
     "dev": "turbo run dev --filter=\"./apps/*\"",
     "format": "oxfmt",

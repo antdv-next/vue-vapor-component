@@ -9,13 +9,13 @@ catalog:
   eslint: ^9.39.3
   jsdom: ^27.4.0
   less: ^4.5.1
-  lint-staged: ^16.3.1
+  lint-staged: ^16.3.2
   oxfmt: ^0.35.0
-  oxlint: ^1.50.0
+  oxlint: ^1.51.0
   resize-observer-polyfill: ^1.5.1
   simple-git-hooks: ^2.13.1
   tsdown: ^0.18.4
-  turbo: ^2.8.12
+  turbo: ^2.8.13
   unplugin-vue: ^7.1.1
   vite: 8.0.0-beta.5
   vite-plugin-vue-devtools: ^8.0.5
