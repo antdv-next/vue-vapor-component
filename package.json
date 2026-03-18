@@ -13,6 +13,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vp run task:dev",
+    "build": "vp run -r build",
     "fmt": "vp fmt",
     "lint": "vp lint . --fix",
     "test": "vp test",
