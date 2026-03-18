@@ -12,10 +12,8 @@ packages
   |- module-b
 ```
 
-已经有了 pnpm workspace 的 monorepo，为何还要引入 turbo？
-
 1. apps + packages 是一种项目组织的最佳实践，意图清晰：apps 是最终要部署的，packages 是基础设施
-2. 分工明确：pnpm 依赖管理，turbo 任务编排与缓存
+2. 分工明确：pnpm 依赖管理，vite plus(tasks、cache) 任务编排与缓存
 
 ## 环境与要求
 

@@ -1,6 +1,8 @@
 <script setup vapor lang="ts">
   import type { QRProps } from './interface.ts'
+
   import { shallowRef, useTemplateRef, watchEffect } from 'vue'
+
   import { useQRCode } from './hooks/useQRCode'
   import {
     DEFAULT_BACKGROUND_COLOR,

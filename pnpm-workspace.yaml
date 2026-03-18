@@ -8,18 +8,15 @@ catalog:
   '@vue/test-utils': ^2.4.6
   eslint: ^9.39.3
   jsdom: ^27.4.0
-  less: ^4.6.3
-  lint-staged: ^16.3.3
-  oxfmt: ^0.35.0
-  oxlint: ^1.55.0
+  less: ^4.6.4
   resize-observer-polyfill: ^1.5.1
-  simple-git-hooks: ^2.13.1
   tsdown: ^0.21.2
   turbo: ^2.8.16
   unplugin-vue: ^7.1.1
-  vite: ^8.0.0
+  vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plugin-vue-devtools: ^8.1.0
-  vitest: ^4.1.0
+  vite-plus: ^0.1.12
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
   vue: 3.6.0-beta.4
   vue-tsc: ^3.2.5
 
@@ -31,6 +28,8 @@ onlyBuiltDependencies:
 overrides:
   make-dir: ^5.1.0
   semver: ^7.0.0
+  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
 
 shellEmulator: true
 

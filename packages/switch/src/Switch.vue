@@ -1,6 +1,7 @@
 <script setup vapor lang="ts">
   /* eslint-disable vue/no-reserved-component-names */
   import type { SwitchProps } from './interface'
+
   import KeyCode from '@v-c/util/dist/KeyCode'
   import { computed, useTemplateRef } from 'vue'
 
@@ -35,10 +36,7 @@
   ])
   const cls = computed(() => classNames?.content)
   const sty = computed(() => styles?.content)
-  function triggerChange(
-    newChecked: boolean,
-    event: MouseEvent | KeyboardEvent,
-  ) {
+  function triggerChange(newChecked: boolean, event: MouseEvent | KeyboardEvent) {
     let mergedChecked = checked || defaultChecked
 
     if (!disabled) {

@@ -8,13 +8,12 @@
   "type": "module",
   "main": "src/index",
   "scripts": {
-    "build": "tsdown --config-loader=unrun",
+    "build": "vp pack",
     "prepublish": "pnpm build",
     "test": "vitest"
   },
   "devDependencies": {
-    "tsdown": "catalog:",
-    "vite": "catalog:"
+    "vite-plus": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"

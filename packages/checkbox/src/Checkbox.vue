@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
   import type { CheckboxChangeEvent, CheckboxProps } from './interface'
+
   import { computed, useTemplateRef } from 'vue'
 
   defineOptions({ name: 'Checkbox' })

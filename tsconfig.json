@@ -2,7 +2,6 @@
   "compilerOptions": {
     "composite": true,
     "target": "esnext",
-    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
     /* Linting */

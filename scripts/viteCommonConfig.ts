@@ -1,4 +1,4 @@
-import type { Plugin, UserConfig } from 'vite'
+import type { Plugin, UserConfig } from 'vite-plus'
 
 import vue from '@vitejs/plugin-vue'
 

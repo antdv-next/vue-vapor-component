@@ -3,6 +3,7 @@
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Switch from '@vapor-component/switch'
   import { ref } from 'vue'
+
   import './styles/switch.less'
 
   defineOptions({ name: 'App' })

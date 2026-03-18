@@ -9,44 +9,28 @@
   ],
   "license": "MIT",
   "author": "selicens",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "turbo run build --filter=\"./apps/*\"",
-    "check-types": "vue-tsc --noEmit",
-    "dev": "turbo run dev --filter=\"./apps/*\"",
-    "format": "oxfmt",
-    "lint": "oxlint . --fix",
-    "test": "vitest",
-    "test:u": "vitest -u"
+    "dev": "vp run task:dev",
+    "fmt": "vp fmt",
+    "lint": "vp lint . --fix",
+    "test": "vp test",
+    "test:u": "vp test -u",
+    "check": "vp check --fix",
+    "clean": "vp cache clean"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
     "jsdom": "catalog:",
     "less": "catalog:",
-    "lint-staged": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "simple-git-hooks": "catalog:",
-    "turbo": "catalog:",
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
+    "vite-plus": "catalog:",
     "vitest": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged && pnpm check-types",
-    "commit-msg": "node scripts/verify-commit.js"
-  },
-  "lint-staged": {
-    "*.{js,json}": [
-      "oxfmt --write"
-    ],
-    "*.ts?(x)": [
-      "oxlint --fix",
-      "oxfmt --no-error-on-unmatched-pattern"
-    ]
   },
   "packageManager": "pnpm@10.26.2"
 }

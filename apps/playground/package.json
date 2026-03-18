@@ -7,11 +7,11 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "build": "vite build",
-    "build:dev": "vite build",
-    "dev": "vite",
-    "preview": "vite preview",
-    "test": "vitest"
+    "build": "vp build",
+    "build:dev": "vp build",
+    "dev": "vp dev",
+    "preview": "vp preview",
+    "test": "vp test"
   },
   "dependencies": {
     "@vapor-component/checkbox": "workspace:*",
@@ -21,8 +21,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
     "less": "catalog:",
-    "vite": "catalog:",
     "vite-plugin-vue-devtools": "catalog:",
+    "vite-plus": "catalog:",
     "vue": "catalog:"
   },
   "packageManager": "pnpm@10.26.2"
