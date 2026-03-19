@@ -1,0 +1,27 @@
+{
+  "name": "@vapor-component/resize-observer",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "src/index",
+  "scripts": {
+    "build": "vp pack",
+    "prepublish": "pnpm build",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@v-c/util": "catalog:",
+    "resize-observer-polyfill": "catalog:"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "packageManager": "pnpm@10.16.1"
+}
