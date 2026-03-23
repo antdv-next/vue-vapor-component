@@ -27,9 +27,9 @@
     "jsdom": "catalog:",
     "less": "catalog:",
     "unplugin-vue": "catalog:",
-    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.13",
+    "vite": "catalog:",
     "vite-plus": "catalog:",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.13",
+    "vitest": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
   },
