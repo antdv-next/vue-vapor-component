@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup vapor lang="ts">
   import type { ResizeObserverProps } from '../interface'
 
   import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
@@ -9,10 +9,11 @@
   import DomWrapper from './DomWrapper.vue'
 
   defineOptions({ name: 'SingleObserver' })
-  const props = defineProps<Omit<ResizeObserverProps, 'onResize'>>()
+  const props = defineProps<ResizeObserverProps>()
   const emit = defineEmits(['resize'])
   const wrapperRef = shallowRef()
   const slot = useSlots()
+  const children = slot.default?.() ?? []
 
   function getDom(el: any): any {
     const dom = findDOMNode(el)
@@ -33,7 +34,6 @@
     } else if (el?.__$el && typeof el.__$el === 'object') {
       _wrapper = el.__$el
     }
-
     wrapperRef.value = getDom(_wrapper)
   }
   const onCollectionResize = inject(CollectionContext, () => {})
@@ -42,13 +42,14 @@
   useResizeObserver(
     enabled,
     wrapperRef,
-    (...args) => emit('resize', ...args),
+    (...args) => props.onResize?.(...args),
     (size, element) => {
       onCollectionResize?.(size, element, props.data)
     },
   )
   onMounted(() => {
-    setWrapperRef(wrapperRef.value.nextSibling)
+    // 需兼容 virtual DOM 与 vapor DOM
+    setWrapperRef(wrapperRef.value?.nodes ? wrapperRef.value.nodes.nextElementSibling : wrapperRef.value)
   })
   defineExpose({
     getDom,
@@ -57,6 +58,6 @@
 
 <template>
   <DomWrapper>
-    <component :is="slot.default" ref="wrapperRef" />
+    <component :is="children" ref="wrapperRef" />
   </DomWrapper>
 </template>

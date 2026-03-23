@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup vapor lang="ts">
   import Checkbox from '@vapor-component/checkbox'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import ResizeObserver from '@vapor-component/resize-observer'
@@ -7,7 +7,7 @@
 
   import './styles/switch.less'
 
-  defineOptions({ name: 'App' })
+  defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
   const checked2 = ref(false)
   const times = ref(0)
@@ -25,7 +25,7 @@
 
 <template>
   <fieldset>
-    <legend>virtual、vapor 混合</legend>
+    <legend>vapor mode</legend>
     <label>
       qrcode-canvas:
       <QRCodeCanvas value="https://www.baidu.com" color="red" />
@@ -65,5 +65,3 @@
     </label>
   </fieldset>
 </template>
-
-<style scoped lang="less"></style>

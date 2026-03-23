@@ -53,7 +53,7 @@ export default defineConfig({
       ]
     },
     overrides: [
-      { files: ['apps/playground/src/App.vue'], rules: { 'no-console': 'off' } }
+      { files: ['apps/playground/src/**'], rules: { 'no-console': 'off' } }
     ]
   },
   fmt: {

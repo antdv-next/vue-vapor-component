@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup vapor lang="ts">
   import type { CollectionProps, ResizeInfo, SizeInfo } from './interface'
 
   import { inject, provide, shallowRef } from 'vue'
