@@ -26,6 +26,7 @@
   }>()
   const btnRef = useTemplateRef('btn')
 
+
   const switchClassName = computed(() => [
     prefixCls,
     className,
@@ -36,14 +37,19 @@
   ])
   const cls = computed(() => classNames?.content)
   const sty = computed(() => styles?.content)
-  function triggerChange(newChecked: boolean, event: MouseEvent | KeyboardEvent) {
+  function triggerChange(
+    newChecked: boolean,
+    event: MouseEvent | KeyboardEvent,
+  ) {
     let mergedChecked = checked || defaultChecked
+
 
     if (!disabled) {
       mergedChecked = newChecked
       emit('change', mergedChecked, event)
     }
     emit('update:checked', mergedChecked!)
+
 
     return mergedChecked
   }

@@ -7,22 +7,22 @@ export default defineConfig({
       'task:dev': {
         command: [
           'vp run --filter "@vapor-component/*" build',
-          'vp run --filter ./apps/playground dev'
+          'vp run --filter ./apps/playground dev',
         ].join(' && '),
-        input: [{ auto: true }, '!**/*.tsbuildinfo']
-      }
+        input: [{ auto: true }, '!**/*.tsbuildinfo'],
+      },
     },
     cache: {
       scripts: true,
-      tasks: true
-    }
+      tasks: true,
+    },
   },
   pack: {
     entry: ['src/index.ts'],
     dts: { vue: true },
     format: ['esm', 'cjs'],
     platform: 'neutral',
-    plugins: [Vue({ isProduction: true })]
+    plugins: [Vue({ isProduction: true })],
   },
   staged: {
     '*.{js,ts,tsx,vue,svelte}': 'vp check --fix',
@@ -30,10 +30,10 @@ export default defineConfig({
   lint: {
     options: {
       typeAware: true,
-      typeCheck: true
+      typeCheck: true,
     },
     categories: {
-      correctness: 'error'
+      correctness: 'error',
     },
     rules: {
       'no-console': 'error',
@@ -42,19 +42,19 @@ export default defineConfig({
       'prefer-destructuring': [
         'error',
         {
-          VariableDeclarator: { array: false, object: true }
-        }
+          VariableDeclarator: { array: false, object: true },
+        },
       ],
       'unicode-bom': ['error', 'never'],
       'typescript/consistent-indexed-object-style': ['error', 'record'],
       'typescript/ban-ts-comment': [
         'error',
-        { 'ts-expect-error': 'allow-with-description' }
-      ]
+        { 'ts-expect-error': 'allow-with-description' },
+      ],
     },
     overrides: [
-      { files: ['apps/playground/src/**'], rules: { 'no-console': 'off' } }
-    ]
+      { files: ['apps/playground/src/**'], rules: { 'no-console': 'off' } },
+    ],
   },
   fmt: {
     semi: false,
@@ -71,13 +71,13 @@ export default defineConfig({
         ['value-builtin', 'value-external'],
         'value-internal',
         ['value-parent', 'value-sibling', 'value-index'],
-        'unknown'
-      ]
+        'unknown',
+      ],
     },
-    vueIndentScriptAndStyle: true
+    vueIndentScriptAndStyle: true,
   },
   test: {
-    environment: 'jsdom'
+    environment: 'jsdom',
   },
-  plugins: [Vue()]
+  plugins: [Vue()],
 })

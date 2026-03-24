@@ -37,6 +37,7 @@
   const calcSettings =
     shallowRef<ReturnType<typeof useQRCode>['calculatedImageSettings']>()
 
+
   watchEffect(
     () => {
       const { margin, cells, numCells, calculatedImageSettings } = useQRCode({
@@ -121,14 +122,17 @@
     { flush: 'sync' },
   )
 
+
   watch(imgSrc, () => {
     isImgLoaded.value = false
   })
+
 
   const canvasStyle = computed(() => ({
     height: `${size}px`,
     width: `${size}px`,
   }))
+
 
   defineExpose({
     toDataURL: (type?: string, quality?: any) => {

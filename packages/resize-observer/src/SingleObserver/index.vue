@@ -12,8 +12,7 @@
   const props = defineProps<ResizeObserverProps>()
   const emit = defineEmits(['resize'])
   const wrapperRef = shallowRef()
-  const slot = useSlots()
-  const children = slot.default?.() ?? []
+
 
   function getDom(el: any): any {
     const dom = findDOMNode(el)
@@ -38,6 +37,7 @@
   }
   const onCollectionResize = inject(CollectionContext, () => {})
 
+
   const enabled = computed(() => !props.disabled)
   useResizeObserver(
     enabled,
@@ -49,7 +49,11 @@
   )
   onMounted(() => {
     // 需兼容 virtual DOM 与 vapor DOM
-    setWrapperRef(wrapperRef.value?.nodes ? wrapperRef.value.nodes.nextElementSibling : wrapperRef.value)
+    setWrapperRef(
+      wrapperRef.value?.nodes
+        ? wrapperRef.value.nodes.nextElementSibling
+        : wrapperRef.value,
+    )
   })
   defineExpose({
     getDom,
@@ -58,6 +62,6 @@
 
 <template>
   <DomWrapper>
-    <component :is="children" ref="wrapperRef" />
+    <slot ref="wrapperRef" />
   </DomWrapper>
 </template>

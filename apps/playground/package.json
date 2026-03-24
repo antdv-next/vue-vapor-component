@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@vapor-component/checkbox": "workspace:*",
+    "@vapor-component/mutate-observer": "workspace:*",
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",
     "@vapor-component/switch": "workspace:*"

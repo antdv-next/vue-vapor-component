@@ -7,7 +7,9 @@
 
   defineOptions({ name: 'Collection' })
 
+
   const props = defineProps<CollectionProps>()
+
 
   const resizeIdRef = shallowRef(0)
   const resizeInfosRef = shallowRef<ResizeInfo[]>([])
@@ -25,6 +27,7 @@
     })
     onCollectionResize?.(size, element, data)
   }
+
 
   provide(CollectionContext, onResize)
 </script>

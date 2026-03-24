@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <SingleObserver v-bind="props" @resize="e =>emit('resize',e)">
+  <SingleObserver v-bind="props" @resize="e => emit('resize', e)">
     <slot />
   </SingleObserver>
 </template>

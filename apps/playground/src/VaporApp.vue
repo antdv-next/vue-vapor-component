@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
   import Checkbox from '@vapor-component/checkbox'
+  import MutateObserver from '@vapor-component/mutate-observer'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import ResizeObserver from '@vapor-component/resize-observer'
   import Switch from '@vapor-component/switch'
@@ -21,6 +22,17 @@
     width.value = w
     height.value = h
   }
+  const internalRef = ref()
+
+
+  function onMutate(mutations: MutationRecord[], observer: MutationObserver) {
+    console.log(mutations)
+    console.log(observer)
+    console.log(internalRef)
+  }
+
+
+  const flag = ref(true)
 </script>
 
 <template>
@@ -62,6 +74,19 @@
       <ResizeObserver :disabled="disabled" @resize="onResize">
         <textarea placeholder="I'm a textarea!" />
       </ResizeObserver>
+    </label>
+    <hr />
+    <label>
+      MutateObserver:
+      <MutateObserver @mutate="onMutate">
+        <button
+          ref="internalRef"
+          :class="[flag ? 'aaa' : 'bbb']"
+          @click="flag = !flag"
+        >
+          click
+        </button>
+      </MutateObserver>
     </label>
   </fieldset>
 </template>

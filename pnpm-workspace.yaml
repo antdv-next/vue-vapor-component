@@ -13,10 +13,10 @@ catalog:
   tsdown: ^0.21.2
   turbo: ^2.8.16
   unplugin-vue: ^7.1.1
-  vite: npm:@voidzero-dev/vite-plus-core@latest
+  vite: npm:@voidzero-dev/vite-plus-core@0.1.13
   vite-plugin-vue-devtools: ^8.1.0
-  vite-plus: ^0.1.12
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
+  vite-plus: ^0.1.13
+  vitest: npm:@voidzero-dev/vite-plus-test@0.1.13
   vue: 3.6.0-beta.4
   vue-tsc: ^3.2.5
 
@@ -28,8 +28,8 @@ onlyBuiltDependencies:
 overrides:
   make-dir: ^5.1.0
   semver: ^7.0.0
-  vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
+  vite: npm:@voidzero-dev/vite-plus-core@0.1.13
+  vitest: npm:@voidzero-dev/vite-plus-test@0.1.13
 
 shellEmulator: true
 
