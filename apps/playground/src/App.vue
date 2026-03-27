@@ -4,9 +4,11 @@
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import ResizeObserver from '@vapor-component/resize-observer'
   import Switch from '@vapor-component/switch'
+  import Rate from '@vapor-component/rate'
   import { ref } from 'vue'
 
   import './styles/switch.less'
+  import './styles/rate.less'
 
   defineOptions({ name: 'App' })
   const checked1 = ref(false)
@@ -88,7 +90,16 @@
         </button>
       </MutateObserver>
     </label>
+    <hr />
+    <label>
+      Rate:
+      <Rate
+      :default-value="2.5"
+      style="font-size: 40px"
+      allow-half
+      :allow-clear="false"
+      @change="(v: number ) => console.log('selected star', v)"
+    />
+    </label>
   </fieldset>
 </template>
-
-<style scoped lang="less"></style>

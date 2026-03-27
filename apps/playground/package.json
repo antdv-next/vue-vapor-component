@@ -18,7 +18,8 @@
     "@vapor-component/mutate-observer": "workspace:*",
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",
-    "@vapor-component/switch": "workspace:*"
+    "@vapor-component/switch": "workspace:*",
+    "@vapor-component/rate": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
