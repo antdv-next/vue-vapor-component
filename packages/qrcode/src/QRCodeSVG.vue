@@ -29,14 +29,12 @@
     fgColor = DEFAULT_FRONT_COLOR,
   } = defineProps<QRProps>()
 
-
   const svgRef = useTemplateRef('_svg')
   let fgPath: string = ''
   let numCells: number = 0
   const calcSettings =
     shallowRef<ReturnType<typeof useQRCode>['calculatedImageSettings']>()
   const marginValue = shallowRef(0)
-
 
   watchEffect(() => {
     const {

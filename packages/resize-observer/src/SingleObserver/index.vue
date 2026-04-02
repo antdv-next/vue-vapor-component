@@ -13,7 +13,6 @@
   const emit = defineEmits(['resize'])
   const wrapperRef = shallowRef()
 
-
   function getDom(el: any): any {
     const dom = findDOMNode(el)
     // 判断当前的dom是不是一个text元素
@@ -36,7 +35,6 @@
     wrapperRef.value = getDom(_wrapper)
   }
   const onCollectionResize = inject(CollectionContext, () => {})
-
 
   const enabled = computed(() => !props.disabled)
   useResizeObserver(

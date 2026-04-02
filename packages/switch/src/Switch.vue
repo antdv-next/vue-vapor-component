@@ -26,7 +26,6 @@
   }>()
   const btnRef = useTemplateRef('btn')
 
-
   const switchClassName = computed(() => [
     prefixCls,
     className,
@@ -43,13 +42,11 @@
   ) {
     let mergedChecked = checked || defaultChecked
 
-
     if (!disabled) {
       mergedChecked = newChecked
       emit('change', mergedChecked, event)
     }
     emit('update:checked', mergedChecked!)
-
 
     return mergedChecked
   }

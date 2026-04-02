@@ -1,7 +1,5 @@
 <script setup vapor lang="ts">
-  import type {
-    KeyboardEventHandler,
-  } from '@v-c/util/dist/EventInterface'
+  import type { KeyboardEventHandler } from '@v-c/util/dist/EventInterface'
 
   import type { RateProps } from './interface'
 
@@ -28,10 +26,8 @@
   })
   const attrs = useAttrs()
 
-
   const [setStarRef, starRefs] = useRefs()
   const rateRef = ref<HTMLUListElement | null>(null)
-
 
   const triggerFocus = () => {
     if (!props.disabled) {
@@ -39,27 +35,22 @@
     }
   }
 
-
   const triggerBlur = () => {
     if (!props.disabled) {
       rateRef.value?.blur()
     }
   }
 
-
   defineExpose({
     focus: triggerFocus,
     blur: triggerBlur,
   })
 
-
   const [state, setStateValue] = useMergedState(props.defaultValue || 0, {
     value: computed(() => props.value),
   })
 
-
   const [cleanedValue, setCleanedValue] = useMergedState<number | null>(null)
-
 
   const getStarValue = (index: number, x: number) => {
     const { direction, allowHalf } = props
@@ -78,31 +69,25 @@
     return starValue
   }
 
-
   const changeValue = (nextValue: number) => {
     setStateValue(nextValue)
     props?.onChange?.(nextValue)
   }
 
-
   const focused = ref(false)
-
 
   const onInternalFocus = () => {
     focused.value = true
     props?.onFocus?.()
   }
 
-
   const onInternalBlur = () => {
     focused.value = false
     props?.onBlur?.()
   }
 
-
   // =========================== Hover ============================
   const hoverValue = ref<number | null>(null)
-
 
   const onHover = (event: MouseEvent, index: number) => {
     const nextHoverValue = getStarValue(index, event.pageX)
@@ -112,7 +97,6 @@
     }
     props?.onHoverChange?.(nextHoverValue)
   }
-
 
   const onMouseLeaveCallback = (event?: MouseEvent) => {
     const { disabled } = props
@@ -126,7 +110,6 @@
     }
   }
 
-
   const onClick = (event: MouseEvent | KeyboardEvent, index: number) => {
     const { allowClear } = props
     const newValue = getStarValue(index, (event as MouseEvent).pageX)
@@ -139,14 +122,12 @@
     setCleanedValue(isReset ? newValue : null)
   }
 
-
   const onInternalKeyDown: KeyboardEventHandler = event => {
     const { keyCode } = event
-    const {value} = state
+    const { value } = state
     const { keyboard, count, direction, allowHalf } = props
     const reverse = direction === 'rtl'
     const step = allowHalf ? 0.5 : 1
-
 
     if (keyboard) {
       if (keyCode === KeyCode.RIGHT && value < count && !reverse) {
@@ -164,10 +145,8 @@
       }
     }
 
-
     props?.onKeyDown?.(event)
   }
-
 
   onMounted(() => {
     const { autoFocus, disabled } = props
@@ -215,9 +194,9 @@
     :style="style"
     @mouseleave="onMouseLeaveCallback"
     :tabindex="disabled ? -1 : tabIndex"
-    @focus="() => disabled ? null : onInternalFocus()"
-    @blur="() => disabled ? null : onInternalBlur()"
-    @keydown="e =>disabled ? null : onInternalKeyDown(e)"
+    @focus="() => (disabled ? null : onInternalFocus())"
+    @blur="() => (disabled ? null : onInternalBlur())"
+    @keydown="e => (disabled ? null : onInternalKeyDown(e))"
     ref="rateRef"
     v-bind="{ ...pickAttrs(restAttrs, { aria: true, data: true, attr: true }) }"
   >
@@ -247,11 +226,15 @@
       </Star> -->
       <li :class="cls(index)" :ref="setStarRef(index)">
         <div
-          @click="e => disabled ? null : onClick(e, index)"
-          @keydown="e => disabled ? null : onInternalKeyDown(e)"
-          @mousemove="e => disabled ? null : onHover(e, index)"
+          @click="e => (disabled ? null : onClick(e, index))"
+          @keydown="e => (disabled ? null : onInternalKeyDown(e))"
+          @mousemove="e => (disabled ? null : onHover(e, index))"
           role="radio"
-          :aria-checked="(hoverValue === null ? state : hoverValue) > index ? 'true' : 'false'"
+          :aria-checked="
+            (hoverValue === null ? state : hoverValue) > index
+              ? 'true'
+              : 'false'
+          "
           :aria-posinset="index + 1"
           :aria-setsize="count"
           :tabindex="disabled ? -1 : 0"

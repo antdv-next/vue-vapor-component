@@ -28,8 +28,8 @@ onlyBuiltDependencies:
 overrides:
   make-dir: ^5.1.0
   semver: ^7.0.0
-  vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
+  vite: catalog
+  vitest: catalog
 
 shellEmulator: true
 

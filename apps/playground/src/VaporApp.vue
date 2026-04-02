@@ -2,9 +2,9 @@
   import Checkbox from '@vapor-component/checkbox'
   import MutateObserver from '@vapor-component/mutate-observer'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
+  import Rate from '@vapor-component/rate'
   import ResizeObserver from '@vapor-component/resize-observer'
   import Switch from '@vapor-component/switch'
-  import Rate from '@vapor-component/rate'
   import { ref } from 'vue'
 
   import './styles/switch.less'
@@ -26,13 +26,11 @@
   }
   const internalRef = ref()
 
-
   function onMutate(mutations: MutationRecord[], observer: MutationObserver) {
     console.log(mutations)
     console.log(observer)
     console.log(internalRef)
   }
-
 
   const flag = ref(true)
 </script>
@@ -94,12 +92,12 @@
     <label>
       Rate:
       <Rate
-      :default-value="2.5"
-      style="font-size: 40px"
-      allow-half
-      :allow-clear="false"
-      @change="(v: number ) => console.log('selected star', v)"
-    />
+        :default-value="2.5"
+        style="font-size: 40px"
+        allow-half
+        :allow-clear="false"
+        @change="(v: number) => console.log('selected star', v)"
+      />
     </label>
   </fieldset>
 </template>

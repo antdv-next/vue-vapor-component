@@ -10,28 +10,21 @@
     observer: MutationObserver,
   ) => void
 
-
   defineOptions({ name: 'MutateObserver' })
   const props = defineProps<{
     onMutate: OnMutateFn
     options?: MutationObserverInit
   }>()
 
-
   const internalOptions = toRef(props, 'options')
-
 
   const elementRef = ref()
 
-
   const wrapperRef = ref()
-
 
   const target = shallowRef<Element | Text | null>(null)
 
-
   const callback: OnMutateFn = (...args) => props.onMutate?.(...args)
-
 
   const getDom = (el: any) => {
     const dom =
@@ -44,10 +37,8 @@
       return dom.nextElementSibling as HTMLElement
     }
 
-
     return dom
   }
-
 
   function setElementRef(el: any) {
     let _wrapper = el
@@ -58,7 +49,6 @@
     }
     elementRef.value = getDom(_wrapper)
   }
-
 
   useMutateObserver(target, callback, internalOptions)
   onMounted(() => {

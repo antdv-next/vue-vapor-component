@@ -11,7 +11,6 @@
       return node.map(item => (isVNode(item) ? cloneVNode(item) : item))
     }
 
-
     return isVNode(node) ? cloneVNode(node) : node
   }
   const onHover = (e: MouseEvent) => {
@@ -28,7 +27,6 @@
       props?.onClick?.(e, index)
     }
   }
-
 
   const cls = computed(() => {
     const { prefixCls, index, value, allowHalf, focused } = props
@@ -59,9 +57,9 @@
   <slot name="characterRender" ref="el">
     <li :class="cls">
       <div
-        @click="e => disabled ? null : onClick(e)"
-        @keydown="e => disabled ? null : onKeyDown(e)"
-        @mousemove="e => disabled ? null : onHover(e)"
+        @click="e => (disabled ? null : onClick(e))"
+        @keydown="e => (disabled ? null : onKeyDown(e))"
+        @mousemove="e => (disabled ? null : onHover(e))"
         role="radio"
         :aria-checked="value > index ? 'true' : 'false'"
         :aria-posinset="index + 1"
