@@ -19,6 +19,7 @@
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/rate": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",
+    "@vapor-component/segmented": "workspace:*",
     "@vapor-component/switch": "workspace:*"
   },
   "devDependencies": {

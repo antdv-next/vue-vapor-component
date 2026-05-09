@@ -4,11 +4,13 @@
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
   import ResizeObserver from '@vapor-component/resize-observer'
+  import Segmented from '@vapor-component/segmented'
   import Switch from '@vapor-component/switch'
   import { ref } from 'vue'
 
   import './styles/switch.less'
   import './styles/rate.less'
+  import './styles/segmented.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -97,6 +99,15 @@
         allow-half
         :allow-clear="false"
         @change="(v: number) => console.log('selected star', v)"
+      />
+    </label>
+    <hr />
+    <label>
+      Segmented:
+      <Segmented
+        :options="['ios', 'android', 'harmony']"
+        default-value="ios"
+        @change="v => console.log('selected option', v)"
       />
     </label>
   </fieldset>
