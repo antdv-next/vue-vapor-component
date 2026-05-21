@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import Checkbox from '@vapor-component/checkbox'
+  import Input from '@vapor-component/input'
   import MutateObserver from '@vapor-component/mutate-observer'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
@@ -11,6 +12,7 @@
   import './styles/switch.less'
   import './styles/rate.less'
   import './styles/segmented.less'
+  import './styles/input.less'
 
   defineOptions({ name: 'App' })
   const checked1 = ref(false)
@@ -35,6 +37,7 @@
   }
 
   const flag = ref(true)
+  const value = ref()
 </script>
 
 <template>
@@ -109,6 +112,21 @@
         default-value="ios"
         @change="v => console.log('selected option', v)"
       />
+    </label>
+    <hr />
+    <label>
+      Input:
+      <Input prefix-cls="vc-input"  prefix="propPrefix" suffix="propSuffix" addon-before="propBefore" addon-after="propAfter" allow-clear :count="{ show: true, max: 5 }" />
+      <br>
+      <br>
+      &nbsp;
+      <Input prefix-cls="vc-input" allow-clear :count="{ show: true, max: 5 }">
+        <template #prefix>slotPrefix</template>
+        <template #suffix>slotSuffix</template>
+        <template #addonBefore>slotBefore</template>
+        <template #addonAfter>slotAfter</template>
+        <template #clearIcon>*</template>
+      </Input>
     </label>
   </fieldset>
 </template>

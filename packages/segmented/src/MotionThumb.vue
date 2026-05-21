@@ -79,9 +79,9 @@
 
   // =========================== Effect ===========================
   const findValueElement = (val: SegmentedValue) => {
-    const {getValueIndex} = props
-    const {containerRef} = props
-    const {prefixCls} = props
+    const { getValueIndex } = props
+    const { containerRef } = props
+    const { prefixCls } = props
     const index = getValueIndex(val)
     const ele = containerRef?.querySelectorAll<HTMLDivElement>(
       `.${prefixCls}-item`,
