@@ -4,6 +4,7 @@ packages:
 
 catalog:
   '@v-c/util': ^1.0.9
+  '@v-c/mini-decimal': ^1.0.1
   '@vitejs/plugin-vue': ^6.0.5
   '@vue/test-utils': ^2.4.6
   eslint: ^9.39.3

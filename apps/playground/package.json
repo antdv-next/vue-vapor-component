@@ -16,6 +16,7 @@
   "dependencies": {
     "@vapor-component/checkbox": "workspace:*",
     "@vapor-component/input": "workspace:*",
+    "@vapor-component/input-number": "workspace:*",
     "@vapor-component/mutate-observer": "workspace:*",
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/rate": "workspace:*",

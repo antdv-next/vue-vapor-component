@@ -105,10 +105,10 @@
   )
 
   const affixWrapperTag = computed(
-    () => props.components?.affixWrapper || 'span'
+    () => props.components?.affixWrapper || 'span',
   )
   const groupWrapperTag = computed(
-    () => props.components?.groupWrapper || 'span'
+    () => props.components?.groupWrapper || 'span',
   )
   const wrapperTag = computed(() => props.components?.wrapper || 'span')
   const groupAddonTag = computed(() => props.components?.groupAddon || 'span')

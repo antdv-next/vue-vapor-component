@@ -1,6 +1,7 @@
 <script setup vapor lang="ts">
   import Checkbox from '@vapor-component/checkbox'
   import Input from '@vapor-component/input'
+  import InputNumber from '@vapor-component/input-number'
   import MutateObserver from '@vapor-component/mutate-observer'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
@@ -12,6 +13,8 @@
   import './styles/switch.less'
   import './styles/rate.less'
   import './styles/segmented.less'
+  import './styles/input.less'
+  import './styles/input-number.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -36,7 +39,7 @@
   }
 
   const flag = ref(true)
-  const value = ref()
+  const value = ref(1)
 </script>
 
 <template>
@@ -115,9 +118,17 @@
     <hr />
     <label>
       Input:
-      <Input prefix-cls="vc-input" prefix="propPrefix" suffix="propSuffix" addon-before="propBefore" addon-after="propAfter" allow-clear :count="{ show: true, max: 5 }" />
-      <br>
-      <br>
+      <Input
+        prefix-cls="vc-input"
+        prefix="propPrefix"
+        suffix="propSuffix"
+        addon-before="propBefore"
+        addon-after="propAfter"
+        allow-clear
+        :count="{ show: true, max: 5 }"
+      />
+      <br />
+      <br />
       &nbsp;
       <Input prefix-cls="vc-input" allow-clear :count="{ show: true, max: 5 }">
         <template #prefix>slotPrefix</template>
@@ -126,6 +137,11 @@
         <template #addonAfter>slotAfter</template>
         <template #clearIcon>*</template>
       </Input>
+    </label>
+    <hr />
+    <label>
+      InputNumber:
+      <InputNumber v-model:value="value" :min="1" :max="5" suffix="%" />
     </label>
   </fieldset>
 </template>
