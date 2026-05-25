@@ -47,6 +47,62 @@ import App from './App.vue'
 ++ createVaporApp(App).mount('#app')
 ```
 
+## 组件完成进度
+
+- ✅ 已实现
+- 🚀 已验证，与vc、rc表现一致
+- ⭐️ 可复用vc的npm包，无需重复实现
+- ⭕ 未开始
+- 🪒 进行中
+- ❌ 不实现
+
+| 组件 | 状态 | 验证 | 备注 |
+| --- | --- | --- | --- |
+| async-validator | ❌ | 🚀 | ⭐️ |
+| cascader | ⭕ | | |
+| checkbox | ✅ | | |
+| collapse | ⭕ | | |
+| color-picker | ⭕ | | |
+| dialog | ⭕ | | |
+| drawer | ⭕ | | |
+| dropdown | ⭕ | | |
+| fast-color | ❌ | 🚀 | ⭐️ |
+| field-form | ⭕ | | |
+| image | 🪒 | | |
+| input | ✅ | | |
+| input-number | ✅ | | |
+| listy | ⭕ | | |
+| mentions | ⭕ | | |
+| menu | ⭕ | | |
+| mini-decimal | ❌ | 🚀 | ⭐️ |
+| mutate-observer | ✅ | | |
+| notification | ⭕ | | |
+| overflow | ⭕ | | |
+| pagination | ⭕ | | |
+| picker | ⭕ | | |
+| portal | ⭕ | | |
+| progress | ⭕ | | |
+| qrcode | ✅ | | |
+| rate | ✅ | | |
+| resize-observer | ✅ | | |
+| segmented | ✅ | | |
+| select | ⭕ | | |
+| slick | ⭕ | | |
+| slider | ⭕ | | |
+| steps | ⭕ | | |
+| switch | ✅ | | |
+| table | ⭕ | | |
+| tabs | ⭕ | | |
+| textarea | ✅ | | |
+| tooltip | ⭕ | | |
+| tour | ⭕ | | |
+| tree | ⭕ | | |
+| tree-select | ⭕ | | |
+| trigger | ⭕ | | |
+| upload | ⭕ | | |
+| util | ❌ | 🚀 | ⭐️部分涉及VDom的需兼容vapor |
+| virtual-list | ⭕ | | |
+
 ## 库构建工具
 
 tsdown，被定义为使用 rolldown 的 vite8 的库编译模式的基座，优势：支持多种输出格式esm、cjs、umd等，自动生成 typescript 声明文件`.d.ts`，借助 rolldown 基于 Rust 提供的高性能，构建速度极快
