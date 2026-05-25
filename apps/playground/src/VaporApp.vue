@@ -8,6 +8,7 @@
   import ResizeObserver from '@vapor-component/resize-observer'
   import Segmented from '@vapor-component/segmented'
   import Switch from '@vapor-component/switch'
+  import TextArea from '@vapor-component/textarea'
   import { ref } from 'vue'
 
   import './styles/switch.less'
@@ -15,6 +16,7 @@
   import './styles/segmented.less'
   import './styles/input.less'
   import './styles/input-number.less'
+  import './styles/textarea.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -40,6 +42,10 @@
 
   const flag = ref(true)
   const value = ref(1)
+  const textValue = ref('hello\ntextarea')
+  function handleTextAreaChange(e: Event) {
+    textValue.value = (e.target as HTMLTextAreaElement).value
+  }
 </script>
 
 <template>
@@ -142,6 +148,32 @@
     <label>
       InputNumber:
       <InputNumber v-model:value="value" :min="1" :max="5" suffix="%" />
+    </label>
+    <hr />
+    <label>
+      TextArea:
+      <TextArea
+        :value="textValue"
+        prefix-cls="vc-textarea"
+        prefix="propPrefix"
+        suffix="propSuffix"
+        allow-clear
+        :count="{ show: true, max: 20 }"
+        :auto-size="{ minRows: 2, maxRows: 4 }"
+        @change="handleTextAreaChange"
+      />
+      <br />
+      <br />
+      <TextArea
+        prefix-cls="vc-textarea"
+        allow-clear
+        :count="{ show: true, max: 10 }"
+        placeholder="slot based textarea"
+      >
+        <template #prefix>slotPrefix</template>
+        <template #suffix>slotSuffix</template>
+        <template #clearIcon>*</template>
+      </TextArea>
     </label>
   </fieldset>
 </template>
