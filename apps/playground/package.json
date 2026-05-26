@@ -18,6 +18,7 @@
     "@vapor-component/input": "workspace:*",
     "@vapor-component/input-number": "workspace:*",
     "@vapor-component/mutate-observer": "workspace:*",
+    "@vapor-component/portal": "workspace:*",
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/rate": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",

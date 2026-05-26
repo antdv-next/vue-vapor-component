@@ -3,13 +3,14 @@
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
   import MutateObserver from '@vapor-component/mutate-observer'
+  import Portal from '@vapor-component/portal'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
   import ResizeObserver from '@vapor-component/resize-observer'
   import Segmented from '@vapor-component/segmented'
   import Switch from '@vapor-component/switch'
   import TextArea from '@vapor-component/textarea'
-  import { ref } from 'vue'
+  import { ref, computed, onUnmounted, version } from 'vue'
 
   import './styles/switch.less'
   import './styles/rate.less'
@@ -17,6 +18,7 @@
   import './styles/input.less'
   import './styles/input-number.less'
   import './styles/textarea.less'
+  import './styles/portal.less'
 
   defineOptions({ name: 'App' })
   const checked1 = ref(false)
@@ -45,6 +47,31 @@
   const textValue = ref('hello\ntextarea')
   function handleTextAreaChange(e: Event) {
     textValue.value = (e.target as HTMLTextAreaElement).value
+  }
+  const show = ref(true)
+  const customizeContainer = ref(false)
+  const lock = ref(false)
+  const divRef = ref<HTMLDivElement | null>(null)
+
+  onUnmounted(() => {
+    console.log('Demo unmount!!')
+  })
+
+  const getContainer = computed(() =>
+    customizeContainer.value ? () => divRef.value : undefined,
+  )
+  const contentCls = computed(() => (customizeContainer.value ? '' : 'abs'))
+
+  function toggleShow() {
+    show.value = !show.value
+  }
+
+  function toggleCustomizeContainer() {
+    customizeContainer.value = !customizeContainer.value
+  }
+
+  function toggleLock() {
+    lock.value = !lock.value
   }
 </script>
 
@@ -174,6 +201,41 @@
         <template #suffix>slotSuffix</template>
         <template #clearIcon>*</template>
       </TextArea>
+    </label>
+    <hr />
+    <label>
+      Portal:
+      <div style="height: 200px">
+        <div style="border: 2px solid red">
+          Real Version: {{ version }}
+          <button @click="toggleShow">show: {{ show.toString() }}</button>
+          <button @click="toggleCustomizeContainer">
+            customize container: {{ customizeContainer.toString() }}
+          </button>
+          <button @click="toggleLock">
+            lock scroll: {{ lock.toString() }}
+          </button>
+          <div
+            id="customize"
+            ref="divRef"
+            style="border: 1px solid green; min-height: 10px"
+          />
+        </div>
+
+        <Portal :open="show" :get-container="getContainer" :auto-lock="lock">
+          <p class="root" :class="[contentCls]">Hello Root</p>
+          <Portal :open="show" :get-container="getContainer" :auto-lock="lock">
+            <p class="parent" :class="[contentCls]">Hello Parent</p>
+            <Portal
+              :open="show"
+              :get-container="getContainer"
+              :auto-lock="lock"
+            >
+              <p class="children" :class="[contentCls]">Hello Children</p>
+            </Portal>
+          </Portal>
+        </Portal>
+      </div>
     </label>
   </fieldset>
 </template>
