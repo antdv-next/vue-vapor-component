@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//tmp/**)",
+      "Read(//tmp/pw-install/node_modules/playwright-core/**)",
+      "Bash(curl -s -o /dev/null -w \"http %{http_code}\\\\n\" http://localhost:5199/)",
+      "Bash(node /tmp/pw-collapse.mjs)",
+      "Bash(node /tmp/pw-dbg.mjs)",
+      "Bash(python -c 'import sys,json,re; t=sys.stdin.read\\(\\); m=t[t.find\\('\\\\''RESULT'\\\\''\\)+6:]; d=json.loads\\(m\\); print\\('\\\\''itemCount'\\\\'',d['\\\\''itemCount'\\\\'']\\); *)",
+      "Bash(python -c 'import sys,json; t=sys.stdin.read\\(\\); d=json.loads\\(t[t.find\\('\\\\''RESULT'\\\\''\\)+6:]\\); print\\('\\\\''itemCount'\\\\'',d['\\\\''itemCount'\\\\'']\\); *)",
+      "Bash(node /tmp/pw-shot2.mjs)",
+      "Bash(python -c 'import sys,json; t=sys.stdin.read\\(\\); d=json.loads\\(t[t.find\\('\\\\''RESULT'\\\\''\\)+6:]\\); *)",
+      "Read(//c/Users/Admin/AppData/Local/Temp/**)"
+    ]
+  }
+}

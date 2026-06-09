@@ -1,5 +1,7 @@
 <script setup lang="ts">
   import Checkbox from '@vapor-component/checkbox'
+  import Collapse from '@vapor-component/collapse'
+  import type { CollapseProps } from '@vapor-component/collapse'
   import Image, { PreviewGroup } from '@vapor-component/image'
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
@@ -21,6 +23,7 @@
   import './styles/textarea.less'
   import './styles/portal.less'
   import './styles/image.less'
+  import './styles/collapse.less'
 
   defineOptions({ name: 'App' })
   const checked1 = ref(false)
@@ -58,6 +61,24 @@
   onUnmounted(() => {
     console.log('Demo unmount!!')
   })
+
+  // ===================== Collapse demo =====================
+  // NOTE: this app is mounted with `createVaporApp` (no vdom interop), so panel
+  // content is provided as plain strings rather than `h()` vnodes, and the
+  // default arrow icon is used. (`h()` VueNodes render in an interop host.)
+  const collapseActiveKey = ref<(string | number)[]>(['1'])
+  const collapseText =
+    'A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found as a welcome guest in many households across the world.'
+  const collapseItems = computed<CollapseProps['items']>(() => [
+    { key: '1', label: 'This is panel header 1', children: collapseText },
+    { key: '2', label: 'This is panel header 2', children: collapseText },
+    {
+      key: '3',
+      label: 'This is panel header 3 (disabled)',
+      collapsible: 'disabled',
+      children: collapseText,
+    },
+  ])
 
   const getContainer = computed(() =>
     customizeContainer.value ? () => divRef.value : undefined,
@@ -304,6 +325,15 @@
           >
         </template>
       </PreviewGroup>
+    </label>
+    <hr>
+    <label>
+      Collapse:
+      <Collapse
+        :active-key="collapseActiveKey"
+        :items="collapseItems"
+        @change="(k) => (collapseActiveKey = k)"
+      />
     </label>
   </fieldset>
 </template>

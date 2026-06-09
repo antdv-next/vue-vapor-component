@@ -15,16 +15,36 @@ packages
 1. apps + packages 是一种项目组织的最佳实践，意图清晰：apps 是最终要部署的，packages 是基础设施
 2. 分工明确：pnpm 依赖管理，vite plus(tasks、cache) 任务编排与缓存
 
-## 环境与要求
+## 依赖环境与使用说明
 
-vue >3.6.x
-pnpm
+- vue > 3.6.x
+- pnpm
+- vite-plus
+
+<details>
+<summary>单一使用（vapor）</summary><br>
+
+vue项目需要在main.ts里引入`createVaporApp`来替换`createApp`
+
+```diff
+-- import { createApp } from 'vue'
+++ import { createVaporApp } from 'vue'
+import App from './App.vue'
+-- createApp(App).mount('#app')
+++ createVaporApp(App).mount('#app')
+```
 
 vapor component 需要在 script 标签中加上vapor
 
-```javascript
-<script setup vapor lang='ts'></script>
+```diff
+-- <script setup lang='ts'>
+++ <script setup vapor lang='ts'>
 ```
+
+<br></details>
+
+<details>
+<summary>混合使用（vapor + vdom）</summary><br>
 
 使用virtualDom的vue项目想使用vapor组件需要在main.ts里引入`vaporInteropPlugin`
 
@@ -37,15 +57,14 @@ import App from './App.vue'
 ++ createApp(App).use(vaporInteropPlugin).mount('#app')
 ```
 
-单vaporDom的vue项目需要在main.ts里引入`createVaporApp`来替换`createApp`，如果需要混合使用则也需要引入`vaporInteropPlugin`，会拉取vdom runtime，抵消掉vapor带来的大幅缩小捆绑包的优势
+单一 vaporMode 如果要混合使用 virtualDom 组件则也需要引入`vaporInteropPlugin`，会拉取vdom runtime，抵消掉vapor带来的大幅缩小捆绑包的优势
 
 ```diff
--- import { createApp } from 'vue'
-++ import { createVaporApp } from 'vue'
-import App from './App.vue'
--- createApp(App).mount('#app')
-++ createVaporApp(App).mount('#app')
+-- createVaporApp(App).mount('#app')
+++ createVaporApp(App).use(vaporInteropPlugin).mount('#app')
 ```
+
+<br></details>
 
 ## 组件完成进度
 
@@ -61,7 +80,7 @@ import App from './App.vue'
 | async-validator | ❌   | 🚀   | ⭐️                          |
 | cascader        | ⭕   |      |                             |
 | checkbox        | ✅   |      |                             |
-| collapse        | ⭕   |      |                             |
+| collapse        | ✅   |      |                             |
 | color-picker    | ⭕   |      |                             |
 | dialog          | ⭕   |      |                             |
 | drawer          | ⭕   |      |                             |
@@ -102,7 +121,3 @@ import App from './App.vue'
 | upload          | ⭕   |      |                             |
 | util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor |
 | virtual-list    | ⭕   |      |                             |
-
-## 库构建工具
-
-tsdown，被定义为使用 rolldown 的 vite8 的库编译模式的基座，优势：支持多种输出格式esm、cjs、umd等，自动生成 typescript 声明文件`.d.ts`，借助 rolldown 基于 Rust 提供的高性能，构建速度极快
