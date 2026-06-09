@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
   import Checkbox from '@vapor-component/checkbox'
+  import Image, { PreviewGroup } from '@vapor-component/image'
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
   import MutateObserver from '@vapor-component/mutate-observer'
@@ -10,7 +11,7 @@
   import Segmented from '@vapor-component/segmented'
   import Switch from '@vapor-component/switch'
   import TextArea from '@vapor-component/textarea'
-  import { ref, computed, onUnmounted, version } from 'vue'
+  import { ref, computed, onUnmounted, version, h } from 'vue'
 
   import './styles/switch.less'
   import './styles/rate.less'
@@ -19,6 +20,7 @@
   import './styles/input-number.less'
   import './styles/textarea.less'
   import './styles/portal.less'
+  import './styles/image.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -71,6 +73,17 @@
 
   function toggleLock() {
     lock.value = !lock.value
+  }
+  const defaultIcons = {
+    rotateLeft: h('button', '<'),
+    rotateRight: h('button','>'),
+    zoomIn: h('button', '+'),
+    zoomOut: h('button', '-'),
+    close: () => h('span', 'x'),
+    left: h('button', '<-'),
+    right: h('button', '->'),
+    flipX: h('button', '^'),
+    flipY: h('button', { style: { display: 'inline-block', transform: 'rotate(180deg)' } }, '^'),
   }
 </script>
 
@@ -235,6 +248,61 @@
           </Portal>
         </Portal>
       </div>
+    </label>
+    <hr>
+    <label>
+      Image:
+      <Image
+        src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+        :width="200"
+        style="margin-right: 24px"
+        @click="() => {
+          console.log('click')
+        }"
+        alt="basic"
+        :preview="{
+          zIndex: 9999,
+        }"
+      />
+      <Image
+        src="https://gw.alipayobjects.com/mdn/rms_08e378/afts/img/A*P0S-QIRUbsUAAAAAAAAAAABkARQnAQ"
+        :width="200"
+        style="margin-right: 24px"
+        :preview="{ cover: 'Click to Preview' }"
+      >
+        <template #actionsRender="{ actions, transform, current, total, image, minScale, maxScale, actionCls, disabledCls }">
+          <button @click="actions.onZoomOut" :class="[actionCls, transform.scale <= minScale ? disabledCls : '']" :disabled="transform.scale <= minScale">-</button>
+          <button @click="actions.onZoomIn" :class="[actionCls, transform.scale >= maxScale ? disabledCls : '']" :disabled="transform.scale >= maxScale">+</button>
+          <button @click="actions.onRotateLeft" :class="[actionCls]">↺</button>
+          <button @click="actions.onRotateRight" :class="[actionCls]">↻</button>
+          <button @click="actions.onFlipX" :class="[actionCls]">⇋</button>
+          <button @click="actions.onFlipY" :class="[actionCls]">⇅</button>
+          <button @click="actions.onReset" :class="[actionCls]">reset</button>
+        </template>
+        <template #closeIcon>
+          <span style="color: red">x</span>
+        </template>
+      </Image>
+      <PreviewGroup>
+        <Image
+          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          :width="200"
+          style="margin-right: 24px"
+          alt="basic"
+        />
+        <Image
+          src="https://gw.alipayobjects.com/mdn/rms_08e378/afts/img/A*P0S-QIRUbsUAAAAAAAAAAABkARQnAQ"
+          :width="200"
+          style="margin-right: 24px"
+          alt="basic"
+        />
+        <template #prevIcon>
+          <
+        </template>
+        <template #nextIcon>
+          >
+        </template>
+      </PreviewGroup>
     </label>
   </fieldset>
 </template>

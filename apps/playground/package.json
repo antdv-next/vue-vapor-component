@@ -24,7 +24,8 @@
     "@vapor-component/resize-observer": "workspace:*",
     "@vapor-component/segmented": "workspace:*",
     "@vapor-component/switch": "workspace:*",
-    "@vapor-component/textarea": "workspace:*"
+    "@vapor-component/textarea": "workspace:*",
+    "@vapor-component/image": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
