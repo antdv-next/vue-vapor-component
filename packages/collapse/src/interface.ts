@@ -29,17 +29,16 @@ export interface CollapsePanelProps {
 
 export type CollapsibleType = 'header' | 'icon' | 'disabled'
 
-export interface ItemType
-  extends Omit<
-    CollapsePanelProps,
-    | 'header' // alias of label
-    | 'prefixCls'
-    | 'panelKey' // alias of key
-    | 'isActive'
-    | 'accordion'
-    | 'openMotion'
-    | 'expandIcon'
-  > {
+export interface ItemType extends Omit<
+  CollapsePanelProps,
+  | 'header' // alias of label
+  | 'prefixCls'
+  | 'panelKey' // alias of key
+  | 'isActive'
+  | 'accordion'
+  | 'openMotion'
+  | 'expandIcon'
+> {
   key?: CollapsePanelProps['panelKey']
   label?: CollapsePanelProps['header']
   ref?: Ref<HTMLDivElement>

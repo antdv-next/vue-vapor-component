@@ -16,6 +16,7 @@
   "dependencies": {
     "@vapor-component/checkbox": "workspace:*",
     "@vapor-component/collapse": "workspace:*",
+    "@vapor-component/image": "workspace:*",
     "@vapor-component/input": "workspace:*",
     "@vapor-component/input-number": "workspace:*",
     "@vapor-component/mutate-observer": "workspace:*",
@@ -25,8 +26,7 @@
     "@vapor-component/resize-observer": "workspace:*",
     "@vapor-component/segmented": "workspace:*",
     "@vapor-component/switch": "workspace:*",
-    "@vapor-component/textarea": "workspace:*",
-    "@vapor-component/image": "workspace:*"
+    "@vapor-component/textarea": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",

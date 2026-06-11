@@ -1,7 +1,8 @@
 <script setup lang="ts">
+  import type { CollapseProps } from '@vapor-component/collapse'
+
   import Checkbox from '@vapor-component/checkbox'
   import Collapse from '@vapor-component/collapse'
-  import type { CollapseProps } from '@vapor-component/collapse'
   import Image, { PreviewGroup } from '@vapor-component/image'
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
@@ -98,14 +99,18 @@
   }
   const defaultIcons = {
     rotateLeft: h('button', '<'),
-    rotateRight: h('button','>'),
+    rotateRight: h('button', '>'),
     zoomIn: h('button', '+'),
     zoomOut: h('button', '-'),
     close: () => h('span', 'x'),
     left: h('button', '<-'),
     right: h('button', '->'),
     flipX: h('button', '^'),
-    flipY: h('button', { style: { display: 'inline-block', transform: 'rotate(180deg)' } }, '^'),
+    flipY: h(
+      'button',
+      { style: { display: 'inline-block', transform: 'rotate(180deg)' } },
+      '^',
+    ),
   }
 </script>
 
@@ -271,16 +276,18 @@
         </Portal>
       </div>
     </label>
-    <hr>
+    <hr />
     <label>
       Image:
       <Image
         src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
         :width="200"
         style="margin-right: 24px"
-        @click="() => {
-          console.log('click')
-        }"
+        @click="
+          () => {
+            console.log('click')
+          }
+        "
         alt="basic"
         :preview="{
           zIndex: 9999,
@@ -292,9 +299,33 @@
         style="margin-right: 24px"
         :preview="{ cover: 'Click to Preview' }"
       >
-        <template #actionsRender="{ actions, transform, current, total, image, minScale, maxScale, actionCls, disabledCls }">
-          <button @click="actions.onZoomOut" :class="[actionCls, transform.scale <= minScale ? disabledCls : '']" :disabled="transform.scale <= minScale">-</button>
-          <button @click="actions.onZoomIn" :class="[actionCls, transform.scale >= maxScale ? disabledCls : '']" :disabled="transform.scale >= maxScale">+</button>
+        <template
+          #actionsRender="{
+            actions,
+            transform,
+            current,
+            total,
+            image,
+            minScale,
+            maxScale,
+            actionCls,
+            disabledCls,
+          }"
+        >
+          <button
+            @click="actions.onZoomOut"
+            :class="[actionCls, transform.scale <= minScale ? disabledCls : '']"
+            :disabled="transform.scale <= minScale"
+          >
+            -
+          </button>
+          <button
+            @click="actions.onZoomIn"
+            :class="[actionCls, transform.scale >= maxScale ? disabledCls : '']"
+            :disabled="transform.scale >= maxScale"
+          >
+            +
+          </button>
           <button @click="actions.onRotateLeft" :class="[actionCls]">↺</button>
           <button @click="actions.onRotateRight" :class="[actionCls]">↻</button>
           <button @click="actions.onFlipX" :class="[actionCls]">⇋</button>
@@ -318,21 +349,17 @@
           style="margin-right: 24px"
           alt="basic"
         />
-        <template #prevIcon>
-          <
-        </template>
-        <template #nextIcon>
-          >
-        </template>
+        <template #prevIcon> < </template>
+        <template #nextIcon> > </template>
       </PreviewGroup>
     </label>
-    <hr>
+    <hr />
     <label>
       Collapse:
       <Collapse
         :active-key="collapseActiveKey"
         :items="collapseItems"
-        @change="(k) => (collapseActiveKey = k)"
+        @change="k => (collapseActiveKey = k)"
       />
     </label>
   </fieldset>

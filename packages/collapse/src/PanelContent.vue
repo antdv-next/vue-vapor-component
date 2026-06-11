@@ -35,7 +35,7 @@
 </script>
 
 <template>
-  <div v-if="rendered" :class="panelCls" :style="(style as any)" :role="role">
+  <div v-if="rendered" :class="panelCls" :style="style as any" :role="role">
     <div :class="bodyCls" :style="styles?.body">
       <component
         v-if="children && typeof children === 'object'"

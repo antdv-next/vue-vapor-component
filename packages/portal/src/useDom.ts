@@ -23,8 +23,9 @@ export default function useDom(
 
     const defaultEle = document.createElement('div')
 
-    if (process.env.NODE_ENV !== 'production' && debug)
+    if (process.env.NODE_ENV !== 'production' && debug) {
       defaultEle.setAttribute('data-debug', debug)
+    }
     return defaultEle
   }
   const ele = eleFun()

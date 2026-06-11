@@ -79,10 +79,10 @@
         handleItemClick()
       }
     },
-    'role': accordion.value ? 'tab' : 'button',
+    role: accordion.value ? 'tab' : 'button',
     'aria-expanded': isActive.value,
     'aria-disabled': disabled.value,
-    'tabindex': disabled.value ? -1 : 0,
+    tabindex: disabled.value ? -1 : 0,
   }))
 
   const isHeaderOrIcon = computed(
@@ -160,10 +160,7 @@
         :style="mergedStyles?.icon"
         v-bind="iconBindings"
       >
-        <component
-          v-if="mergedExpandIcon"
-          :is="mergedExpandIcon(iconProps)"
-        />
+        <component v-if="mergedExpandIcon" :is="mergedExpandIcon(iconProps)" />
         <i v-else class="arrow" />
       </div>
 

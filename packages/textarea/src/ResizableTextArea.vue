@@ -62,7 +62,7 @@
 
   // ============================== AutoSize ==============================
   const autoSizeData = computed(() => {
-    const autoSize = props.autoSize
+    const { autoSize } = props
     if (autoSize && typeof autoSize === 'object') {
       return [autoSize.minRows, autoSize.maxRows]
     }

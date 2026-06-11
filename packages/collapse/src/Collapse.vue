@@ -113,11 +113,7 @@
     :role="accordion ? 'tablist' : undefined"
     v-bind="pickedAttrs"
   >
-    <Panel
-      v-for="p in panels"
-      :key="p.panelKey"
-      v-bind="p.bind"
-    />
+    <Panel v-for="p in panels" :key="p.panelKey" v-bind="p.bind" />
     <slot></slot>
   </div>
 </template>

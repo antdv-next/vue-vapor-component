@@ -239,7 +239,7 @@
   )
 
   const bodyStyle = computed<CSSProperties>(() => {
-    const s: CSSProperties = { ...(props.styles?.body ?? {}) }
+    const s: CSSProperties = { ...props.styles?.body }
     if (props.mousePosition) {
       s.transformOrigin = `${props.mousePosition.x}px ${props.mousePosition.y}px`
     }
@@ -260,7 +260,7 @@
 
   const mergedRootStyle = computed<CSSProperties>(() => {
     const s: CSSProperties = {
-      ...(props.styles?.root ?? {}),
+      ...props.styles?.root,
       ...(attrs.style as CSSProperties),
     }
     if (props.zIndex) s.zIndex = props.zIndex
@@ -304,7 +304,7 @@
       onTouchcancel: onTouchEnd,
     })
     return {
-      imgNode, 
+      imgNode,
       transform: transform.value,
       image: image.value,
       ...(groupContext ? { current: props.current } : {}),

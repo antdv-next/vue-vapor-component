@@ -208,7 +208,7 @@
   const rootStyle = computed<CSSProperties>(() => ({
     width: getStylePxValue(props.width) as any,
     height: getStylePxValue(props.height) as any,
-    ...(props.styles?.root ?? {}),
+    ...props.styles?.root,
   }))
 
   const rootCls = computed(() =>
@@ -319,12 +319,12 @@
       aria-hidden="true"
       :class="`${prefixCls}-placeholder`"
     >
-      <slot name="placeholder">{{ placeholderNode }}</slot>  
+      <slot name="placeholder">{{ placeholderNode }}</slot>
     </div>
 
     <!-- Preview Click Mask / Cover -->
     <div v-if="showCover" :class="coverCls" :style="styles?.cover">
-      <slot name="cover">{{ coverNode }}</slot>  
+      <slot name="cover">{{ coverNode }}</slot>
     </div>
   </div>
 

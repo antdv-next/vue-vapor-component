@@ -18,8 +18,8 @@ catalog:
   vite-plugin-vue-devtools: ^8.1.2
   vite-plus: latest
   vitest: npm:@voidzero-dev/vite-plus-test@latest
-  vue: 3.6.0-beta.11
-  vue-tsc: ^3.2.5
+  vue: 3.6.0-beta.14
+  vue-tsc: latest
 
 onlyBuiltDependencies:
   - esbuild
