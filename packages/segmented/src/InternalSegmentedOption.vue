@@ -16,6 +16,8 @@
     prefixCls: string
     classNames?: Partial<Record<SemanticName, string>>
     styles?: Partial<Record<SemanticName, CSSProperties>>
+    class?: Partial<Record<SemanticName, string>>
+    style?: Partial<Record<SemanticName, CSSProperties>>
     data: SegmentedLabeledOption
     disabled?: boolean
     checked: boolean

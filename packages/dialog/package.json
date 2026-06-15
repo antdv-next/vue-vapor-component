@@ -1,5 +1,5 @@
 {
-  "name": "@vapor-component/input-number",
+  "name": "@vapor-component/dialog",
   "version": "0.0.1",
   "description": "",
   "keywords": [],
@@ -13,8 +13,8 @@
     "test": "vp test"
   },
   "dependencies": {
-    "@v-c/mini-decimal": "catalog:",
-    "@v-c/util": "catalog:"
+    "@v-c/util": "catalog:",
+    "@vapor-component/portal": "workspace:*"
   },
   "devDependencies": {
     "vite-plus": "catalog:"

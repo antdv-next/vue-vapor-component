@@ -1,5 +1,4 @@
 <script setup vapor lang="ts">
-  /* eslint-disable vue/no-reserved-component-names */
   import type { SwitchProps } from './interface'
 
   import KeyCode from '@v-c/util/dist/KeyCode'
@@ -69,9 +68,9 @@
 
 <template>
   <button
-    ref="btn"
     type="button"
     role="switch"
+    ref="btn"
     :class="switchClassName"
     :aria-checked="checked || defaultChecked"
     :disabled="disabled"
@@ -81,9 +80,7 @@
     <template v-if="loadingIcon && typeof loadingIcon === 'function'">
       <component :is="loadingIcon" />
     </template>
-    <template v-else>
-      {{ loadingIcon }}
-    </template>
+    <template v-else>{{ loadingIcon }}</template>
     <span :class="`${prefixCls}-inner`">
       <span :class="[`${prefixCls}-inner-checked`, cls]" :style="sty">
         {{ checkedChildren }}

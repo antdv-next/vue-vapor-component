@@ -1,4 +1,3 @@
-/* eslint-disable */
 // Copyright (c) Project Nayuki. (MIT License)
 // https://www.nayuki.io/page/qr-code-generator-library
 
@@ -278,7 +277,7 @@ export class QrSegment {
   private static readonly NUMERIC_REGEX: RegExp = /^[0-9]*$/
 
   // Describes precisely all strings that are encodable in alphanumeric mode.
-  private static readonly ALPHANUMERIC_REGEX: RegExp = /^[A-Z0-9 $%*+.\/:-]*$/
+  private static readonly ALPHANUMERIC_REGEX: RegExp = /^[A-Z0-9 $%*+./:-]*$/
 
   // The set of all legal characters in alphanumeric mode,
   // where each character value maps to the index in the string.

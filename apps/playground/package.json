@@ -16,6 +16,7 @@
   "dependencies": {
     "@vapor-component/checkbox": "workspace:*",
     "@vapor-component/collapse": "workspace:*",
+    "@vapor-component/dialog": "workspace:*",
     "@vapor-component/image": "workspace:*",
     "@vapor-component/input": "workspace:*",
     "@vapor-component/input-number": "workspace:*",

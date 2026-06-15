@@ -3,6 +3,7 @@
 
   import Checkbox from '@vapor-component/checkbox'
   import Collapse from '@vapor-component/collapse'
+  import Dialog from '@vapor-component/dialog'
   import Image, { PreviewGroup } from '@vapor-component/image'
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
@@ -25,6 +26,7 @@
   import './styles/portal.less'
   import './styles/image.less'
   import './styles/collapse.less'
+  import './styles/dialog.less'
 
   defineOptions({ name: 'App' })
   const checked1 = ref(false)
@@ -112,6 +114,7 @@
       '^',
     ),
   }
+  const visible = ref(false)
 </script>
 
 <template>
@@ -361,6 +364,30 @@
         :items="collapseItems"
         @change="k => (collapseActiveKey = k)"
       />
+    </label>
+    <hr />
+    <label>
+      Dialog:
+      <button @click="visible = !visible">Open Dialog</button>
+      <Dialog
+        v-model:visible="visible"
+        title="Dialog Title"
+        :get-container="getContainer"
+        :force-render="true"
+        :mask-closable="false"
+        @close="
+          () => {
+            console.log('Dialog closed')
+            visible = !visible
+          }
+        "
+      >
+        <p>This is the content of the dialog.</p>
+        <p>You can put any content here, such as forms, text, or images.</p>
+        <template #footer>
+          <button @click="visible = !visible">Close</button>
+        </template>
+      </Dialog>
     </label>
   </fieldset>
 </template>
