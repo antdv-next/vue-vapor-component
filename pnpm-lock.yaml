@@ -96,6 +96,9 @@ importers:
       '@vapor-component/dialog':
         specifier: workspace:*
         version: link:../../packages/dialog
+      '@vapor-component/drawer':
+        specifier: workspace:*
+        version: link:../../packages/drawer
       '@vapor-component/image':
         specifier: workspace:*
         version: link:../../packages/image
@@ -170,6 +173,22 @@ importers:
         version: 0.1.24(@types/node@25.0.1)(esbuild@0.27.4)(jiti@2.6.1)(jsdom@27.4.0)(less@4.6.4)(typescript@5.9.3)(vite@8.0.16(@types/node@25.0.1)(esbuild@0.27.4)(jiti@2.6.1)(less@4.6.4)(yaml@2.8.2))(yaml@2.8.2)
 
   packages/dialog:
+    dependencies:
+      '@v-c/util':
+        specifier: 'catalog:'
+        version: 1.0.19(vue@3.6.0-beta.14(typescript@5.9.3))
+      '@vapor-component/portal':
+        specifier: workspace:*
+        version: link:../portal
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.14(typescript@5.9.3)
+    devDependencies:
+      vite-plus:
+        specifier: 'catalog:'
+        version: 0.1.24(@types/node@25.0.1)(esbuild@0.27.4)(jiti@2.6.1)(jsdom@27.4.0)(less@4.6.4)(typescript@5.9.3)(vite@8.0.16(@types/node@25.0.1)(esbuild@0.27.4)(jiti@2.6.1)(less@4.6.4)(yaml@2.8.2))(yaml@2.8.2)
+
+  packages/drawer:
     dependencies:
       '@v-c/util':
         specifier: 'catalog:'
@@ -4844,7 +4863,7 @@ snapshots:
       '@vue/shared': 3.5.29
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.14
+      postcss: 8.5.15
       source-map-js: 1.2.1
 
   '@vue/compiler-sfc@3.6.0-beta.14':
@@ -4857,7 +4876,7 @@ snapshots:
       '@vue/shared': 3.6.0-beta.14
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.14
+      postcss: 8.5.15
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.5.29':

@@ -4,6 +4,7 @@
   import Checkbox from '@vapor-component/checkbox'
   import Collapse from '@vapor-component/collapse'
   import Dialog from '@vapor-component/dialog'
+  import Drawer from '@vapor-component/drawer'
   import Image, { PreviewGroup } from '@vapor-component/image'
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
@@ -27,6 +28,8 @@
   import './styles/image.less'
   import './styles/collapse.less'
   import './styles/dialog.less'
+  import './styles/drawer-common.less'
+  import './styles/drawer-motion.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -115,6 +118,30 @@
     ),
   }
   const visible = ref(false)
+  const open = ref(false)
+
+  function onClose() {
+    open.value = false
+  }
+
+  function onToggle() {
+    open.value = !open.value
+  }
+  const maskMotion = {
+    appear: true,
+    name: 'mask-motion',
+  }
+
+  const motion: any = (placement: string) =>
+    ({
+      appear: true,
+      name: `panel-motion-${placement}`,
+    }) as any
+
+  const motionProps = {
+    maskMotion,
+    motion,
+  }
 </script>
 
 <template>
@@ -388,6 +415,25 @@
           <button @click="visible = !visible">Close</button>
         </template>
       </Dialog>
+    </label>
+    <hr />
+    <label>
+      Drawer:
+      <Drawer
+        :open="open"
+        placement="right"
+        width="60%"
+        v-bind="motionProps"
+        :after-open-change="
+          c => {
+            console.log('transitionEnd: ', c)
+          }
+        "
+        @close="onClose"
+      >
+        content
+      </Drawer>
+      <button @click="onToggle">打开</button>
     </label>
   </fieldset>
 </template>

@@ -82,8 +82,8 @@ import App from './App.vue'
 | checkbox        | ✅   |      |                             |
 | collapse        | ✅   |      |                             |
 | color-picker    | ⭕   |      |                             |
-| dialog          | ⭕   |      |                             |
-| drawer          | ⭕   |      |                             |
+| dialog          | ✅   |      |                             |
+| drawer          | ✅   |      |                             |
 | dropdown        | ⭕   |      |                             |
 | fast-color      | ❌   | 🚀   | ⭐️                          |
 | field-form      | ⭕   |      |                             |
