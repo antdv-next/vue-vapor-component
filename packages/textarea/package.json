@@ -5,6 +5,10 @@
   "keywords": [],
   "license": "MIT",
   "author": "",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "main": "src/index",
   "scripts": {
@@ -16,10 +20,6 @@
     "@v-c/util": "catalog:",
     "@vapor-component/input": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*"
-  },
-  "devDependencies": {
-    "vite": "catalog:",
-    "vite-plus": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"

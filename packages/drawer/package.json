@@ -5,6 +5,10 @@
   "keywords": [],
   "license": "MIT",
   "author": "",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "main": "src/index",
   "scripts": {
@@ -15,9 +19,6 @@
   "dependencies": {
     "@v-c/util": "catalog:",
     "@vapor-component/portal": "workspace:*"
-  },
-  "devDependencies": {
-    "vite-plus": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"

@@ -5,15 +5,16 @@
   "keywords": [],
   "license": "MIT",
   "author": "",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "type": "module",
   "main": "src/index",
   "scripts": {
     "build": "vp pack",
     "prepublish": "pnpm build",
     "test": "vitest"
-  },
-  "devDependencies": {
-    "vite-plus": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"
