@@ -9,6 +9,7 @@
   import Input from '@vapor-component/input'
   import InputNumber from '@vapor-component/input-number'
   import MutateObserver from '@vapor-component/mutate-observer'
+  import Overflow from '@vapor-component/overflow'
   import Portal from '@vapor-component/portal'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
@@ -30,6 +31,7 @@
   import './styles/dialog.less'
   import './styles/drawer-common.less'
   import './styles/drawer-motion.less'
+  import './styles/overflow.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -63,6 +65,15 @@
   const customizeContainer = ref(false)
   const lock = ref(false)
   const divRef = ref<HTMLDivElement | null>(null)
+
+  // ===================== Overflow demo =====================
+  const overflowData = ref([
+    { key: 'item-1', label: 'Item 1' },
+    { key: 'item-2', label: 'Item 2' },
+    { key: 'item-3', label: 'Item 3' },
+    { key: 'item-4', label: 'Item 4' },
+    { key: 'item-5', label: 'Item 5' },
+  ])
 
   onUnmounted(() => {
     console.log('Demo unmount!!')
@@ -434,6 +445,46 @@
         content
       </Drawer>
       <button @click="onToggle">打开</button>
+    </label>
+    <hr />
+    <label>
+      Overflow:
+      <div style="max-width: 300px; border: 1px solid #ddd; padding: 8px">
+        <Overflow
+          :data="overflowData"
+          :itemKey="(item: any) => item.key"
+          :renderItem="(item: { key: string; label: string }) => item.label"
+          :maxCount="3"
+          :renderRest="
+            (omitted: { key: string; label: string }[]) =>
+              `+${omitted.length}...`
+          "
+          prefix="⏮"
+          suffix="⏭"
+          @visibleChange="
+            (count: number) => console.log('visible change:', count)
+          "
+        />
+      </div>
+      <div style="margin-top: 8px">
+        <button
+          @click="
+            () =>
+              (overflowData =
+                overflowData.length > 3
+                  ? overflowData.slice(0, overflowData.length - 1)
+                  : [
+                      ...overflowData,
+                      {
+                        key: `item-${overflowData.length + 1}`,
+                        label: `Item ${overflowData.length + 1}`,
+                      },
+                    ])
+          "
+        >
+          Toggle Data
+        </button>
+      </div>
     </label>
   </fieldset>
 </template>

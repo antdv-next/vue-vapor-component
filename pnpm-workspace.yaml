@@ -7,22 +7,21 @@ packages:
   - apps/*
 
 catalog:
-  '@v-c/util': ^1.0.9
-  '@v-c/mini-decimal': ^1.0.1
+  '@v-c/util': latest
+  '@v-c/mini-decimal': latest
   '@vitejs/plugin-vue': latest
   '@vue/test-utils': latest
-  eslint: ^9.39.2
-  jsdom: ^27.4.0
-  less: ^4.5.1
-  resize-observer-polyfill: ^1.5.1
-  lint-staged: ^16.2.7
-  simple-git-hooks: ^2.8.0
+  jsdom: latest
+  less: latest
+  resize-observer-polyfill: latest
+  lint-staged: latest
+  simple-git-hooks: latest
   unplugin-vue: latest
   vite: latest
   vite-plugin-vue-devtools: latest
   vite-plus: latest
   vitest: latest
-  vue: 3.6.0-beta.14
+  vue: 3.6.0-beta.17
   vue-tsc: latest
 
 onlyBuiltDependencies:

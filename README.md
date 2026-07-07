@@ -96,7 +96,7 @@ import App from './App.vue'
 | mini-decimal    | ❌   | 🚀   | ⭐️                          |
 | mutate-observer | ✅   |      |                             |
 | notification    | ⭕   |      |                             |
-| overflow        | ⭕   |      |                             |
+| overflow        | ✅   |      |                             |
 | pagination      | ⭕   |      |                             |
 | picker          | ⭕   |      |                             |
 | portal          | ✅   |      |                             |
