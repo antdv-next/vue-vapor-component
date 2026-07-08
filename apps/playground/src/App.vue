@@ -14,6 +14,7 @@
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
   import ResizeObserver from '@vapor-component/resize-observer'
+  import Pagination from '@vapor-component/pagination'
   import Segmented from '@vapor-component/segmented'
   import Switch from '@vapor-component/switch'
   import TextArea from '@vapor-component/textarea'
@@ -32,6 +33,7 @@
   import './styles/drawer-common.less'
   import './styles/drawer-motion.less'
   import './styles/overflow.less'
+  import './styles/pagination.less'
 
   defineOptions({ name: 'App' })
   const checked1 = ref(false)
@@ -153,6 +155,8 @@
     maskMotion,
     motion,
   }
+
+  const paginationTotal = ref(100)
 </script>
 
 <template>
@@ -484,6 +488,14 @@
         >
           Toggle Data
         </button>
+      </div>
+    </label>
+    <hr />
+    <label>
+      Pagination:
+      <Pagination :total="paginationTotal" :default-page-size="5" @change="(p, s) => console.log('page:', p, 'size:', s)" />
+      <div style="margin-top: 8px">
+        <button @click="() => (paginationTotal = paginationTotal > 50 ? 50 : paginationTotal + 50)">Toggle Total ({{ paginationTotal }})</button>
       </div>
     </label>
   </fieldset>

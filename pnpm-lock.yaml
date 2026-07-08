@@ -114,6 +114,9 @@ importers:
       '@vapor-component/overflow':
         specifier: workspace:*
         version: link:../../packages/overflow
+      '@vapor-component/pagination':
+        specifier: workspace:*
+        version: link:../../packages/pagination
       '@vapor-component/portal':
         specifier: workspace:*
         version: link:../../packages/portal
@@ -241,6 +244,15 @@ importers:
       '@vapor-component/resize-observer':
         specifier: workspace:^
         version: link:../resize-observer
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.17(typescript@5.9.3)
+
+  packages/pagination:
+    dependencies:
+      '@v-c/util':
+        specifier: 'catalog:'
+        version: 1.0.21(vue@3.6.0-beta.17(typescript@5.9.3))
       vue:
         specifier: 'catalog:'
         version: 3.6.0-beta.17(typescript@5.9.3)
