@@ -19,6 +19,9 @@
     options: [],
     motionName: 'thumb-motion',
   })
+  const emit = defineEmits<{
+    change: [val: SegmentedRawOption]
+  }>()
   function getValidTitle(option: SegmentedLabeledOption) {
     if (typeof option.title !== 'undefined') {
       return option.title
@@ -68,7 +71,7 @@
   const thumbShow = shallowRef(false)
   const handleChange = (_event: ChangeEvent, val: SegmentedRawOption) => {
     rawValue.value = val
-    props?.onChange?.(val)
+    emit('change', val)
   }
 
   // ======================= Focus ========================
@@ -101,7 +104,7 @@
     const nextOption = segmentedOptions.value[nextIndex]
     if (nextOption) {
       rawValue.value = nextOption.value
-      props?.onChange?.(nextOption.value)
+      emit('change', nextOption.value)
     }
   }
 
@@ -179,13 +182,13 @@
           :style="styles?.item"
           :classNames="classNames"
           :styles="styles"
-          :checked="itemRender === rawValue"
-          :onChange="handleChange"
+          :checked="item.value === rawValue"
+          @change="handleChange"
           :onFocus="handleFocus"
           :onBlur="handleBlur"
-          @keyDown="{ handleKeyDown }"
-          @keyUp="{ handleKeyUp }"
-          @mouseDown="{ handleMouseDown }"
+          @keyDown="handleKeyDown"
+          @keyUp="handleKeyUp"
+          @mouseDown="handleMouseDown"
           :disabled="!!disabled || !!item.disabled"
         >
           <template #itemRender>

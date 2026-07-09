@@ -25,7 +25,6 @@
     title?: string
     value: SegmentedRawOption
     name?: string
-    onChange: (e: ChangeEvent, value: SegmentedRawOption) => void
     onFocus: (e: FocusEvent) => void
     onBlur: (e: FocusEvent) => void
     onKeyDown: (e: KeyboardEvent) => void
@@ -33,11 +32,14 @@
     onMouseDown: () => void
     itemRender?: ItemRender
   }>()
+  const emit = defineEmits<{
+    change: [e: ChangeEvent, value: SegmentedRawOption]
+  }>()
   const handleChange = (event: Event) => {
     if (props.disabled) {
       return
     }
-    props?.onChange?.(event as any, props.value)
+    emit('change', event as any, props.value)
   }
 </script>
 
@@ -45,11 +47,11 @@
   <slot name="itemRender">
     <label
       :class="
-        clsx(($attrs as any).class, {
+        clsx(props.class, {
           [`${prefixCls}-item-disabled`]: disabled,
         })
       "
-      :style="($attrs as any).style"
+      :style="props.style"
       @mousedown="onMouseDown"
     >
       <input

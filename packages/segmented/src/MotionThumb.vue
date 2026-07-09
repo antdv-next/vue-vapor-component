@@ -202,7 +202,7 @@
       done()
     },
   })
-  const mergedStyle = {
+  const mergedStyle = computed<CSSProperties>(() => ({
     '--thumb-start-left': thumbStart.value,
     '--thumb-start-width': toPX(prevStyle.value?.width),
     '--thumb-active-left': thumbActive.value,
@@ -211,7 +211,7 @@
     '--thumb-start-height': toPX(prevStyle.value?.height),
     '--thumb-active-top': thumbActive.value,
     '--thumb-active-height': toPX(nextStyle.value?.height),
-  } as CSSProperties
+  }))
 </script>
 
 <template>
