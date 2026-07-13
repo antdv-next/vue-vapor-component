@@ -85,7 +85,6 @@
   const decimalValue = shallowRef<DecimalClass>(
     getMiniDecimal((props.value ?? props.defaultValue ?? '') as any),
   )
-  console.log(decimalValue.value)
 
   const setUncontrolledDecimalValue = (newDecimal: DecimalClass) => {
     if (props.value === undefined) {

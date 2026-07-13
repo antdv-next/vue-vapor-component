@@ -58,6 +58,7 @@
     let starValue = index + 1
     if (allowHalf) {
       const starEle = starRefs.value.get(index) as HTMLElement
+      if (!starEle) return starValue
       const leftDis = getOffsetLeft(starEle)
       const width = starEle.clientWidth
       if (reverse && x - leftDis > width / 2) {
