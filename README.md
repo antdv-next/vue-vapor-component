@@ -97,10 +97,10 @@ import App from './App.vue'
 | mutate-observer | ✅   |      |                             |
 | notification    | ⭕   |      |                             |
 | overflow        | ✅   |      |                             |
-| pagination      | ⭕   |      |                             |
+| pagination      | ✅   |      |                             |
 | picker          | ⭕   |      |                             |
 | portal          | ✅   |      |                             |
-| progress        | ⭕   |      |                             |
+| progress        | ✅   |      |                             |
 | qrcode          | ✅   |      |                             |
 | rate            | ✅   |      |                             |
 | resize-observer | ✅   |      |                             |

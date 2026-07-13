@@ -15,6 +15,7 @@
   import Rate from '@vapor-component/rate'
   import ResizeObserver from '@vapor-component/resize-observer'
   import Pagination from '@vapor-component/pagination'
+  import { Circle, Line } from '@vapor-component/progress'
   import Segmented from '@vapor-component/segmented'
   import Switch from '@vapor-component/switch'
   import TextArea from '@vapor-component/textarea'
@@ -157,6 +158,27 @@
   }
 
   const paginationTotal = ref(100)
+  const percent = ref<number>(9)
+const color = ref<string>('#3FC7FA')
+
+function changeState() {
+  const colorMap: string[] = ['#3FC7FA', '#85D262', '#FE8C6A']
+  const value = Math.floor(Math.random() * 100)
+  color.value = colorMap[Math.floor(Math.random() * 3)]
+  percent.value = value
+}
+
+function changeIncrease() {
+  if (percent.value < 100) {
+    percent.value += 1
+  }
+}
+
+function changeReduce() {
+  if (percent.value > 0) {
+    percent.value -= 1
+  }
+}
 </script>
 
 <template>
@@ -497,6 +519,36 @@
       <div style="margin-top: 8px">
         <button @click="() => (paginationTotal = paginationTotal > 50 ? 50 : paginationTotal + 50)">Toggle Total ({{ paginationTotal }})</button>
       </div>
+    </label>
+    <hr />
+    <label>
+      Progress:
+      <!-- Line -->
+      <div style="width: 250px">
+        <Line :percent="percent" :stroke-width="4" :strokeColor="color" />
+        <Line :percent="[percent / 2, percent / 2]" :stroke-width="4" :strokeColor="[color, '#ccc']" />
+      </div>
+      <!-- Circle (容器需设宽高，否则 SVG 默认尺寸撑大) -->
+      <div style="margin-bottom: 16px; width: 250px; height: 250px; display: inline-block">
+        <Circle :percent="percent" :stroke-width="6" stroke-linecap="round" :strokeColor="color" />
+      </div>
+      <div style="margin-bottom: 16px; width: 250px; height: 250px; display: inline-block">
+        <Circle :percent="percent" :stroke-width="6" stroke-linecap="butt" :strokeColor="color" />
+      </div>
+      <div style="margin-bottom: 16px; width: 200px; height: 200px; display: inline-block">
+        <Circle :percent="percent" :stroke-width="6" stroke-linecap="square" :strokeColor="color" />
+      </div>
+      <p>
+      <button @click="changeState">
+        Change State
+      </button>
+      <button @click="changeIncrease">
+        Increase
+      </button>
+      <button @click="changeReduce">
+        Reduce
+      </button>
+    </p>
     </label>
   </fieldset>
 </template>

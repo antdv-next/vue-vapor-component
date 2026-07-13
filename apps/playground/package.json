@@ -25,6 +25,7 @@
     "@vapor-component/overflow": "workspace:*",
     "@vapor-component/pagination": "workspace:*",
     "@vapor-component/portal": "workspace:*",
+    "@vapor-component/progress": "workspace:*",
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/rate": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",
