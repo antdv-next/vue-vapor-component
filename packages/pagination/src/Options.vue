@@ -50,13 +50,11 @@
     ) {
       return getterPageSizeOptions.value
     }
-    return getterPageSizeOptions.value
-      .concat([props.pageSize])
-      .sort((a, b) => {
-        const numberA = Number.isNaN(Number(a)) ? 0 : Number(a)
-        const numberB = Number.isNaN(Number(b)) ? 0 : Number(b)
-        return numberA - numberB
-      })
+    return getterPageSizeOptions.value.concat([props.pageSize]).sort((a, b) => {
+      const numberA = Number.isNaN(Number(a)) ? 0 : Number(a)
+      const numberB = Number.isNaN(Number(b)) ? 0 : Number(b)
+      return numberA - numberB
+    })
   }
 
   const prefixCls = computed(() => `${props.rootPrefixCls}-options`)
@@ -77,8 +75,9 @@
     })
     const relTarget = e.relatedTarget as HTMLInputElement | null
     if (
-      (relTarget && relTarget.className.includes(`${props.rootPrefixCls}-item-link`))
-      || relTarget?.className.includes(`${props.rootPrefixCls}-item`)
+      (relTarget &&
+        relTarget.className.includes(`${props.rootPrefixCls}-item-link`)) ||
+      relTarget?.className.includes(`${props.rootPrefixCls}-item`)
     ) {
       return
     }
@@ -103,7 +102,7 @@
     return props.sizeChangerRender({
       disabled: props.disabled as boolean,
       size: props.pageSize,
-      onSizeChange: (nextValue) => {
+      onSizeChange: nextValue => {
         props.changeSize?.(Number(nextValue))
       },
       'aria-label': props.locale.page_size as string,
@@ -149,11 +148,7 @@
           >
             {{ props.locale.jump_to_confirm }}
           </button>
-          <span
-            v-else
-            @click="go"
-            @keyup="go"
-          >
+          <span v-else @click="go" @keyup="go">
             {{ props.goButton }}
           </span>
         </template>

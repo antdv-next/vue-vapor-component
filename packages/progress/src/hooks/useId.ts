@@ -15,8 +15,7 @@ function getUUID(): number | string {
   if (isBrowserClient) {
     retId = uuid
     uuid += 1
-  }
-  else {
+  } else {
     retId = 'TEST_OR_SSR'
   }
   return retId

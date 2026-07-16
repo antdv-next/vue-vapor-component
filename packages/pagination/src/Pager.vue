@@ -38,10 +38,7 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (
-      e.key === 'Enter' ||
-      e.keyCode === 13
-    ) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
       handleClick()
     }
   }
@@ -61,7 +58,10 @@
     @keydown="handleKeydown"
     tabindex="0"
   >
-    <slot name="itemRender" v-bind="{ page, type: 'page', defaultNode: itemNode }">
+    <slot
+      name="itemRender"
+      v-bind="{ page, type: 'page', defaultNode: itemNode }"
+    >
       <a rel="nofollow">{{ props.page }}</a>
     </slot>
   </li>

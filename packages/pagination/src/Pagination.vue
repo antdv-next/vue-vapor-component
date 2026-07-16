@@ -33,9 +33,7 @@
   const mergedSelectPrefixCls = computed(() => props.selectPrefixCls)
   const mergedLocale = computed(() => props.locale ?? zhCN)
   const mergedTotal = computed(() => props.total)
-  const mergedShowPrevNextJumpers = computed(
-    () => props.showPrevNextJumpers,
-  )
+  const mergedShowPrevNextJumpers = computed(() => props.showPrevNextJumpers)
   const mergedShowTitle = computed(() => props.showTitle)
   const mergedTotalBoundaryShowSizeChanger = computed(
     () => props.totalBoundaryShowSizeChanger,
@@ -81,7 +79,11 @@
     )
   }
 
-  function calculatePage(p: number | undefined, pageSize: number, total: number) {
+  function calculatePage(
+    p: number | undefined,
+    pageSize: number,
+    total: number,
+  ) {
     const _pageSize = typeof p === 'undefined' ? pageSize : p
     return Math.floor((total - 1) / _pageSize) + 1
   }
@@ -122,7 +124,9 @@
   )
   const hasPrev = computed(() => current.value > 1)
   const hasNext = computed(
-    () => current.value < calculatePage(undefined, pageSize.value, mergedTotal.value),
+    () =>
+      current.value <
+      calculatePage(undefined, pageSize.value, mergedTotal.value),
   )
 
   let lastHandleTime = 0
@@ -132,7 +136,11 @@
     if (typeof page === 'undefined' || props.disabled) {
       return current.value
     }
-    if (!isInteger(page) || !isInteger(mergedTotal.value) || mergedTotal.value <= 0) {
+    if (
+      !isInteger(page) ||
+      !isInteger(mergedTotal.value) ||
+      mergedTotal.value <= 0
+    ) {
       return current.value
     }
     if (page === current.value) return current.value
@@ -174,7 +182,10 @@
   }
 
   // ==================== Keyboard handlers ====================
-  function runIfEnter(event: KeyboardEvent, callback: (...args: any[]) => void) {
+  function runIfEnter(
+    event: KeyboardEvent,
+    callback: (...args: any[]) => void,
+  ) {
     if (
       event.key === 'Enter' ||
       event.charCode === KeyCode.ENTER ||
@@ -200,14 +211,21 @@
   // ==================== itemRender ====================
   const defaultItemRender: ItemRender = (_page, _type, element) => element
 
-  const mergedItemRender = computed<ItemRender>(() =>
-    props.itemRender || defaultItemRender,
+  const mergedItemRender = computed<ItemRender>(
+    () => props.itemRender || defaultItemRender,
   )
 
-  function getItemIcon(icon: VueNode | (() => VueNode) | undefined, label: string) {
+  function getItemIcon(
+    icon: VueNode | (() => VueNode) | undefined,
+    label: string,
+  ) {
     const prefixCls = mergedPrefixCls.value
     if (!icon) {
-      return h('button', { type: 'button', 'aria-label': label, class: `${prefixCls}-item-link` })
+      return h('button', {
+        type: 'button',
+        'aria-label': label,
+        class: `${prefixCls}-item-link`,
+      })
     }
     if (typeof icon === 'function') {
       return (icon as () => VueNode)()
@@ -246,7 +264,7 @@
         handleChange(value - 1)
         break
       case KeyCode.DOWN:
-       handleChange(value + 1)
+        handleChange(value + 1)
         break
     }
   }
@@ -267,7 +285,9 @@
   function changePageSize(size: number) {
     const newCurrent = calculatePage(size, pageSize.value, mergedTotal.value)
     const nextCurrent =
-      current.value > newCurrent && newCurrent !== 0 ? newCurrent : current.value
+      current.value > newCurrent && newCurrent !== 0
+        ? newCurrent
+        : current.value
 
     setPageSize(size)
     internalInputVal.value = nextCurrent
@@ -322,28 +342,47 @@
     if (!mergedShowPrevNextJumpers.value) return false
     if (!allPages.value) return false
     const pageBufferSize = props.showLessItems ? 1 : 2
-    return allPages.value - current.value >= pageBufferSize * 2 && current.value !== allPages.value - 2
+    return (
+      allPages.value - current.value >= pageBufferSize * 2 &&
+      current.value !== allPages.value - 2
+    )
   })
-  const hasJumpPrev = computed(() =>
-    showJumpPrev.value && (
-      !props.itemRender
-      || !!mergedItemRender.value(jumpPrevPage.value, 'jump-prev', getItemIcon(props.jumpPrevIcon, 'prev page'))
-    ),
+  const hasJumpPrev = computed(
+    () =>
+      showJumpPrev.value &&
+      (!props.itemRender ||
+        !!mergedItemRender.value(
+          jumpPrevPage.value,
+          'jump-prev',
+          getItemIcon(props.jumpPrevIcon, 'prev page'),
+        )),
   )
-  const hasJumpNext = computed(() =>
-    showJumpNext.value && (
-      !props.itemRender
-      || !!mergedItemRender.value(jumpNextPage.value, 'jump-next', getItemIcon(props.jumpNextIcon, 'next page'))
-    ),
+  const hasJumpNext = computed(
+    () =>
+      showJumpNext.value &&
+      (!props.itemRender ||
+        !!mergedItemRender.value(
+          jumpNextPage.value,
+          'jump-next',
+          getItemIcon(props.jumpNextIcon, 'next page'),
+        )),
   )
 
   const jumpPrevContent = computed<VueNode | undefined>(() => {
     if (!hasJumpPrev.value || !props.itemRender) return undefined
-    return mergedItemRender.value(jumpPrevPage.value, 'jump-prev', getItemIcon(props.jumpPrevIcon, 'prev page'))
+    return mergedItemRender.value(
+      jumpPrevPage.value,
+      'jump-prev',
+      getItemIcon(props.jumpPrevIcon, 'prev page'),
+    )
   })
   const jumpNextContent = computed<VueNode | undefined>(() => {
     if (!hasJumpNext.value || !props.itemRender) return undefined
-    return mergedItemRender.value(jumpNextPage.value, 'jump-next', getItemIcon(props.jumpNextIcon, 'next page'))
+    return mergedItemRender.value(
+      jumpNextPage.value,
+      'jump-next',
+      getItemIcon(props.jumpNextIcon, 'next page'),
+    )
   })
 
   // ==================== Render values ====================
@@ -364,40 +403,52 @@
   const itemStyle = computed(() => props.styles?.item)
 
   const rootCls = computed(() =>
-    clsx(
-      mergedPrefixCls.value,
-      attrs.class as any,
-      {
-        [`${mergedPrefixCls.value}-start`]: props.align === 'start',
-        [`${mergedPrefixCls.value}-center`]: props.align === 'center',
-        [`${mergedPrefixCls.value}-end`]: props.align === 'end',
-        [`${mergedPrefixCls.value}-simple`]: !!props.simple,
-        [`${mergedPrefixCls.value}-disabled`]: !!props.disabled,
-      },
-    ),
+    clsx(mergedPrefixCls.value, attrs.class as any, {
+      [`${mergedPrefixCls.value}-start`]: props.align === 'start',
+      [`${mergedPrefixCls.value}-center`]: props.align === 'center',
+      [`${mergedPrefixCls.value}-end`]: props.align === 'end',
+      [`${mergedPrefixCls.value}-simple`]: !!props.simple,
+      [`${mergedPrefixCls.value}-disabled`]: !!props.disabled,
+    }),
   )
 
   const prevButtonContent = computed<VueNode | undefined>(() => {
     if (!props.itemRender) return undefined
-    return mergedItemRender.value(prevPage.value, 'prev', getItemIcon(props.prevIcon, 'prev page'))
+    return mergedItemRender.value(
+      prevPage.value,
+      'prev',
+      getItemIcon(props.prevIcon, 'prev page'),
+    )
   })
   const nextButtonContent = computed<VueNode | undefined>(() => {
     if (!props.itemRender) return undefined
-    return mergedItemRender.value(nextPage.value, 'next', getItemIcon(props.nextIcon, 'next page'))
+    return mergedItemRender.value(
+      nextPage.value,
+      'next',
+      getItemIcon(props.nextIcon, 'next page'),
+    )
   })
   const prevDisabled = computed(() => !hasPrev.value || allPages.value <= 0)
   const nextDisabled = computed(() => !hasNext.value || allPages.value <= 0)
-  const prevTabIndex = computed(() => !prevDisabled.value ? 0 : undefined)
+  const prevTabIndex = computed(() => (!prevDisabled.value ? 0 : undefined))
   const nextTabIndex = computed(() =>
     props.simple
-      ? (hasPrev.value ? 0 : undefined)
-      : (nextDisabled.value ? undefined : 0),
+      ? hasPrev.value
+        ? 0
+        : undefined
+      : nextDisabled.value
+        ? undefined
+        : 0,
   )
 
   const totalTextContent = computed<VueNode | undefined>(() => {
     if (!props.showTotal) return undefined
-    const start = mergedTotal.value === 0 ? 0 : (current.value - 1) * pageSize.value! + 1
-    const end = current.value * pageSize.value! > mergedTotal.value ? mergedTotal.value : current.value * pageSize.value!
+    const start =
+      mergedTotal.value === 0 ? 0 : (current.value - 1) * pageSize.value! + 1
+    const end =
+      current.value * pageSize.value! > mergedTotal.value
+        ? mergedTotal.value
+        : current.value * pageSize.value!
     return props.showTotal(mergedTotal.value, [start, end])
   })
 
@@ -406,10 +457,20 @@
     const extra = []
     if (page === current.value) extra.push(`${base}-active`)
     if (page === 0) extra.push(`${base}-disabled`)
-    if (hasJumpPrev.value && idx === 0 && pagerPages.value.length > 0 && pagerPages.value[0] === page) {
+    if (
+      hasJumpPrev.value &&
+      idx === 0 &&
+      pagerPages.value.length > 0 &&
+      pagerPages.value[0] === page
+    ) {
       extra.push(`${mergedPrefixCls.value}-item-after-jump-prev`)
     }
-    if (hasJumpNext.value && idx === pagerPages.value.length - 1 && pagerPages.value.length > 0 && pagerPages.value[page - 1] === page) {
+    if (
+      hasJumpNext.value &&
+      idx === pagerPages.value.length - 1 &&
+      pagerPages.value.length > 0 &&
+      pagerPages.value[page - 1] === page
+    ) {
       extra.push(`${mergedPrefixCls.value}-item-before-jump-next`)
     }
     return clsx(base, extra, itemClassName.value)
@@ -435,15 +496,18 @@
     const anchor = h('a', { rel: 'nofollow' }, String(page))
     return mergedItemRender.value(page, 'page', anchor)
   }
-
-
 </script>
 
 <template>
   <template v-if="props.hideOnSinglePage && mergedTotal <= pageSize">
     <!-- hidden -->
   </template>
-  <ul v-else :class="rootCls" :style="attrs.style" v-bind="dataOrAriaAttributeProps">
+  <ul
+    v-else
+    :class="rootCls"
+    :style="attrs.style"
+    v-bind="dataOrAriaAttributeProps"
+  >
     <!-- total text -->
     <li v-if="totalTextContent" :class="`${mergedPrefixCls}-total-text`">
       <component :is="totalTextContent" />
@@ -455,20 +519,37 @@
       @click="prevHandle"
       :tabindex="prevTabIndex"
       @keydown="runIfEnterPrev"
-      :class="clsx(`${mergedPrefixCls}-prev`, itemClassName, { [`${mergedPrefixCls}-disabled`]: prevDisabled })"
+      :class="
+        clsx(`${mergedPrefixCls}-prev`, itemClassName, {
+          [`${mergedPrefixCls}-disabled`]: prevDisabled,
+        })
+      "
       :style="itemStyle"
       :aria-disabled="prevDisabled"
     >
       <template v-if="props.itemRender">
         <component :is="prevButtonContent" />
       </template>
-      <button v-else type="button" :class="`${mergedPrefixCls}-item-link`" aria-label="prev page"></button>
+      <button
+        v-else
+        type="button"
+        :class="`${mergedPrefixCls}-item-link`"
+        aria-label="prev page"
+      ></button>
     </li>
 
     <!-- simple mode pager -->
     <template v-if="props.simple">
-      <li :title="mergedShowTitle ? `${current}/${allPages}` : undefined" :class="clsx(`${mergedPrefixCls}-simple-pager`, itemClassName)" :style="itemStyle">
-        <template v-if="isReadOnly">{{ internalInputVal }}<span :class="`${mergedPrefixCls}-slash`">/</span>{{ allPages }}</template>
+      <li
+        :title="mergedShowTitle ? `${current}/${allPages}` : undefined"
+        :class="clsx(`${mergedPrefixCls}-simple-pager`, itemClassName)"
+        :style="itemStyle"
+      >
+        <template v-if="isReadOnly"
+          >{{ internalInputVal
+          }}<span :class="`${mergedPrefixCls}-slash`">/</span
+          >{{ allPages }}</template
+        >
         <template v-else>
           <input
             type="text"
@@ -485,9 +566,26 @@
           {{ allPages }}
         </template>
       </li>
-      <li v-if="goButton" :title="mergedShowTitle ? `${mergedLocale.jump_to}${current}/${allPages}` : undefined" :class="`${mergedPrefixCls}-simple-pager`">
-        <button v-if="typeof goButton === 'boolean'" type="button" @click="handleGoTO" @keyup="handleGoTO">{{ mergedLocale.jump_to_confirm }}</button>
-        <span v-else @click="handleGoTO" @keyup="handleGoTO">{{ goButton }}</span>
+      <li
+        v-if="goButton"
+        :title="
+          mergedShowTitle
+            ? `${mergedLocale.jump_to}${current}/${allPages}`
+            : undefined
+        "
+        :class="`${mergedPrefixCls}-simple-pager`"
+      >
+        <button
+          v-if="typeof goButton === 'boolean'"
+          type="button"
+          @click="handleGoTO"
+          @keyup="handleGoTO"
+        >
+          {{ mergedLocale.jump_to_confirm }}
+        </button>
+        <span v-else @click="handleGoTO" @keyup="handleGoTO">{{
+          goButton
+        }}</span>
       </li>
     </template>
 
@@ -496,11 +594,21 @@
       <!-- jump-prev -->
       <li
         v-if="showJumpPrev"
-        :title="mergedShowTitle ? (props.showLessItems ? mergedLocale.prev_3 : mergedLocale.prev_5) : undefined"
+        :title="
+          mergedShowTitle
+            ? props.showLessItems
+              ? mergedLocale.prev_3
+              : mergedLocale.prev_5
+            : undefined
+        "
         @click="jumpPrevHandle"
         @keydown="runIfEnterJumpPrev"
         tabindex="0"
-        :class="clsx(`${mergedPrefixCls}-jump-prev`, { [`${mergedPrefixCls}-jump-prev-custom-icon`]: !!props.jumpPrevIcon })"
+        :class="
+          clsx(`${mergedPrefixCls}-jump-prev`, {
+            [`${mergedPrefixCls}-jump-prev-custom-icon`]: !!props.jumpPrevIcon,
+          })
+        "
       >
         <template v-if="props.itemRender">
           <component :is="jumpPrevContent" />
@@ -530,11 +638,21 @@
       <!-- jump-next -->
       <li
         v-if="showJumpNext"
-        :title="mergedShowTitle ? (props.showLessItems ? mergedLocale.next_3 : mergedLocale.next_5) : undefined"
+        :title="
+          mergedShowTitle
+            ? props.showLessItems
+              ? mergedLocale.next_3
+              : mergedLocale.next_5
+            : undefined
+        "
         @click="jumpNextHandle"
         @keydown="runIfEnterJumpNext"
         tabindex="0"
-        :class="clsx(`${mergedPrefixCls}-jump-next`, { [`${mergedPrefixCls}-jump-next-custom-icon`]: !!props.jumpNextIcon })"
+        :class="
+          clsx(`${mergedPrefixCls}-jump-next`, {
+            [`${mergedPrefixCls}-jump-next-custom-icon`]: !!props.jumpNextIcon,
+          })
+        "
       >
         <template v-if="props.itemRender">
           <component :is="jumpNextContent" />
@@ -549,14 +667,23 @@
       @click="nextHandle"
       :tabindex="nextTabIndex"
       @keydown="runIfEnterNext"
-      :class="clsx(`${mergedPrefixCls}-next`, itemClassName, { [`${mergedPrefixCls}-disabled`]: nextDisabled })"
+      :class="
+        clsx(`${mergedPrefixCls}-next`, itemClassName, {
+          [`${mergedPrefixCls}-disabled`]: nextDisabled,
+        })
+      "
       :style="itemStyle"
       :aria-disabled="nextDisabled"
     >
       <template v-if="props.itemRender">
         <component :is="nextButtonContent" />
       </template>
-      <button v-else type="button" :class="`${mergedPrefixCls}-item-link`" aria-label="next page"></button>
+      <button
+        v-else
+        type="button"
+        :class="`${mergedPrefixCls}-item-link`"
+        aria-label="next page"
+      ></button>
     </li>
 
     <!-- options -->

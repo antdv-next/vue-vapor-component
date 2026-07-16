@@ -4,15 +4,20 @@
   import { computed, defineComponent, h, useAttrs } from 'vue'
 
   // ---- Block component (used for gradient rendering) ----
-  const Block = defineComponent<{ bg: string }>((blockProps) => {
-    return () => h('div', { style: { width: '100%', height: '100%', background: blockProps.bg } }, {default: () => ''})
+  const Block = defineComponent<{ bg: string }>(blockProps => {
+    return () =>
+      h(
+        'div',
+        { style: { width: '100%', height: '100%', background: blockProps.bg } },
+        { default: () => '' },
+      )
   })
 
   function getPtgColors(
     color: Record<string, string | boolean>,
     scale: number,
   ) {
-    return Object.keys(color).map((key) => {
+    return Object.keys(color).map(key => {
       const parsedKey = parseFloat(key)
       const ptgKey = `${Math.floor(parsedKey * scale)}%`
       return `${color[key]} ${ptgKey}`
@@ -45,22 +50,26 @@
   )
   const conicColors = computed(() =>
     isGradient.value
-      ? getPtgColors(props.color as Record<string, string | boolean>, (360 - props.gapDegree) / 360).join(', ')
+      ? getPtgColors(
+          props.color as Record<string, string | boolean>,
+          (360 - props.gapDegree) / 360,
+        ).join(', ')
       : '',
   )
   const linearColors = computed(() =>
     isGradient.value
-      ? getPtgColors(props.color as Record<string, string | boolean>, 1).join(', ')
+      ? getPtgColors(props.color as Record<string, string | boolean>, 1).join(
+          ', ',
+        )
       : '',
   )
   const conicColorBg = computed(
     () => `conic-gradient(from ${fromDeg.value}, ${conicColors.value})`,
   )
-  const linearColorBg = computed(
-    () =>
-      props.gapDegree
-        ? `linear-gradient(to bottom, ${linearColors.value})`
-        : `linear-gradient(to top, ${linearColors.value})`,
+  const linearColorBg = computed(() =>
+    props.gapDegree
+      ? `linear-gradient(to bottom, ${linearColors.value})`
+      : `linear-gradient(to top, ${linearColors.value})`,
   )
   const maskId = computed(() => `${props.gradientId}-conic`)
 </script>

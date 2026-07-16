@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'vue'
+
 import type { StrokeLinecapType } from '../interface'
 
 interface IndeterminateLineOptions {
@@ -26,7 +27,8 @@ export function getIndeterminateLineStyle({
     }
   }
   const animationName = `${id}-indeterminate-animate`
-  const strokeDashOffset = 100 - (percent + (strokeLinecap === 'round' ? strokeWidth : 0))
+  const strokeDashOffset =
+    100 - (percent + (strokeLinecap === 'round' ? strokeWidth : 0))
 
   return {
     indeterminateStyleProps: {

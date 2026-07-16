@@ -20,7 +20,7 @@ export interface ProgressProps {
   transition?: string
   onClick?: MouseEventHandler
   loading?: boolean
-  steps?: number | { count: number, gap: number }
+  steps?: number | { count: number; gap: number }
 }
 
 export type StrokeColorObject = Record<string, string | boolean>

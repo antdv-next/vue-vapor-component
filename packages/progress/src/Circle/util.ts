@@ -1,5 +1,6 @@
-import type { ProgressProps } from '../interface'
 import type { CSSProperties } from 'vue'
+
+import type { ProgressProps } from '../interface'
 import type { StrokeColorType } from '../interface'
 
 export const VIEW_BOX_SIZE = 100
@@ -18,8 +19,8 @@ export function getCircleStyle(
   stepSpace = 0,
 ): CSSProperties {
   const offsetDeg = (offset / 100) * 360 * ((360 - gapDegree) / 360)
-  const positionDeg
-    = gapDegree === 0
+  const positionDeg =
+    gapDegree === 0
       ? 0
       : {
           bottom: 0,
@@ -47,7 +48,8 @@ export function getCircleStyle(
     strokeDashoffset: strokeDashoffset + stepSpace,
     transform: `rotate(${rotateDeg + offsetDeg + positionDeg}deg)`,
     transformOrigin: `${halfSize}px ${halfSize}px`,
-    transition: 'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s, stroke-width .06s ease .3s, opacity .3s ease 0s',
+    transition:
+      'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s, stroke-width .06s ease .3s, opacity .3s ease 0s',
     fillOpacity: 0,
   }
 }

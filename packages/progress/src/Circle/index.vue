@@ -1,14 +1,14 @@
 <script setup vapor lang="ts">
   import type { ProgressProps, StrokeColorType } from '../interface'
 
-  import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
   import omit from '@v-c/util/dist/omit'
+  import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
   import { computed, onMounted, ref, useAttrs } from 'vue'
 
   import useId from '../hooks/useId'
   import { getIndeterminateCircleStyle } from '../utils/indeterminate'
-  import { getCircleStyle, VIEW_BOX_SIZE } from './util'
   import PtgCircle from './PtgCircle.vue'
+  import { getCircleStyle, VIEW_BOX_SIZE } from './util'
 
   defineOptions({ name: 'Circle' })
 
@@ -18,7 +18,7 @@
     prefixCls: 'vc-progress',
     gapPosition: 'bottom',
     loading: false,
-    strokeLinecap: 'round'
+    strokeLinecap: 'round',
   })
 
   const attrs = useAttrs()
@@ -34,8 +34,8 @@
   const rotateDeg = computed(() =>
     gapDegree.value > 0 ? 90 + gapDegree.value / 2 : -90,
   )
-  const perimeterWithoutGap = computed(() =>
-    perimeter.value * ((360 - gapDegree.value) / 360),
+  const perimeterWithoutGap = computed(
+    () => perimeter.value * ((360 - gapDegree.value) / 360),
   )
   const stepObj = computed(() =>
     typeof props.steps === 'object'
@@ -52,7 +52,8 @@
   })
   const gradient = computed<Record<string, string> | undefined>(() => {
     for (const color of strokeColorList.value) {
-      if (color && typeof color === 'object') return color as Record<string, string>
+      if (color && typeof color === 'object')
+        return color as Record<string, string>
     }
     return undefined
   })
@@ -67,7 +68,7 @@
     const now = Date.now()
     let updated = false
     let prevTimeStamp: number | undefined
-    pathsRef.value.forEach((path) => {
+    pathsRef.value.forEach(path => {
       if (!path) return
       updated = true
       const pathStyle = (path as any).style
@@ -147,13 +148,9 @@
 
     return Array.from({ length: stepCount }).map((_, index) => {
       const color =
-        index <= current - 1
-          ? strokeColorList.value[0]
-          : props.railColor
+        index <= current - 1 ? strokeColorList.value[0] : props.railColor
       const stroke =
-        color && typeof color === 'object'
-          ? `url(#${gradientId})`
-          : undefined
+        color && typeof color === 'object' ? `url(#${gradientId})` : undefined
       const circleStyleForStack = getCircleStyle(
         perimeter.value,
         perimeterWithoutGap.value,
@@ -194,11 +191,18 @@
 </script>
 
 <template>
-  <style v-if="indeterminateResult.animationKeyframes">{{ indeterminateResult.animationKeyframes }}</style>
+  <style v-if="indeterminateResult.animationKeyframes">
+    {{ indeterminateResult.animationKeyframes }}
+  </style>
   <svg
     :class="[`${prefixCls}-circle`, classNames?.root, props.className]"
     :viewBox="`0 0 ${VIEW_BOX_SIZE} ${VIEW_BOX_SIZE}`"
-    :style="{ width: '100%', height: '100%', ...props.styles?.root, ...attrStyle }"
+    :style="{
+      width: '100%',
+      height: '100%',
+      ...props.styles?.root,
+      ...attrStyle,
+    }"
     :id="props.id"
     role="presentation"
     v-bind="svgRestAttrs"
@@ -227,7 +231,11 @@
           :class="[classNames?.track]"
           :prefixCls="prefixCls"
           :gradientId="gradientId"
-          :style="[data.circleStyleForStack, indeterminateResult.indeterminateStyleProps, props.styles?.track]"
+          :style="[
+            data.circleStyleForStack,
+            indeterminateResult.indeterminateStyleProps,
+            props.styles?.track,
+          ]"
           :strokeLinecap="mergedStrokeLinecap"
           :strokeWidth="strokeWidth"
           :gapDegree="gapDegree"

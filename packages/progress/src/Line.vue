@@ -1,6 +1,7 @@
 <script setup vapor lang="ts">
-  import type { ProgressProps, StrokeColorType } from './interface'
   import type { CSSProperties } from 'vue'
+
+  import type { ProgressProps, StrokeColorType } from './interface'
 
   import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
   import { computed, onMounted, ref, useAttrs } from 'vue'
@@ -33,7 +34,7 @@
     const now = Date.now()
     let updated = false
     let prevTimeStamp: number | undefined
-    pathsRef.value.forEach((path) => {
+    pathsRef.value.forEach(path => {
       if (!path) return
       updated = true
       const pathStyle = (path as any).style
@@ -112,7 +113,9 @@
 </script>
 
 <template>
-  <style v-if="indeterminateResult.animationKeyframes">{{ indeterminateResult.animationKeyframes }}</style>
+  <style v-if="indeterminateResult.animationKeyframes">
+    {{ indeterminateResult.animationKeyframes }}
+  </style>
   <svg
     :class="{ [`${prefixCls}-line`]: true, [props.className as string]: true }"
     preserveAspectRatio="none"
@@ -136,7 +139,11 @@
         :stroke="data.color"
         :stroke-width="strokeWidth"
         fill-opacity="0"
-        :ref="el => { pathsRef.push(el as SVGPathElement) }"
+        :ref="
+          el => {
+            pathsRef.push(el as SVGPathElement)
+          }
+        "
         :style="data.pathStyle"
       />
     </template>
