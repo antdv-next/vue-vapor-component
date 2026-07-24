@@ -1,0 +1,966 @@
+// ====================== Variables ======================
+@stepsPrefixClass: ~'vc-steps';
+@stepDescriptionMaxWidth: 100px;
+@stepNavContentMaxWidth: 140px;
+@primary-color: #108ee9;
+@process-icon-color: @primary-color;
+@process-title-color: rgba(0, 0, 0, 0.65);
+@process-description-color: @process-title-color;
+@process-tail-color: #e9e9e9;
+@wait-icon-color: #ccc;
+@wait-title-color: rgba(0, 0, 0, 0.43);
+@wait-description-color: @wait-title-color;
+@wait-tail-color: @process-tail-color;
+@finish-icon-color: @process-icon-color;
+@finish-title-color: @wait-title-color;
+@finish-description-color: @finish-title-color;
+@finish-tail-color: @process-icon-color;
+@error-icon-color: #f50;
+@error-title-color: @error-icon-color;
+@error-description-color: @error-icon-color;
+@error-tail-color: @process-tail-color;
+
+// ====================== Base ======================
+.@{stepsPrefixClass} {
+  font-size: 0;
+  width: 100%;
+  line-height: 1.5;
+  display: flex;
+
+  &,
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.@{stepsPrefixClass}-item {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  flex: 1;
+
+  &:last-child {
+    flex: none;
+  }
+
+  &:last-child &-title:after {
+    display: none;
+  }
+
+  &-icon,
+  &-section {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  &-icon {
+    flex: none;
+    border: 1px solid @wait-icon-color;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    border-radius: 26px;
+    font-size: 14px;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+
+    > .@{stepsPrefixClass}-icon {
+      line-height: 1;
+      top: -1px;
+      color: @primary-color;
+      position: relative;
+
+      &.rcicon {
+        font-size: 12px;
+        position: relative;
+        top: -2px;
+      }
+    }
+  }
+
+  &-section {
+    margin-top: 3px;
+  }
+  &-title {
+    font-size: 14px;
+    color: #666;
+    font-weight: bold;
+    display: inline-block;
+    position: relative;
+  }
+  &-subtitle {
+    font-size: 12px;
+    display: inline-block;
+    color: #999;
+  }
+  &-description {
+    font-size: 12px;
+    color: #999;
+  }
+  .step-item-status(wait);
+  .step-item-status(process);
+  &-process &-icon {
+    background: @process-icon-color;
+    > .@{stepsPrefixClass}-icon {
+      color: #fff;
+    }
+  }
+  .step-item-status(finish);
+  .step-item-status(error);
+
+  &.@{stepsPrefixClass}-next-error .@{stepsPrefixClass}-item-title:after {
+    background: @error-icon-color;
+  }
+}
+
+.@{stepsPrefixClass}-horizontal:not(.@{stepsPrefixClass}-label-vertical) {
+  .@{stepsPrefixClass}-item {
+    &-description {
+      max-width: @stepDescriptionMaxWidth;
+    }
+  }
+}
+
+.step-item-status(@status) {
+  @icon-color: '@{status}-icon-color';
+  @title-color: '@{status}-title-color';
+  @description-color: '@{status}-description-color';
+  @tail-color: '@{status}-tail-color';
+  &-@{status} &-icon {
+    border-color: @@icon-color;
+    background-color: #fff;
+    > .@{stepsPrefixClass}-icon {
+      color: @@icon-color;
+      .@{stepsPrefixClass}-icon-dot {
+        background: @@icon-color;
+      }
+    }
+  }
+  &-@{status} &-title {
+    color: @@title-color;
+  }
+  &-@{status} &-description {
+    color: @@description-color;
+  }
+}
+
+// ====================== Horizontal ======================
+.verticalFlex() {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.@{stepsPrefixClass} {
+  .@{stepsPrefixClass}-item {
+    &-section {
+      min-width: 0;
+    }
+
+    &-header {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    // Ellipsis
+    &-title,
+    &-subtitle,
+    &-description {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.@{stepsPrefixClass}-horizontal {
+  .@{stepsPrefixClass}-item {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+
+    &-rail {
+      height: 1px;
+      background: @process-tail-color;
+    }
+  }
+
+  // Label Vertical
+  &.@{stepsPrefixClass}-label-vertical {
+    .@{stepsPrefixClass}-item {
+      .verticalFlex();
+      padding-inline: 8px;
+
+      &-section {
+        .verticalFlex();
+      }
+
+      &-rail {
+        position: absolute;
+        top: 13px;
+        left: calc(50% + 13px);
+        width: 100%;
+      }
+    }
+  }
+
+  // Label Horizontal
+  &.@{stepsPrefixClass}-label-horizontal {
+    .@{stepsPrefixClass}-item {
+      display: flex;
+
+      &:last-child {
+        flex: none;
+      }
+
+      &-section {
+        flex: 1;
+      }
+
+      &-rail {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+}
+
+// ====================== Vertical ======================
+.@{stepsPrefixClass}-vertical {
+  display: block;
+  .@{stepsPrefixClass}-item {
+    display: block;
+    overflow: visible;
+    &-icon {
+      float: left;
+      &-inner {
+        margin-right: 16px;
+      }
+    }
+    &-section {
+      min-height: 48px;
+      overflow: hidden;
+      display: block;
+    }
+    &-title {
+      line-height: 26px;
+      &:after {
+        display: none;
+      }
+    }
+    &-description {
+      padding-bottom: 12px;
+    }
+  }
+
+  &.@{stepsPrefixClass}-small {
+    .@{stepsPrefixClass}-item-title {
+      line-height: 18px;
+    }
+  }
+}
+
+// ====================== Label Placement ======================
+.@{stepsPrefixClass}-label-vertical {
+  .@{stepsPrefixClass}-item {
+    overflow: visible;
+    &-section {
+      display: block;
+      text-align: center;
+      margin-top: 8px;
+      width: @stepDescriptionMaxWidth;
+    }
+    &-icon {
+      display: inline-block;
+      margin-left: 36px;
+    }
+    &-title {
+      padding-right: 0;
+      &:after {
+        display: none;
+      }
+    }
+    &-description {
+      text-align: left;
+    }
+  }
+}
+
+// ====================== Custom Icon ======================
+.@{stepsPrefixClass}-item-custom {
+  .@{stepsPrefixClass}-item-icon {
+    background: none;
+    border: 0;
+    width: auto;
+    height: auto;
+    > .@{stepsPrefixClass}-icon {
+      font-size: 20px;
+      top: 1px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+  &.@{stepsPrefixClass}-item-process {
+    .@{stepsPrefixClass}-item-icon > .@{stepsPrefixClass}-icon {
+      color: @process-icon-color;
+    }
+  }
+}
+
+// ====================== Small ======================
+.@{stepsPrefixClass}-small {
+  .@{stepsPrefixClass}-item-icon {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 18px;
+    font-size: 12px;
+    margin-right: 10px;
+    > .@{stepsPrefixClass}-icon {
+      font-size: 12px;
+      font-size: ~'9px \9'; // ie8-9
+      transform: scale(0.75);
+      top: -1px;
+    }
+  }
+  .@{stepsPrefixClass}-item-section {
+    margin-top: 0;
+  }
+  .@{stepsPrefixClass}-item-title {
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #666;
+    font-weight: bold;
+  }
+  .@{stepsPrefixClass}-item-description {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .@{stepsPrefixClass}-item-custom .@{stepsPrefixClass}-item-icon {
+    width: inherit;
+    height: inherit;
+    line-height: inherit;
+    border-radius: 0;
+    border: 0;
+    background: none;
+    > .@{stepsPrefixClass}-icon {
+      font-size: 20px;
+      top: -2.5px;
+      transform: none;
+    }
+  }
+}
+
+// ====================== Progress Dot ======================
+.@{stepsPrefixClass}-dot {
+  .@{stepsPrefixClass}-item {
+    &-icon {
+      padding-right: 0;
+      width: 5px;
+      height: 5px;
+      line-height: 5px;
+      border: 0;
+      margin-left: 48px;
+      .@{stepsPrefixClass}-icon-dot {
+        float: left;
+        width: 100%;
+        height: 100%;
+        border-radius: 2.5px;
+      }
+    }
+    &-process &-icon {
+      top: -1px;
+      width: 7px;
+      height: 7px;
+      line-height: 7px;
+      .@{stepsPrefixClass}-icon-dot {
+        border-radius: 3.5px;
+      }
+    }
+  }
+}
+
+// ====================== Nav ======================
+.@{stepsPrefixClass}-navigation {
+  padding-top: 8px;
+  &.@{stepsPrefixClass}-horizontal {
+    .@{stepsPrefixClass}-item-description {
+      max-width: @stepNavContentMaxWidth;
+    }
+  }
+
+  .@{stepsPrefixClass}-item {
+    box-sizing: border-box;
+    text-align: center;
+    overflow: visible;
+
+    &-title {
+      max-width: @stepNavContentMaxWidth;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:after {
+        display: none;
+      }
+    }
+
+    &:last-child {
+      flex: 1;
+      &:after {
+        display: none;
+      }
+    }
+
+    &:after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #ccc;
+      border-bottom: none;
+      border-left: none;
+      transform: rotate(45deg);
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      margin-top: -12px;
+      margin-left: -8px;
+    }
+  }
+}
+
+// ====================== Inline ======================
+.@{stepsPrefixClass}-inline {
+  width: auto;
+  display: inline-flex;
+
+  .@{stepsPrefixClass}-item {
+    flex: none;
+
+    &-icon {
+      width: 6px;
+      height: 6px;
+      margin-left: calc(50% - 3px);
+      > .@{stepsPrefixClass}-icon {
+        top: 0;
+      }
+      .@{stepsPrefixClass}-icon-dot {
+        border-radius: 3px;
+      }
+    }
+
+    &-section {
+      width: auto;
+      margin-top: 7px;
+    }
+    &-title {
+      color: rgba(0, 0, 0, 0.25);
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: normal;
+      margin-bottom: 2px;
+    }
+    &-description {
+      display: none;
+    }
+
+    &-finish {
+      .@{stepsPrefixClass}-item-icon
+        .@{stepsPrefixClass}-icon
+        .@{stepsPrefixClass}-icon-dot {
+        background-color: @process-tail-color;
+      }
+    }
+    &-wait {
+      .@{stepsPrefixClass}-item-icon
+        .@{stepsPrefixClass}-icon
+        .@{stepsPrefixClass}-icon-dot {
+        background-color: #fff;
+        border: 1px solid @process-tail-color;
+      }
+    }
+  }
+}
+
+@icon-url: '//at.alicdn.com/t/font_1434092639_4910953';
+.ie-rotate(@rotation) {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=@rotation);
+}
+.rotate(@degrees) {
+  -webkit-transform: rotate(@degrees);
+  -ms-transform: rotate(@degrees); // IE9 only
+  -o-transform: rotate(@degrees);
+  transform: rotate(@degrees);
+}
+.animation(@animation) {
+  -webkit-animation: @animation;
+  -o-animation: @animation;
+  animation: @animation;
+}
+// font-face
+// @icon-url： 字体源文件的地址
+@font-face {
+  font-family: 'anticon';
+  src: url('@{icon-url}.eot'); /* IE9*/
+  src:
+    url('@{icon-url}.eot?#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */ url('@{icon-url}.woff') format('woff'),
+    /* chrome、firefox */ url('@{icon-url}.ttf') format('truetype'),
+    /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+      url('@{icon-url}.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.rcicon {
+  position: relative;
+  display: inline-block;
+  font-style: normal;
+  vertical-align: baseline;
+  text-align: center;
+  text-transform: none;
+  text-rendering: auto;
+  // 更好地渲染字体
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0px;
+  -moz-osx-font-smoothing: grayscale;
+
+  &:before {
+    display: block;
+    font-family: 'anticon' !important;
+  }
+}
+// 方向性图标
+.rcicon-step-backward:before {
+  content: '\e662';
+}
+.rcicon-step-forward {
+  .ie-rotate(2);
+}
+.rcicon-step-forward:before {
+  content: '\e662';
+  .rotate(180deg);
+}
+.rcicon-fast-backward:before {
+  content: '\e62a';
+}
+.rcicon-fast-forward {
+  .ie-rotate(2);
+}
+.rcicon-fast-forward:before {
+  content: '\e62a';
+  .rotate(180deg);
+}
+.rcicon-shrink:before {
+  content: '\e65f';
+}
+.rcicon-arrow-salt:before {
+  content: '\e608';
+}
+.rcicon-caret-down:before {
+  content: '\e60f';
+}
+.rcicon-caret-left {
+  .ie-rotate(1);
+}
+.rcicon-caret-left:before {
+  content: '\e60f';
+  .rotate(90deg);
+}
+.rcicon-caret-up {
+  .ie-rotate(2);
+}
+.rcicon-caret-up:before {
+  content: '\e60f';
+  .rotate(180deg);
+}
+.rcicon-caret-right {
+  .ie-rotate(3);
+}
+.rcicon-caret-right:before {
+  content: '\e60f';
+  .rotate(270deg);
+}
+.rcicon-caret-circle-right:before {
+  content: '\e60d';
+}
+.rcicon-caret-circle-left {
+  .ie-rotate(2);
+}
+.rcicon-caret-circle-left:before {
+  content: '\e60d';
+  .rotate(180deg);
+}
+.rcicon-caret-circle-o-right:before {
+  content: '\e60e';
+}
+.rcicon-caret-circle-o-left {
+  .ie-rotate(2);
+}
+.rcicon-caret-circle-o-left:before {
+  content: '\e60e';
+  .rotate(180deg);
+}
+.rcicon-circle-right:before {
+  content: '\e602';
+}
+.rcicon-circle-left {
+  .ie-rotate(2);
+}
+.rcicon-circle-left:before {
+  content: '\e602';
+  .rotate(180deg);
+}
+.rcicon-circle-o-right:before {
+  content: '\e603';
+}
+.rcicon-circle-o-left {
+  .ie-rotate(2);
+}
+.rcicon-circle-o-left:before {
+  content: '\e603';
+  .rotate(180deg);
+}
+.rcicon-double-right:before {
+  content: '\e604';
+}
+.rcicon-double-left {
+  .ie-rotate(2);
+}
+.rcicon-double-left:before {
+  content: '\e604';
+  .rotate(180deg);
+}
+.rcicon-verticle-right:before {
+  content: '\e605';
+}
+.rcicon-verticle-left {
+  .ie-rotate(2);
+}
+.rcicon-verticle-left:before {
+  content: '\e605';
+  .rotate(180deg);
+}
+.rcicon-forward:before {
+  content: '\e630';
+}
+.rcicon-backward {
+  .ie-rotate(2);
+}
+.rcicon-backward:before {
+  content: '\e630';
+  .rotate(180deg);
+}
+.rcicon-rollback:before {
+  content: '\e65a';
+}
+.rcicon-retweet:before {
+  content: '\e659';
+}
+
+.rcicon-right:before {
+  content: '\e611';
+}
+.rcicon-down {
+  .ie-rotate(1);
+}
+.rcicon-down:before {
+  content: '\e611';
+  .rotate(90deg);
+}
+.rcicon-left {
+  .ie-rotate(2);
+}
+.rcicon-left:before {
+  content: '\e611';
+  .rotate(180deg);
+}
+.rcicon-up {
+  .ie-rotate(3);
+}
+.rcicon-up:before {
+  content: '\e611';
+  .rotate(270deg);
+}
+
+// 提示性图标
+.rcicon-question:before {
+  content: '\e655';
+}
+.rcicon-question-circle:before {
+  content: '\e656';
+}
+.rcicon-question-circle-o:before {
+  content: '\e657';
+}
+.rcicon-plus:before {
+  content: '\e651';
+}
+.rcicon-plus-circle:before {
+  content: '\e652';
+}
+.rcicon-plus-circle-o:before {
+  content: '\e653';
+}
+.rcicon-pause:before {
+  content: '\e64c';
+}
+.rcicon-pause-circle:before {
+  content: '\e64d';
+}
+.rcicon-pause-circle-o:before {
+  content: '\e64e';
+}
+.rcicon-minus:before {
+  content: '\e646';
+}
+.rcicon-minus-circle:before {
+  content: '\e647';
+}
+.rcicon-minus-circle-o:before {
+  content: '\e648';
+}
+.rcicon-info-circle:before {
+  content: '\e637';
+}
+.rcicon-info-circle-o:before {
+  content: '\e638';
+}
+.rcicon-info:before {
+  content: '\e63a';
+}
+.rcicon-exclamation:before {
+  content: '\e627';
+}
+.rcicon-exclamation-circle:before {
+  content: '\e628';
+}
+.rcicon-exclamation-circle-o:before {
+  content: '\e629';
+}
+.rcicon-cross:before {
+  content: '\e61e';
+}
+.rcicon-cross-circle:before {
+  content: '\e61f';
+}
+.rcicon-cross-circle-o:before {
+  content: '\e620';
+}
+.rcicon-check:before {
+  content: '\e613';
+}
+.rcicon-check-circle:before {
+  content: '\e614';
+}
+.rcicon-check-circle-o:before {
+  content: '\e615';
+}
+.rcicon-clock-circle:before {
+  content: '\e616';
+}
+.rcicon-clock-circle-o:before {
+  content: '\e617';
+}
+
+// 网站通用图标
+.rcicon-lock:before {
+  content: '\e641';
+}
+.rcicon-android:before {
+  content: '\e601';
+}
+.rcicon-apple:before {
+  content: '\e606';
+}
+.rcicon-area-chart:before {
+  content: '\e607';
+}
+.rcicon-bar-chart:before {
+  content: '\e609';
+}
+.rcicon-bars:before {
+  content: '\e60a';
+}
+.rcicon-book:before {
+  content: '\e60b';
+}
+.rcicon-calendar:before {
+  content: '\e60c';
+}
+.rcicon-cloud:before {
+  content: '\e618';
+}
+.rcicon-cloud-download:before {
+  content: '\e619';
+}
+.rcicon-code:before {
+  content: '\e61a';
+}
+.rcicon-copy:before {
+  content: '\e61c';
+}
+.rcicon-credit-card:before {
+  content: '\e61d';
+}
+.rcicon-delete:before {
+  content: '\e621';
+}
+.rcicon-desktop:before {
+  content: '\e622';
+}
+.rcicon-download-line:before {
+  content: '\e623';
+}
+.rcicon-edit:before {
+  content: '\e624';
+}
+.rcicon-ellipsis:before {
+  content: '\e625';
+}
+.rcicon-environment:before {
+  content: '\e626';
+}
+.rcicon-file:before {
+  content: '\e62c';
+}
+.rcicon-file-text:before {
+  content: '\e62d';
+}
+.rcicon-folder:before {
+  content: '\e62e';
+}
+.rcicon-folder-open:before {
+  content: '\e62f';
+}
+.rcicon-github:before {
+  content: '\e631';
+}
+.rcicon-hdd:before {
+  content: '\e632';
+}
+.rcicon-frown:before {
+  content: '\e633';
+}
+.rcicon-meh:before {
+  content: '\e634';
+}
+.rcicon-inbox:before {
+  content: '\e635';
+}
+.rcicon-laptop:before {
+  content: '\e63d';
+}
+.rcicon-large:before {
+  content: '\e63e';
+}
+.rcicon-line-chart:before {
+  content: '\e63f';
+}
+.rcicon-link:before {
+  content: '\e640';
+}
+.rcicon-logout:before {
+  content: '\e642';
+}
+.rcicon-mail:before {
+  content: '\e643';
+}
+.rcicon-menu-fold:before {
+  content: '\e644';
+}
+.rcicon-menu-unfold:before {
+  content: '\e645';
+}
+.rcicon-mobile:before {
+  content: '\e649';
+}
+.rcicon-notification:before {
+  content: '\e64a';
+}
+.rcicon-paper-clip:before {
+  content: '\e64b';
+}
+.rcicon-picture:before {
+  content: '\e64f';
+}
+.rcicon-pie-chart:before {
+  content: '\e650';
+}
+.rcicon-poweroff:before {
+  content: '\e654';
+}
+.rcicon-reload:before {
+  content: '\e658';
+}
+.rcicon-search:before {
+  content: '\e65b';
+}
+.rcicon-setting:before {
+  content: '\e65c';
+}
+.rcicon-share-alt:before {
+  content: '\e65d';
+}
+.rcicon-shopping-cart:before {
+  content: '\e65e';
+}
+.rcicon-smile:before {
+  content: '\e661';
+}
+.rcicon-tablet:before {
+  content: '\e664';
+}
+.rcicon-tag:before {
+  content: '\e665';
+}
+.rcicon-tags:before {
+  content: '\e666';
+}
+.rcicon-to-top:before {
+  content: '\e667';
+}
+.rcicon-unlock:before {
+  content: '\e668';
+}
+.rcicon-upload:before {
+  content: '\e669';
+}
+.rcicon-user:before {
+  content: '\e66a';
+}
+.rcicon-video-camera:before {
+  content: '\e66b';
+}
+.rcicon-windows:before {
+  content: '\e66c';
+}
+.rcicon-loading:before {
+  display: inline-block;
+  .animation(loadingCircle 1s infinite linear);
+  content: '\e610';
+}
+
+:root {
+  .rcicon-step-forward,
+  .rcicon-fast-forward,
+  .rcicon-left,
+  .rcicon-up,
+  .rcicon-down,
+  .rcicon-caret-left,
+  .rcicon-caret-up,
+  .rcicon-caret-right,
+  .rcicon-caret-circle-left,
+  .rcicon-caret-circle-o-left,
+  .rcicon-circle-left,
+  .rcicon-circle-o-left,
+  .rcicon-double-left,
+  .rcicon-verticle-left,
+  .rcicon-backward {
+    filter: none;
+  }
+}

@@ -21,7 +21,7 @@ catalog:
   vite-plugin-vue-devtools: latest
   vite-plus: latest
   vitest: latest
-  vue: 3.6.0-beta.17
+  vue: 3.6.0-rc.1
   vue-tsc: latest
 
 onlyBuiltDependencies:

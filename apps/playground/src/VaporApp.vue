@@ -10,13 +10,14 @@
   import InputNumber from '@vapor-component/input-number'
   import MutateObserver from '@vapor-component/mutate-observer'
   import Overflow from '@vapor-component/overflow'
+  import Pagination from '@vapor-component/pagination'
   import Portal from '@vapor-component/portal'
+  import { Circle, Line } from '@vapor-component/progress'
   import { QRCodeCanvas, QRCodeSVG } from '@vapor-component/qrcode'
   import Rate from '@vapor-component/rate'
   import ResizeObserver from '@vapor-component/resize-observer'
-  import Pagination from '@vapor-component/pagination'
-  import { Circle, Line} from '@vapor-component/progress'
   import Segmented from '@vapor-component/segmented'
+  import Steps from '@vapor-component/steps'
   import Switch from '@vapor-component/switch'
   import TextArea from '@vapor-component/textarea'
   import { ref, computed, onUnmounted, version, h } from 'vue'
@@ -35,6 +36,7 @@
   import './styles/drawer-motion.less'
   import './styles/overflow.less'
   import './styles/pagination.less'
+  import './styles/steps.less'
 
   defineOptions({ name: 'VaporApp' })
   const checked1 = ref(false)
@@ -159,26 +161,26 @@
 
   const paginationTotal = ref(100)
   const percent = ref<number>(9)
-const color = ref<string>('#3FC7FA')
+  const color = ref<string>('#3FC7FA')
 
-function changeState() {
-  const colorMap: string[] = ['#3FC7FA', '#85D262', '#FE8C6A']
-  const value = Math.floor(Math.random() * 100)
-  color.value = colorMap[Math.floor(Math.random() * 3)]
-  percent.value = value
-}
-
-function changeIncrease() {
-  if (percent.value < 100) {
-    percent.value += 1
+  function changeState() {
+    const colorMap: string[] = ['#3FC7FA', '#85D262', '#FE8C6A']
+    const value = Math.floor(Math.random() * 100)
+    color.value = colorMap[Math.floor(Math.random() * 3)]
+    percent.value = value
   }
-}
 
-function changeReduce() {
-  if (percent.value > 0) {
-    percent.value -= 1
+  function changeIncrease() {
+    if (percent.value < 100) {
+      percent.value += 1
+    }
   }
-}
+
+  function changeReduce() {
+    if (percent.value > 0) {
+      percent.value -= 1
+    }
+  }
 </script>
 
 <template>
@@ -515,9 +517,21 @@ function changeReduce() {
     <hr />
     <label>
       Pagination:
-      <Pagination :total="paginationTotal" :default-page-size="5" @change="(p, s) => console.log('page:', p, 'size:', s)" />
+      <Pagination
+        :total="paginationTotal"
+        :default-page-size="5"
+        @change="(p, s) => console.log('page:', p, 'size:', s)"
+      />
       <div style="margin-top: 8px">
-        <button @click="() => (paginationTotal = paginationTotal > 50 ? 50 : paginationTotal + 50)">Toggle Total ({{ paginationTotal }})</button>
+        <button
+          @click="
+            () =>
+              (paginationTotal =
+                paginationTotal > 50 ? 50 : paginationTotal + 50)
+          "
+        >
+          Toggle Total ({{ paginationTotal }})
+        </button>
       </div>
     </label>
     <hr />
@@ -526,29 +540,103 @@ function changeReduce() {
       <!-- Line -->
       <div style="width: 250px">
         <Line :percent="percent" :stroke-width="4" :strokeColor="color" />
-        <Line :percent="[percent / 2, percent / 2]" :stroke-width="4" :strokeColor="[color, '#ccc']" />
+        <Line
+          :percent="[percent / 2, percent / 2]"
+          :stroke-width="4"
+          :strokeColor="[color, '#ccc']"
+        />
       </div>
       <!-- Circle -->
-      <div style="margin-bottom: 16px; width: 250px; height: 250px; display: inline-block">
-        <Circle :percent="percent" :stroke-width="6" stroke-linecap="round" :strokeColor="color" />
+      <div
+        style="
+          margin-bottom: 16px;
+          width: 250px;
+          height: 250px;
+          display: inline-block;
+        "
+      >
+        <Circle
+          :percent="percent"
+          :stroke-width="6"
+          stroke-linecap="round"
+          :strokeColor="color"
+        />
       </div>
-      <div style="margin-bottom: 16px; width: 250px; height: 250px; display: inline-block">
-        <Circle :percent="percent" :stroke-width="6" stroke-linecap="butt" :strokeColor="color" />
+      <div
+        style="
+          margin-bottom: 16px;
+          width: 250px;
+          height: 250px;
+          display: inline-block;
+        "
+      >
+        <Circle
+          :percent="percent"
+          :stroke-width="6"
+          stroke-linecap="butt"
+          :strokeColor="color"
+        />
       </div>
-      <div style="margin-bottom: 16px; width: 200px; height: 200px; display: inline-block">
-        <Circle :percent="percent" :stroke-width="6" stroke-linecap="square" :strokeColor="color" />
+      <div
+        style="
+          margin-bottom: 16px;
+          width: 200px;
+          height: 200px;
+          display: inline-block;
+        "
+      >
+        <Circle
+          :percent="percent"
+          :stroke-width="6"
+          stroke-linecap="square"
+          :strokeColor="color"
+        />
       </div>
       <p>
-      <button @click="changeState">
-        Change State
-      </button>
-      <button @click="changeIncrease">
-        Increase
-      </button>
-      <button @click="changeReduce">
-        Reduce
-      </button>
-    </p>
+        <button @click="changeState">Change State</button>
+        <button @click="changeIncrease">Increase</button>
+        <button @click="changeReduce">Reduce</button>
+      </p>
+    </label>
+    <hr />
+    <label>
+      Steps:
+      <Steps
+        title-placement="vertical"
+        class="vc-steps-label-vertical"
+        :current="1"
+        :items="[
+          {
+            title: '已完成',
+            description: 1,
+            status: 'wait',
+          },
+          {
+            title: '进行中',
+            description: 2,
+            status: 'wait',
+            subTitle: '剩余 00:00:07',
+          },
+          undefined as any,
+          {
+            title: '待运行',
+            description: 3,
+            status: 'process',
+          },
+          false as any,
+          {
+            title: '待运行',
+            description: 4,
+            status: 'finish',
+            disabled: true,
+          },
+          null as any,
+        ]"
+      >
+        <template #iconRender="{ index, icon }">
+          <component :is="icon">{{ index }}</component>
+        </template>
+      </Steps>
     </label>
   </fieldset>
 </template>
