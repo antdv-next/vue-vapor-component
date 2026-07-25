@@ -1,7 +1,9 @@
 import { createApp, createVaporApp, vaporInteropPlugin } from 'vue'
 
-import App from './App.vue'
-import VaporApp from './VaporApp.vue'
+import RouterApp from './RouterApp.vue'
+import { createRouter } from './routes'
+import VaporHost from './VaporHost.vue'
 
-createApp(App).use(vaporInteropPlugin).mount('#app')
-createVaporApp(VaporApp).mount('#vapor')
+createApp(RouterApp).use(vaporInteropPlugin).use(createRouter()).mount('#app')
+
+createVaporApp(VaporHost).mount('#vapor')

@@ -39,7 +39,8 @@
     "less": "catalog:",
     "vite-plugin-vue-devtools": "catalog:",
     "vite-plus": "catalog:",
-    "vue": "catalog:"
+    "vue": "catalog:",
+    "vue-router": "^5.2.0"
   },
   "packageManager": "pnpm@10.26.2"
 }
