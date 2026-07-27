@@ -107,6 +107,11 @@ export const demoManifest: DemoGroup[] = [
     label: 'MutateObserver',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
+  {
+    component: 'upload',
+    label: 'Upload',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
 ]
 
 // Auto-generate routes from demoManifest: /<component>/<case>

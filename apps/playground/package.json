@@ -32,7 +32,8 @@
     "@vapor-component/segmented": "workspace:*",
     "@vapor-component/steps": "workspace:*",
     "@vapor-component/switch": "workspace:*",
-    "@vapor-component/textarea": "workspace:*"
+    "@vapor-component/textarea": "workspace:*",
+    "@vapor-component/upload": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",

@@ -19,6 +19,7 @@
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
+  import UploadBasic from './demos/vapor/upload/basic.vue'
   import { currentComponent, currentCase } from './shared'
 </script>
 
@@ -86,6 +87,9 @@
       />
       <MutateObserverBasic
         v-if="currentComponent === 'mutate-observer' && currentCase === 'basic'"
+      />
+      <UploadBasic
+        v-if="currentComponent === 'upload' && currentCase === 'basic'"
       />
     </template>
   </div>

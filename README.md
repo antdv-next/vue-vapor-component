@@ -108,7 +108,7 @@ import App from './App.vue'
 | select          | ⭕   |      |                             |
 | slick           | ⭕   |      |                             |
 | slider          | ⭕   |      |                             |
-| steps           | ⭕   |      |                             |
+| steps           | ✅   |      |                             |
 | switch          | ✅   |      |                             |
 | table           | ⭕   |      |                             |
 | tabs            | ⭕   |      |                             |
@@ -118,6 +118,6 @@ import App from './App.vue'
 | tree            | ⭕   |      |                             |
 | tree-select     | ⭕   |      |                             |
 | trigger         | ⭕   |      |                             |
-| upload          | ⭕   |      |                             |
+| upload          | ✅   |      |                             |
 | util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor |
 | virtual-list    | ⭕   |      |                             |
