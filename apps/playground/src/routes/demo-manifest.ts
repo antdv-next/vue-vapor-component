@@ -112,6 +112,11 @@ export const demoManifest: DemoGroup[] = [
     label: 'Upload',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
+  {
+    component: 'trigger',
+    label: 'Trigger',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
 ]
 
 // Auto-generate routes from demoManifest: /<component>/<case>

@@ -376,7 +376,10 @@
   }
 
   const onWrapClick = (e: MouseEvent) => {
-    console.log('[Upload] onWrapClick', { isDisabled: isDisabled.value, canOpenFile: canOpenFile.value })
+    console.log('[Upload] onWrapClick', {
+      isDisabled: isDisabled.value,
+      canOpenFile: canOpenFile.value,
+    })
     if (!isDisabled.value && canOpenFile.value) {
       onClick(e)
     }

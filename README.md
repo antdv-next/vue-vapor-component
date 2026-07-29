@@ -117,7 +117,7 @@ import App from './App.vue'
 | tour            | ⭕   |      |                             |
 | tree            | ⭕   |      |                             |
 | tree-select     | ⭕   |      |                             |
-| trigger         | ⭕   |      |                             |
+| trigger         | ✅   |      |                             |
 | upload          | ✅   |      |                             |
 | util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor |
 | virtual-list    | ⭕   |      |                             |
