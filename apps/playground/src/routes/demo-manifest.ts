@@ -117,6 +117,11 @@ export const demoManifest: DemoGroup[] = [
     label: 'Trigger',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
+  {
+    component: 'tooltip',
+    label: 'Tooltip',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
 ]
 
 // Auto-generate routes from demoManifest: /<component>/<case>

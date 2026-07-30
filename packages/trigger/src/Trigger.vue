@@ -44,6 +44,7 @@
     mouseLeaveDelay: 0.1,
     maskClosable: true,
     builtinPlacements: () => ({}),
+    popup: undefined as any,
     popupVisible: undefined as any,
     defaultPopupVisible: undefined as any,
   })
@@ -635,6 +636,10 @@
       :target-width="targetWidth / scaleX"
       :target-height="targetHeight / scaleY"
       :mobile="mobile"
-    />
+    >
+      <template #popup>
+        <slot name="popup">{{ popup }}</slot>
+      </template>
+    </Popup>
   </TriggerContextProvider>
 </template>

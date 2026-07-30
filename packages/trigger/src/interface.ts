@@ -128,7 +128,7 @@ export interface TriggerProps {
   blurDelay?: number
 
   // Popup
-  popup: VueNode | (() => VueNode)
+  popup?: VueNode | (() => VueNode)
   popupPlacement?: string
   builtinPlacements?: BuildInPlacements
   popupAlign?: AlignType
@@ -227,7 +227,7 @@ export interface MaskProps {
 
 export interface UniqueShowOptions {
   id: string
-  popup: TriggerProps['popup']
+  popup?: TriggerProps['popup']
   target: HTMLElement
   delay: number
   prefixCls?: string

@@ -36,14 +36,14 @@
       const targetTB = targetPoints[0]
       const targetLR = targetPoints[1]
 
-      if (popupTB === targetTB || !['t', 'b'].includes(popupTB))
-        {alignStyle.top = `${y}px`}
-      else if (popupTB === 't') alignStyle.top = 0
+      if (popupTB === targetTB || !['t', 'b'].includes(popupTB)) {
+        alignStyle.top = `${y}px`
+      } else if (popupTB === 't') alignStyle.top = 0
       else alignStyle.bottom = 0
 
-      if (popupLR === targetLR || !['l', 'r'].includes(popupLR))
-        {alignStyle.left = `${x}px`}
-      else if (popupLR === 'l') alignStyle.left = 0
+      if (popupLR === targetLR || !['l', 'r'].includes(popupLR)) {
+        alignStyle.left = `${x}px`
+      } else if (popupLR === 'l') alignStyle.left = 0
       else alignStyle.right = 0
     }
 

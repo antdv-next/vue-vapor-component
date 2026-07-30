@@ -33,6 +33,7 @@
     "@vapor-component/steps": "workspace:*",
     "@vapor-component/switch": "workspace:*",
     "@vapor-component/textarea": "workspace:*",
+    "@vapor-component/tooltip": "workspace:*",
     "@vapor-component/trigger": "workspace:*",
     "@vapor-component/upload": "workspace:*"
   },

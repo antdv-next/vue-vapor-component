@@ -138,7 +138,7 @@
           background: 'white',
           boxSizing: 'border-box',
         }"
-        :popup="() => 'vapor popup'"
+        :popup="'vapor popup'"
         :popup-motion="{ name: state.transitionName }"
       >
         <template v-slot="{ open, trigger: triggerProps, setRef }">

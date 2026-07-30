@@ -1,0 +1,37 @@
+@tooltipPrefixCls: vc-tooltip;
+
+.@{tooltipPrefixCls} {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+
+  &-container {
+    display: inline-block;
+    width: max-content;
+  }
+
+  &-inner {
+    display: inline-block;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #fff;
+    background: #262626;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+
+    &-content {
+      overflow: hidden;
+    }
+  }
+
+  &-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+}

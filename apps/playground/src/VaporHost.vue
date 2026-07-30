@@ -19,6 +19,7 @@
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
+  import TooltipBasic from './demos/vapor/tooltip/basic.vue'
   import TriggerBasic from './demos/vapor/trigger/basic.vue'
   import UploadBasic from './demos/vapor/upload/basic.vue'
   import { currentComponent, currentCase } from './shared'
@@ -94,6 +95,9 @@
       />
       <TriggerBasic
         v-if="currentComponent === 'trigger' && currentCase === 'basic'"
+      />
+      <TooltipBasic
+        v-if="currentComponent === 'tooltip' && currentCase === 'basic'"
       />
     </template>
   </div>

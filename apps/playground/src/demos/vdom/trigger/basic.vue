@@ -171,7 +171,7 @@
           background: 'white',
           boxSizing: 'border-box',
         }"
-        :popup="() => 'i am a popup'"
+        :popup="'i am a popup'"
         :popup-motion="{ name: state.transitionName }"
         :on-after-open-change="handleAfterOpenChange"
       >

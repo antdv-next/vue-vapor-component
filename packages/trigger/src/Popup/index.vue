@@ -131,14 +131,16 @@
     const { stretch, targetHeight, targetWidth } = props
     const style: CSSProperties = {}
     if (stretch) {
-      if (stretch.includes('height') && targetHeight)
-        {style.height = `${targetHeight}px`}
-      else if (stretch.includes('minHeight') && targetHeight)
-        {style.minHeight = `${targetHeight}px`}
-      if (stretch.includes('width') && targetWidth)
-        {style.width = `${targetWidth}px`}
-      else if (stretch.includes('minWidth') && targetWidth)
-        {style.minWidth = `${targetWidth}px`}
+      if (stretch.includes('height') && targetHeight) {
+        style.height = `${targetHeight}px`
+      } else if (stretch.includes('minHeight') && targetHeight) {
+        style.minHeight = `${targetHeight}px`
+      }
+      if (stretch.includes('width') && targetWidth) {
+        style.width = `${targetWidth}px`
+      } else if (stretch.includes('minWidth') && targetWidth) {
+        style.minWidth = `${targetWidth}px`
+      }
     }
     if (!props.open) style.pointerEvents = 'none'
     return style
@@ -153,14 +155,6 @@
     }
     return props.getPopupContainer
   })
-
-  // Popup content: handle both function and element cases
-  const popupContent = computed(() => {
-    if (typeof props.popup === 'function') return (props.popup as () => any)()
-    return props.popup
-  })
-
-  const isStringContent = computed(() => typeof popupContent.value === 'string')
 </script>
 
 <template>
@@ -200,10 +194,7 @@
             :align="align"
           />
 
-          <template v-if="popupContent">
-            <span v-if="isStringContent">{{ popupContent }}</span>
-            <component v-else :is="popupContent as any" />
-          </template>
+          <slot name="popup" />
         </div>
       </Transition>
 
