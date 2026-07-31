@@ -95,7 +95,7 @@ import App from './App.vue'
 | menu            | ⭕   |      |                             |
 | mini-decimal    | ❌   | 🚀   | ⭐️                          |
 | mutate-observer | ✅   |      |                             |
-| notification    | ⭕   |      |                             |
+| notification    | ✅   |      | 受限SFC，多了configRef与onReady |
 | overflow        | ✅   |      |                             |
 | pagination      | ✅   |      |                             |
 | picker          | ⭕   |      |                             |

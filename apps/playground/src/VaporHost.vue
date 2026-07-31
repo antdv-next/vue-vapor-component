@@ -22,6 +22,7 @@
   import TooltipBasic from './demos/vapor/tooltip/basic.vue'
   import TriggerBasic from './demos/vapor/trigger/basic.vue'
   import UploadBasic from './demos/vapor/upload/basic.vue'
+  import NotificationBasic from './demos/vapor/notification/basic.vue'
   import { currentComponent, currentCase } from './shared'
 </script>
 
@@ -98,6 +99,9 @@
       />
       <TooltipBasic
         v-if="currentComponent === 'tooltip' && currentCase === 'basic'"
+      />
+      <NotificationBasic
+        v-if="currentComponent === 'notification' && currentCase === 'basic'"
       />
     </template>
   </div>
