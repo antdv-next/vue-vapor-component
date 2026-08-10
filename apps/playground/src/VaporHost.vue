@@ -16,6 +16,7 @@
   import RateBasic from './demos/vapor/rate/basic.vue'
   import ResizeObserverBasic from './demos/vapor/resize-observer/basic.vue'
   import SegmentedBasic from './demos/vapor/segmented/basic.vue'
+  import SlickBasic from './demos/vapor/slick/basic.vue'
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
@@ -102,6 +103,9 @@
       />
       <NotificationBasic
         v-if="currentComponent === 'notification' && currentCase === 'basic'"
+      />
+      <SlickBasic
+        v-if="currentComponent === 'slick' && currentCase === 'basic'"
       />
     </template>
   </div>

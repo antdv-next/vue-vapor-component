@@ -106,7 +106,7 @@ import App from './App.vue'
 | resize-observer | ✅   |      |                             |
 | segmented       | ✅   |      |                             |
 | select          | ⭕   |      |                             |
-| slick           | ⭕   |      |                             |
+| slick           | ✅   |      |                             |
 | slider          | ⭕   |      |                             |
 | steps           | ✅   |      |                             |
 | switch          | ✅   |      |                             |

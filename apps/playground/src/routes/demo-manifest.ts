@@ -127,6 +127,11 @@ export const demoManifest: DemoGroup[] = [
     label: 'Notification',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
+  {
+    component: 'slick',
+    label: 'Slick',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
 ]
 
 // Auto-generate routes from demoManifest: /<component>/<case>
