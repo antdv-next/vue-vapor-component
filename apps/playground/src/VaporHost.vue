@@ -17,6 +17,7 @@
   import ResizeObserverBasic from './demos/vapor/resize-observer/basic.vue'
   import SegmentedBasic from './demos/vapor/segmented/basic.vue'
   import SlickBasic from './demos/vapor/slick/basic.vue'
+  import SliderBasic from './demos/vapor/slider/basic.vue'
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
@@ -106,6 +107,9 @@
       />
       <SlickBasic
         v-if="currentComponent === 'slick' && currentCase === 'basic'"
+      />
+      <SliderBasic
+        v-if="currentComponent === 'slider' && currentCase === 'basic'"
       />
     </template>
   </div>

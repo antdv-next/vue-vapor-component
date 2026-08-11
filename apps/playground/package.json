@@ -29,6 +29,7 @@
     "@vapor-component/progress": "workspace:*",
     "@vapor-component/qrcode": "workspace:*",
     "@vapor-component/slick": "workspace:*",
+    "@vapor-component/slider": "workspace:*",
     "@vapor-component/rate": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",
     "@vapor-component/segmented": "workspace:*",

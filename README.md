@@ -107,13 +107,13 @@ import App from './App.vue'
 | segmented       | ✅   |      |                             |
 | select          | ⭕   |      |                             |
 | slick           | ✅   |      |                             |
-| slider          | ⭕   |      |                             |
+| slider          | ✅   |      |                             |
 | steps           | ✅   |      |                             |
 | switch          | ✅   |      |                             |
 | table           | ⭕   |      |                             |
 | tabs            | ⭕   |      |                             |
 | textarea        | ✅   |      |                             |
-| tooltip         | ⭕   |      |                             |
+| tooltip         | ✅   |      |                             |
 | tour            | ⭕   |      |                             |
 | tree            | ⭕   |      |                             |
 | tree-select     | ⭕   |      |                             |
