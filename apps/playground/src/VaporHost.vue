@@ -18,6 +18,7 @@
   import SegmentedBasic from './demos/vapor/segmented/basic.vue'
   import SlickBasic from './demos/vapor/slick/basic.vue'
   import SliderBasic from './demos/vapor/slider/basic.vue'
+  import TourBasic from './demos/vapor/tour/basic.vue'
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
@@ -110,6 +111,9 @@
       />
       <SliderBasic
         v-if="currentComponent === 'slider' && currentCase === 'basic'"
+      />
+      <TourBasic
+        v-if="currentComponent === 'tour' && currentCase === 'basic'"
       />
     </template>
   </div>

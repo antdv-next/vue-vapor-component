@@ -56,6 +56,6 @@
     @mousedown="onMousedown"
     @click="handleClick"
   >
-    <slot />
+    <slot name="mark" />
   </span>
 </template>

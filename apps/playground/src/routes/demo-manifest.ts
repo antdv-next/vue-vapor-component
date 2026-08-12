@@ -137,6 +137,11 @@ export const demoManifest: DemoGroup[] = [
     label: 'Slider',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
+  {
+    component: 'tour',
+    label: 'Tour',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
 ]
 
 // Auto-generate routes from demoManifest: /<component>/<case>

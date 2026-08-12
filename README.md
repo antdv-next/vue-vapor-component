@@ -114,7 +114,7 @@ import App from './App.vue'
 | tabs            | ⭕   |      |                             |
 | textarea        | ✅   |      |                             |
 | tooltip         | ✅   |      |                             |
-| tour            | ⭕   |      |                             |
+| tour            | ✅   |      |                             |
 | tree            | ⭕   |      |                             |
 | tree-select     | ⭕   |      |                             |
 | trigger         | ✅   |      |                             |

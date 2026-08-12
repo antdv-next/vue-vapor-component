@@ -542,16 +542,33 @@ defineExpose({
 
 ### 7.5 动态组件渲染
 
+**仅当 props 中存在 `component` 属性且类型为 HTML 标签字符串（如 `'div'`、`'span'`、`'section'`）时，才使用 `<component :is>` 动态渲染**：
+
 ```vue
+<!-- ✅ 正确：component 类型是 HTML 标签 -->
 <component
   :is="props.component ?? 'div'"
   :class="nodeCls"
   :style="nodeStyle"
   v-bind="restAttrs"
 >
-  <slot />
+  ...
 </component>
 ```
+
+**对于 `props.xxRender(args)` 渲染函数模式，使用 `<slot>` 替代，由父组件通过 slot 传入渲染逻辑**：
+
+```vue
+<!-- ✅ 正确：render 函数模式用 slot -->
+<template v-if="slots.xxRender">
+  <slot name="xxRender" :item="item" :index="idx" />
+</template>
+
+<!-- ❌ 错误：不要把 render 函数的返回值当作组件动态渲染 -->
+<!-- <component :is="props.xxRender(item, idx)" /> -->
+```
+
+**原因**：render 函数可能返回 VNode（vdom），在 vapor 模式下无法直接渲染为 `<component :is>`，会触发 vapor/vdom 互斥问题。使用 slot 将渲染逻辑交给父组件的 SFC 模板处理，保持 vapor 上下文一致。
 
 ### 7.6 模板中的布尔表达式类型问题
 
@@ -768,11 +785,62 @@ const shouldResponsive = computed<boolean>(
 
 ### 5. v-for + key 约束
 
-`<template v-for>` 不加 `:key`，内部组件加 `:key`。
+`<template v-for="item in items">` 要加 `:key`，`<template v-for="item in items" :key="item.xx">`。
 
 ### 6. 静态属性挂载
 
 在 `index.ts` 中挂载子组件/常量到主组件静态属性上。
+
+### 7. 布尔 prop 的 `??` fallback 失效（vapor 强制转换）
+
+**问题**：当 prop 类型包含 `false` 分支时（如 `?: (() => HTMLElement) | false`），vapor 编译会把未传的 `undefined` 强制转为 `false`，导致 `??` 默认值回退失效：
+
+```ts
+// ❌ 危险：undefined 被强制转为 false，false ?? default → false（fallback 被跳过）
+const merged = computed(() => props.xxx ?? defaultProps.xxx)
+
+// ✅ 安全：false 是 falsy 值，|| 会正确回退到默认值
+const merged = computed(() => props.xxx || defaultProps.xxx)
+```
+
+**更根本的修复**：在 `interface.ts` 中**去除 `false` 分支**，让类型本身不包含布尔值：
+
+```ts
+// ❌ 危险：包含 false，vapor 会强制转换
+getContainer?: (() => HTMLElement) | false
+mask?: boolean | { style: CSSProperties; color: string }
+
+// ✅ 安全：不包含 false，undefined 不会被强制转换
+getContainer?: () => HTMLElement
+mask?: { style: CSSProperties; color: string }
+```
+
+**检测手段**：构建后检查 `dist/index.js` 中 prop 类型声明是否包含 `Boolean`：
+
+```bash
+grep -n "getContainer.*type" packages/{name}/dist/index.js
+# ❌ { type: [Function, Boolean] } — 包含 Boolean，会强制转换
+# ✅ { type: Function } — 只有 Function，不会强制转换
+```
+
+**常见受影响场景**：
+- `getContainer?: (() => HTMLElement) | false`（Portal 相关）
+- 任何 `boolean | { ... }` 联合类型（如 `mask`，其中 `false` 表示关闭、`object` 表示配置）
+- 需要 `??` 做默认值回退的所有布尔 prop
+
+### 8. `Exclude<>` 工具类型在运行时类型提取中无效
+
+`Exclude<T, false>` 在 TypeScript 层面正确排除了 `false`，但 **Vue 运行时类型提取仍会识别出 `Boolean`**，导致与规则 7 相同的强制转换问题。
+
+```ts
+// ❌ 编译期正确，但运行时仍提取出 Boolean → vapor 强制转换仍然生效
+getContainer?: Exclude<PortalProps['getContainer'], false>
+
+// ✅ 直接定义不含 false 的显式类型
+getContainer?: string | ContainerType | (() => ContainerType)
+```
+
+**原则**：涉及 Portal 等外部组件类型复用、且需要排除 `false` 的场景，**必须用显式联合类型替代 `Exclude<>`**。
 
 ---
 
@@ -797,7 +865,8 @@ const shouldResponsive = computed<boolean>(
 
 | 依赖                               | 用途         | 谁依赖                |
 | ---------------------------------- | ------------ | --------------------- |
-| `@vapor-component/portal`          | DOM 传送门   | dialog, drawer, image |
+| `@vapor-component/portal`          | DOM 传送门   | dialog, drawer, image, tour |
+| `@vapor-component/trigger`         | 弹出层定位   | tooltip, tour         |
 | `@vapor-component/resize-observer` | 元素尺寸监听 | textarea, overflow    |
 
 ### 简单组件无内部依赖
@@ -818,6 +887,7 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 | `Property 'value' does not exist`                           | inject 返回 ComputedRef             | `computed(() => ref?.value)`            |
 | `TS2322: Type 'string' is not assignable to type 'boolean'` | v-for + key 位置错误                | key 放在内部组件上                      |
 | `TS2345: Argument of type '{...}' is not assignable`        | v-bind 展开类型不匹配               | 显式声明 props 或用 getter 对象         |
+| 默认值不生效 / `??` 回退被跳过                              | 布尔 prop 被 vapor 强制转为 `false` | `??` 改为 `||`，或去除 prop 类型中的 `false` 分支 |
 
 ---
 
@@ -849,6 +919,7 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 | resize-observer | Observer                | Collection 子组件, 双导出               |
 | mutate-observer | Observer                | useMutateObserver hook                  |
 | overflow        | 父子 + Context Provider | useEffectState batcher, v-for v-if 共存 |
+| tour            | Portal + Trigger 组合   | useTarget hook, 布尔 prop 强制转换坑 |
 
 ### 工程文件参考
 
