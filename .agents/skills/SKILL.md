@@ -54,10 +54,6 @@
     "@v-c/util": "catalog:",
     "@vapor-component/{internal-dep}": "workspace:^"
   },
-  "devDependencies": {
-    "vite": "catalog:",
-    "vite-plus": "catalog:"
-  },
   "peerDependencies": {
     "vue": "catalog:"
   },

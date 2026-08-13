@@ -26,6 +26,7 @@
   import TriggerBasic from './demos/vapor/trigger/basic.vue'
   import UploadBasic from './demos/vapor/upload/basic.vue'
   import NotificationBasic from './demos/vapor/notification/basic.vue'
+  import VirtualListBasic from './demos/vapor/virtual-list/basic.vue'
   import { currentComponent, currentCase } from './shared'
 </script>
 
@@ -114,6 +115,9 @@
       />
       <TourBasic
         v-if="currentComponent === 'tour' && currentCase === 'basic'"
+      />
+      <VirtualListBasic
+        v-if="currentComponent === 'virtual-list' && currentCase === 'basic'"
       />
     </template>
   </div>

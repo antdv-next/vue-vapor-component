@@ -39,7 +39,8 @@
     "@vapor-component/tooltip": "workspace:*",
     "@vapor-component/tour": "workspace:*",
     "@vapor-component/trigger": "workspace:*",
-    "@vapor-component/upload": "workspace:*"
+    "@vapor-component/upload": "workspace:*",
+    "@vapor-component/virtual-list": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
