@@ -21,6 +21,7 @@
     "@vapor-component/image": "workspace:*",
     "@vapor-component/input": "workspace:*",
     "@vapor-component/input-number": "workspace:*",
+    "@vapor-component/listy": "workspace:*",
     "@vapor-component/mutate-observer": "workspace:*",
     "@vapor-component/notification": "workspace:*",
     "@vapor-component/overflow": "workspace:*",

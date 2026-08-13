@@ -147,6 +147,11 @@ export const demoManifest: DemoGroup[] = [
     label: 'VirtualList',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
+  {
+    component: 'listy',
+    label: 'Listy',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
 ]
 
 // Auto-generate routes from demoManifest: /<component>/<case>

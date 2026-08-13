@@ -1,0 +1,44 @@
+@listy-prefix-cls: ~'vc-listy';
+
+.@{listy-prefix-cls} {
+  position: relative;
+
+  &-group-header {
+    background-color: #fff;
+
+    &-sticky {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+    }
+
+    &-fixed {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    &-holder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+  }
+
+  &-group-section {
+    position: relative;
+  }
+
+  &-scrollbar {
+    z-index: 1;
+  }
+}

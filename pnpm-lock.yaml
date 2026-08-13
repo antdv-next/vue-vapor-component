@@ -111,6 +111,9 @@ importers:
       '@vapor-component/input-number':
         specifier: workspace:*
         version: link:../../packages/input-number
+      '@vapor-component/listy':
+        specifier: workspace:*
+        version: link:../../packages/listy
       '@vapor-component/mutate-observer':
         specifier: workspace:*
         version: link:../../packages/mutate-observer
@@ -259,6 +262,21 @@ importers:
       '@v-c/util':
         specifier: 'catalog:'
         version: 1.1.0(vue@3.6.0-rc.3(typescript@5.9.3))
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-rc.3(typescript@5.9.3)
+
+  packages/listy:
+    dependencies:
+      '@v-c/util':
+        specifier: 'catalog:'
+        version: 1.1.0(vue@3.6.0-rc.3(typescript@5.9.3))
+      '@vapor-component/portal':
+        specifier: workspace:^
+        version: link:../portal
+      '@vapor-component/virtual-list':
+        specifier: workspace:^
+        version: link:../virtual-list
       vue:
         specifier: 'catalog:'
         version: 3.6.0-rc.3(typescript@5.9.3)
@@ -3139,7 +3157,7 @@ snapshots:
       '@babel/helper-compilation-targets': 7.28.6
       '@babel/helper-module-transforms': 7.28.6(@babel/core@7.29.0)
       '@babel/helpers': 7.28.6
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.8
       '@babel/template': 7.28.6
       '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
@@ -3154,8 +3172,8 @@ snapshots:
 
   '@babel/generator@7.29.1':
     dependencies:
-      '@babel/parser': 7.29.7
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.29.8
+      '@babel/types': 7.29.8
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
@@ -3258,7 +3276,7 @@ snapshots:
   '@babel/helpers@7.28.6':
     dependencies:
       '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/parser@7.29.7':
     dependencies:
@@ -3322,7 +3340,7 @@ snapshots:
   '@babel/template@7.28.6':
     dependencies:
       '@babel/code-frame': 7.29.0
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.8
       '@babel/types': 7.29.7
 
   '@babel/traverse@7.29.0':
@@ -3330,7 +3348,7 @@ snapshots:
       '@babel/code-frame': 7.29.0
       '@babel/generator': 7.29.1
       '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.8
       '@babel/template': 7.28.6
       '@babel/types': 7.29.7
       debug: 4.4.3
@@ -4104,7 +4122,7 @@ snapshots:
       '@babel/core': 7.29.0
       '@babel/helper-module-imports': 7.28.6
       '@babel/helper-plugin-utils': 7.28.6
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.8
       '@vue/compiler-sfc': 3.5.29
     transitivePeerDependencies:
       - supports-color
@@ -4119,7 +4137,7 @@ snapshots:
 
   '@vue/compiler-core@3.5.34':
     dependencies:
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.8
       '@vue/shared': 3.5.34
       entities: 7.0.1
       estree-walker: 2.0.2

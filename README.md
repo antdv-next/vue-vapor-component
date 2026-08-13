@@ -90,7 +90,7 @@ import App from './App.vue'
 | image           | ✅   |      |                             |
 | input           | ✅   |      |                             |
 | input-number    | ✅   |      |                             |
-| listy           | ⭕   |      |                             |
+| listy           | ✅   |      |                             |
 | mentions        | ⭕   |      |                             |
 | menu            | ⭕   |      |                             |
 | mini-decimal    | ❌   | 🚀   | ⭐️                          |
@@ -120,4 +120,4 @@ import App from './App.vue'
 | trigger         | ✅   |      |                             |
 | upload          | ✅   |      |                             |
 | util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor |
-| virtual-list    | ⭕   |      |                             |
+| virtual-list    | ✅   |      |                             |

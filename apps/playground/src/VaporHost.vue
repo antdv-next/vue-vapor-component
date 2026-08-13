@@ -27,6 +27,7 @@
   import UploadBasic from './demos/vapor/upload/basic.vue'
   import NotificationBasic from './demos/vapor/notification/basic.vue'
   import VirtualListBasic from './demos/vapor/virtual-list/basic.vue'
+  import ListyBasic from './demos/vapor/listy/basic.vue'
   import { currentComponent, currentCase } from './shared'
 </script>
 
@@ -118,6 +119,9 @@
       />
       <VirtualListBasic
         v-if="currentComponent === 'virtual-list' && currentCase === 'basic'"
+      />
+      <ListyBasic
+        v-if="currentComponent === 'listy' && currentCase === 'basic'"
       />
     </template>
   </div>

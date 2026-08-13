@@ -1,14 +1,11 @@
-# jsx-to-vapor-sfc
-
-## 概述
-
-将 jsx（`@v-c/*`，基于 `defineComponent + render function`）迁移到 vue vapor SFC 格式的工程化 skill。基于 15 个已迁移组件（collapse, dialog, drawer, switch, checkbox, input, input-number, textarea, rate, segmented, image, qrcode, portal, resize-observer, overflow）的通用模式提炼而成。
-
-## 触发条件
-
-当需要把 `@v-c/*`（或任何 jsx render function 组件）迁移到 vue vapor SFC 时，加载此 skill。
-
 ---
+name: "jsx-to-vapor-sfc"
+description: |
+ 将 jsx（`@v-c/*`，基于 `defineComponent + render function` 或 Function component）迁移到 vue vapor SFC 格式的工程化 skill。
+ 触发条件：当需要把 `@v-c/*`（或任何 jsx render function 组件）迁移到 vue vapor SFC 时，加载此 skill
+---
+
+# jsx 转换到 vue vapor 单文件组件
 
 ## 一、工程结构对照
 
@@ -498,11 +495,11 @@ defineExpose({
 <component :is="content" />
 ```
 
-**仅当值是 Component 构造函数或 `<component>` 才用 `:is`**：
+**仅当值是 HTML tag时才采用 `<component :is>`**：
 
 ```vue
 <!-- 渲染自定义组件（来自 renderItem 函数） -->
-<component :is="props.renderRawItem(item, idx)" />
+<component :is="props.component" />
 ```
 
 ### 7.2 v-for + key
@@ -552,12 +549,17 @@ defineExpose({
 </component>
 ```
 
-**对于 `props.xxRender(args)` 渲染函数模式，使用 `<slot>` 替代，由父组件通过 slot 传入渲染逻辑**：
+**对于 `props.xxRender(args)` 渲染函数模式，使用 `<slot>` 替代，由父组件通过 slot 传入渲染逻辑**。slot props 在 script 中构建为对象，模板中用 `v-bind` 绑定：
+
+```ts
+// script 中构建 slot props
+const slotProps = { item, index: idx }
+```
 
 ```vue
 <!-- ✅ 正确：render 函数模式用 slot -->
 <template v-if="slots.xxRender">
-  <slot name="xxRender" :item="item" :index="idx" />
+  <slot name="xxRender" v-bind="slotProps" />
 </template>
 
 <!-- ❌ 错误：不要把 render 函数的返回值当作组件动态渲染 -->
@@ -593,6 +595,50 @@ const shouldResponsive = computed<boolean>(
 <slot v-else />
 <!-- 条件渲染 slot -->
 ```
+
+### 7.8 Slot 转发模式（重要）
+
+**问题**：当一个组件 A 包装了组件 B，而 B 的 `#default` slot 传递了 slot props（如 `VcVirtualList` 的 `{ item, index, ... }`），在 A 中不能直接在 B 的 slot 模板内写 `<slot>`，因为 Vapor 模式下 slot 解析作用域会混乱，导致 slot props 变为 `undefined`。
+
+**修复**：在中间组件（如 `Listy.vue`）中显式使用 `<template #default="slotProps"><slot v-bind="slotProps" /></template>` 做中转。
+
+**示例**（`Listy.vue` 包装 `VirtualList.vue`，而 `VirtualList.vue` 内部用 VcVirtualList 的 `#default` slot）：
+
+```vue
+<!-- ✅ 正确：Listy.vue 中显式转发 slot props -->
+<template>
+  <VirtualList
+    ref="listRef"
+    :data="data"
+    :row-key="props.rowKey"
+    ...
+  >
+    <template #default="slotProps">
+      <slot v-bind="slotProps" />
+    </template>
+  </VirtualList>
+</template>
+```
+
+**原理**：`Listy` 这层负责捕获下层 `VirtualList` 的 slot props 并转发给上层（用户组件），绕过了 Vapor 嵌套 slot 解析的限制。用户组件的 `<template #default="slotProps">` 就能正确拿到 `{ item, index }`。
+
+**适用场景**：
+- 组件 A 包装了组件 B，B 的 slot 带 props，A 需要把这些 props 透传给上层
+- 任何中间层需要转发 slot 的场景
+
+### 7.9 Slot props 用 v-bind 对象字面量
+
+在 vapor 模板中给 `<slot>` 传 props 时，推荐使用 `v-bind` 对象字面量语法：
+
+```vue
+<!-- ✅ 推荐：对象字面量，清晰可靠 -->
+<slot v-bind="{ item: row.item, index: row.index }" />
+
+<!-- 不推荐：多个独立绑定，vapor 编译中可能出现解析问题 -->
+<slot :item="row.item" :index="row.index" />
+```
+
+**场景**：当 slot props 需要从行数据对象中提取（如 `flattenRows.rows` 中每个 row 含 `item` 和 `index`）时，`v-bind` 对象语法让数据转换逻辑一目了然。
 
 ---
 
@@ -668,6 +714,24 @@ cd apps/playground && npx vp dev
 dialog, drawer, image 等组件使用 Portal 做 DOM 传送门，有额外约定：
 
 **依赖**：`"@vapor-component/portal": "workspace:^"`
+
+**`:open` 必须显式传值**（常见遗漏）：
+
+`@vapor-component/portal` 的 `open` 默认值是 `false`，如果不显式传 `:open="true"`，Portal 内部的 `canRender` 计算为 `false`，**内容完全不会渲染**（无报错、无警告）。
+
+```vue
+<!-- ✅ 正确：明确 :open="true" -->
+<Portal :open="true" :get-container="() => container">
+  <div>内容</div>
+</Portal>
+
+<!-- ❌ 错误：忘记 :open，内容不渲染（silent fail） -->
+<Portal :get-container="() => container">
+  <div>内容</div>
+</Portal>
+```
+
+**适用场景**：所有使用 Portal 做 DOM 传送门的组件（dialog, drawer, image, sticky header, tour）。
 
 **核心 props**：
 
@@ -838,6 +902,33 @@ getContainer?: string | ContainerType | (() => ContainerType)
 
 **原则**：涉及 Portal 等外部组件类型复用、且需要排除 `false` 的场景，**必须用显式联合类型替代 `Exclude<>`**。
 
+### 9. Portal 必须显式 `:open="true"`
+
+`@vapor-component/portal` 的 `open` 默认为 `false`。不传 `:open="true"` 时 Portal 静默不渲染，无任何报错。
+
+```vue
+<!-- ✅ 正确 -->
+<Portal :open="true" :get-container="() => container">...</Portal>
+```
+
+参见[九、Portal 组件模式](#九portal-组件模式)。
+
+### 10. 布尔 prop 必须显式传 `:attr="true"`（不要省略值）
+
+在 vapor 模板中，不带值的裸属性（如 `<VcVirtualList virtual>`）实际解析为 `undefined`，而非 `true`，随后被 vapor 强制转换为 `false`，导致该 prop 被禁用。
+
+```vue
+<!-- ❌ 错误：裸属性 virtual 解析为 undefined → 被强制转为 false，虚拟模式被禁用 -->
+<VcVirtualList virtual ... />
+
+<!-- ✅ 正确：:virtual="true" 显式传值 -->
+<VcVirtualList :virtual="true" ... />
+```
+
+**原因**：Vue 模板中带值属性 `virtual` 解析为 `undefined`，vapor 模式下布尔类型的 `undefined` 被强制转换为 `false`（参见规则 7）。`??` 和默认值回退同样失效。必须用 `:attr="true"` 显式传递布尔值。
+
+**常见受影响属性**：`virtual`、`sticky`、`fixed`、`open`、`full-height` 等布尔 prop。
+
 ---
 
 ## 十二、依赖关系速查
@@ -861,9 +952,10 @@ getContainer?: string | ContainerType | (() => ContainerType)
 
 | 依赖                               | 用途         | 谁依赖                |
 | ---------------------------------- | ------------ | --------------------- |
-| `@vapor-component/portal`          | DOM 传送门   | dialog, drawer, image, tour |
+| `@vapor-component/portal`          | DOM 传送门   | dialog, drawer, image, listy, tour |
 | `@vapor-component/trigger`         | 弹出层定位   | tooltip, tour         |
 | `@vapor-component/resize-observer` | 元素尺寸监听 | textarea, overflow    |
+| `@vapor-component/virtual-list`    | 虚拟列表     | listy                 |
 
 ### 简单组件无内部依赖
 
@@ -916,6 +1008,7 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 | mutate-observer | Observer                | useMutateObserver hook                  |
 | overflow        | 父子 + Context Provider | useEffectState batcher, v-for v-if 共存 |
 | tour            | Portal + Trigger 组合   | useTarget hook, 布尔 prop 强制转换坑 |
+| listy           | Portal + VirtualList 组合 | slot 转发模式（`#default="slotProps"` 中转）、Portal `:open="true"` 必传、`onVisibleChange` 回调 |
 
 ### 工程文件参考
 
