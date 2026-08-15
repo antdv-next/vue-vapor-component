@@ -888,6 +888,8 @@ grep -n "getContainer.*type" packages/{name}/dist/index.js
 - 任何 `boolean | { ... }` 联合类型（如 `mask`，其中 `false` 表示关闭、`object` 表示配置）
 - 需要 `??` 做默认值回退的所有布尔 prop
 
+参见[规则 13](#13-可选非布尔-prop如-iconfunction-也被-vapor-强制转为-false) — Vapor 强制转换不只影响布尔类型，可选的非布尔 prop（如 `switcherIcon?: IconType`）也会被强制转为 `false`。
+
 ### 8. `Exclude<>` 工具类型在运行时类型提取中无效
 
 `Exclude<T, false>` 在 TypeScript 层面正确排除了 `false`，但 **Vue 运行时类型提取仍会识别出 `Boolean`**，导致与规则 7 相同的强制转换问题。
@@ -928,6 +930,125 @@ getContainer?: string | ContainerType | (() => ContainerType)
 **原因**：Vue 模板中带值属性 `virtual` 解析为 `undefined`，vapor 模式下布尔类型的 `undefined` 被强制转换为 `false`（参见规则 7）。`??` 和默认值回退同样失效。必须用 `:attr="true"` 显式传递布尔值。
 
 **常见受影响属性**：`virtual`、`sticky`、`fixed`、`open`、`full-height` 等布尔 prop。
+
+### 11. 模板中直接用变量名（不要加 `props.` 前缀）
+
+Vue 编译器会将 `<template>` 中出现的 `props.xxx` 自动展开为 `xxx`。在 `<template>` 中写 `props.xxx` 虽然能工作，但属于反模式，应统一省略 `props.` 前缀。
+
+```vue
+<script setup>
+const props = defineProps<{ title: string; disabled: boolean }>()
+</script>
+
+<template>
+  <!-- ❌ 反模式：写了 props. -->
+  <div>{{ props.title }}</div>
+  <button :disabled="props.disabled" />
+
+  <!-- ✅ 正确：直接用变量名，编译器自动处理 -->
+  <div>{{ title }}</div>
+  <button :disabled="disabled" />
+</template>
+```
+
+**注意**：此规则**仅适用于 `<template>`**。`<script>` 中必须用 `props.xxx`。
+
+**批量检测**：
+```bash
+for f in packages/*/src/*.vue; do
+  awk '/<script/ { s=1 } /<\/script>/ { s=0 } /<style/ { st=1 } /<\/style>/ { st=0 } !s && !st && /props\./ { print FILENAME ":" NR ":" $0 }' "$f"
+done
+```
+
+### 12. `reactive()` + `watchEffect` 在 Vapor 中不可靠
+
+在 Vapor 模式下，`reactive()` 创建时捕获的 `let` 变量和 prop 值，通过 `watchEffect` 重新赋值后**不会可靠地触发** `computed(() => reactiveObj)` 重新计算。子组件通过 inject 获取的 context 值会过时。
+
+**原始写法（失效）**：
+```ts
+const treeCtx = reactive<any>({
+  selectable: props.selectable,
+  checkable: props.checkable,
+  get onNodeClick() { return onNodeClick },
+})
+provideTreeContext(computed(() => treeCtx))
+
+// watchEffect 重新赋值 → Vapor 中不触发 computed 重新计算
+watchEffect(() => {
+  treeCtx.selectable = props.selectable
+  treeCtx.checkable = props.checkable
+})
+```
+
+**修复**：对所有属性使用 **getter**，并在提供 context 时用 `computed(() => reactiveObj)`：
+```ts
+const treeCtx = reactive<any>({
+  get selectable() { return props.selectable },
+  get checkable() { return props.checkable },
+  get onNodeClick() { return onNodeClick },
+})
+provideTreeContext(computed(() => treeCtx))
+// 无需 watchEffect — getter 保证每次访问都读到最新值
+```
+
+### 13. 可选非布尔 prop（如 icon/function）也被 Vapor 强制转为 `false`
+
+规则 7 不仅影响布尔类型。当可选 prop 类型为 `IconType | undefined` 等非布尔联合时，如果未传递该 prop，Vapor 仍可能将其强制转换为 `false`（而非 `undefined`），导致 `??` 和 `||` 回退都失效。
+
+**典型场景** — Tree 的 `switcherIcon`：
+```ts
+// interface.ts 中 switcherIcon 为可选 IconType
+switcherIcon?: IconType
+
+// TreeNode.vue 中：
+const switcherIcon = props.switcherIcon || ctx.value?.switcherIcon
+// Vapor 下未传时 props.switcherIcon === false（非 undefined），|| 判断 false 为 falsy
+// 继续到 ctx 分支，但 ctx.switcherIcon 也是 false → 最终 switcherIcon = false
+// renderSwitcherIconDom 返回 false → showSwitcher = false → 不渲染 switcher
+```
+
+**修复**：对可能被 Vapor 强制转换的 prop，显式检查 `=== false`：
+```ts
+const switcherIcon = props.switcherIcon || ctx.value?.switcherIcon
+if (typeof switcherIcon === 'function')
+  return (switcherIcon as any)({ ...props, isLeaf: isInternalLeaf })
+if (switcherIcon === false) return ''   // 显式回退到空字符串
+return switcherIcon
+```
+
+**受影响 prop 类型特征**：可选的非布尔联合类型（`T | undefined`），其中 `T` 不是 `boolean`，但在 Vapor 中仍被强制转换为 `false`。
+
+**常见受影响场景**：
+- `switcherIcon?: IconType`（Tree）
+- `icon?: IconType`
+- 任何 `?: SomeType` 可选 prop（当 SomeType 不包含 `boolean` 时也可能受影响）
+
+### 14. 无 CSSTransition 时跳过过渡 placeholder 逻辑
+
+源项目（Vue Components）的展开/折叠动画通常通过 `CSSTransition` 包装 placeholder 节点，在动画结束后触发 `onMotionEnd` 清理。Vapor 版本若没有对应的过渡组件，placeholder 会永久残留。
+
+**源项目模式**：
+```ts
+// 插入 placeholder 节点 → CSSTransition 播放动画 → onMotionEnd 清理
+const MOTION_FLATTEN_DATA = { key: '__tree_motion_placeholder__', title: null, ... }
+newData.splice(keyIndex + 1, 0, MOTION_FLATTEN_DATA)
+transitionData.value = newData
+motionType.value = 'show'  // CSSTransition 完成后 onMotionEnd 会被调用
+```
+
+**Vapor 修复**：当没有过渡组件时，直接更新到最终状态，跳过 placeholder 逻辑：
+```ts
+if (diffExpanded.key !== null) {
+  // 无 CSSTransition — placeholder 永远不会被清理
+  // 直接更新到最终数据状态
+  prevData.value = newData
+  transitionData.value = newData
+  transitionRange.value = []
+  motionType.value = null
+}
+```
+
+**适用场景**：任何原本依赖 CSSTransition/CSSMotion 做过渡并需要清理中间状态的组件（Tree 展开/折叠、Collapse 面板切换等）。
 
 ---
 

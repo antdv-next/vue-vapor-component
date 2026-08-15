@@ -23,6 +23,7 @@
   import SwitchBasic from './demos/vapor/switch/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
   import TooltipBasic from './demos/vapor/tooltip/basic.vue'
+  import TreeBasic from './demos/vapor/tree/basic.vue'
   import TriggerBasic from './demos/vapor/trigger/basic.vue'
   import UploadBasic from './demos/vapor/upload/basic.vue'
   import NotificationBasic from './demos/vapor/notification/basic.vue'
@@ -122,6 +123,9 @@
       />
       <ListyBasic
         v-if="currentComponent === 'listy' && currentCase === 'basic'"
+      />
+      <TreeBasic
+        v-if="currentComponent === 'tree' && currentCase === 'basic'"
       />
     </template>
   </div>

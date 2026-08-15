@@ -20,16 +20,9 @@
 <template>
   <div class="nav">
     <div class="nav-brand" :class="{ active: isActive }" @click="goHome">
-      <svg
-        class="brand-icon"
-        viewBox="0 0 128 128"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <polygon fill="#41B883" points="20.5,4 107.5,4 128,32 64,124 0,32" />
-        <polygon
-          fill="#35495E"
-          points="36.8,14.5 91.2,14.5 111.5,42.5 64,107.5 16.5,42.5"
-        />
+      <svg class="logo" viewBox="0 0 128 128" width="36" height="36">
+        <path fill="#42b883" d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z"></path>
+        <path fill="#35495e" d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z"></path>
       </svg>
     </div>
     <div v-for="group in demoManifest" :key="group.component" class="nav-group">

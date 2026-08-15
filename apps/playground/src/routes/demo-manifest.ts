@@ -148,6 +148,11 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
+    component: 'tree',
+    label: 'Tree',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
     component: 'listy',
     label: 'Listy',
     cases: [{ name: 'basic', label: 'Basic' }],

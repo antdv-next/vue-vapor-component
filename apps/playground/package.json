@@ -37,6 +37,7 @@
     "@vapor-component/steps": "workspace:*",
     "@vapor-component/switch": "workspace:*",
     "@vapor-component/textarea": "workspace:*",
+    "@vapor-component/tree": "workspace:*",
     "@vapor-component/tooltip": "workspace:*",
     "@vapor-component/tour": "workspace:*",
     "@vapor-component/trigger": "workspace:*",
