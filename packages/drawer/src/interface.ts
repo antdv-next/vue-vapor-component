@@ -9,21 +9,12 @@ export interface PushConfig {
   distance?: number | string
 }
 
-export interface DrawerPanelEvents {
-  onMouseEnter?: (e: MouseEvent) => void
-  onMouseOver?: (e: MouseEvent) => void
-  onMouseLeave?: (e: MouseEvent) => void
-  onClick?: (e: MouseEvent) => void
-  onKeyDown?: (e: KeyboardEvent) => void
-  onKeyUp?: (e: KeyboardEvent) => void
-}
-
-export interface DrawerPanelProps extends DrawerPanelEvents {
+export interface DrawerPanelProps {
   prefixCls: string
   id?: string
 }
 
-export interface DrawerPopupProps extends DrawerPanelEvents {
+export interface DrawerPopupProps {
   prefixCls: string
   open?: boolean
   inline?: boolean
@@ -56,7 +47,6 @@ export interface DrawerPopupProps extends DrawerPanelEvents {
   maskMotion?: CSSMotionProps
 
   afterOpenChange?: (open: boolean) => void
-  onClose?: (e: MouseEvent | KeyboardEvent) => void
 
   classNames?: DrawerClassNames
   styles?: DrawerStyles
@@ -72,11 +62,12 @@ export interface DrawerPopupProps extends DrawerPanelEvents {
       }
 }
 
-export interface DrawerProps
-  extends Omit<DrawerPopupProps, 'prefixCls' | 'inline'>, DrawerPanelEvents {
+export interface DrawerProps extends Omit<
+  DrawerPopupProps,
+  'prefixCls' | 'inline' | 'afterOpenChange'
+> {
   prefixCls?: string
   open?: boolean
-  onClose?: (e: MouseEvent | KeyboardEvent) => void
   destroyOnHidden?: boolean
   getContainer?: any
   panelRef?: any

@@ -27,6 +27,9 @@
     fresh: undefined,
   })
   const attrs = useAttrs()
+  const emit = defineEmits<{
+    'visible-change': [visible: boolean]
+  }>()
   const mergedId = useId(props.id)
   const triggerRef = ref<any>()
 
@@ -80,7 +83,7 @@
     ref="triggerRef"
     :popup-align="align"
     :get-popup-container="getTooltipContainer"
-    :on-open-change="onVisibleChange"
+    @open-change="v => emit('visible-change', v)"
     :after-open-change="afterVisibleChange"
     :popup-motion="motion"
     :default-popup-visible="defaultVisible"

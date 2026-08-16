@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import { ref } from 'vue'
 
 export default function useOriginScroll(
@@ -11,8 +12,7 @@ export default function useOriginScroll(
   let lockTimeout: ReturnType<typeof setTimeout> | null = null
 
   function lockScroll() {
-    if (lockTimeout)
-      clearTimeout(lockTimeout)
+    if (lockTimeout) clearTimeout(lockTimeout)
 
     lockRef.value = true
 
@@ -23,17 +23,15 @@ export default function useOriginScroll(
 
   return (isHorizontal: boolean, delta: number, smoothOffset = false) => {
     const originScroll = isHorizontal
-      ? (delta < 0 && isScrollAtLeft.value)
-        || (delta > 0 && isScrollAtRight.value)
-      : (delta < 0 && isScrollAtTop.value)
-        || (delta > 0 && isScrollAtBottom.value)
+      ? (delta < 0 && isScrollAtLeft.value) ||
+        (delta > 0 && isScrollAtRight.value)
+      : (delta < 0 && isScrollAtTop.value) ||
+        (delta > 0 && isScrollAtBottom.value)
 
     if (smoothOffset && originScroll) {
-      if (lockTimeout)
-        clearTimeout(lockTimeout)
+      if (lockTimeout) clearTimeout(lockTimeout)
       lockRef.value = false
-    }
-    else if (!originScroll || lockRef.value) {
+    } else if (!originScroll || lockRef.value) {
       lockScroll()
     }
 

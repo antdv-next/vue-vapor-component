@@ -1,52 +1,54 @@
 <script setup lang="ts">
-import type { ListyRef } from '@vapor-component/listy'
-import { ref } from 'vue'
-import Listy from '@vapor-component/listy'
-import '@/styles/listy.less'
+  import type { ListyRef } from '@vapor-component/listy'
 
-interface Item {
-  id: number
-  name: string
-  group: string
-}
+  import Listy from '@vapor-component/listy'
+  import { ref } from 'vue'
 
-const data: Item[] = []
-const groups = ['Fruits', 'Vegetables', 'Dairy', 'Meat', 'Grains']
-for (let i = 0; i < 500; i += 1) {
-  data.push({
-    id: i,
-    name: `Item ${i}`,
-    group: groups[i % groups.length],
-  })
-}
+  import '@/styles/listy.less'
 
-const listRef = ref<ListyRef>()
-const virtual = ref(true)
+  interface Item {
+    id: number
+    name: string
+    group: string
+  }
 
-function toggleMode() {
-  virtual.value = !virtual.value
-}
+  const data: Item[] = []
+  const groups = ['Fruits', 'Vegetables', 'Dairy', 'Meat', 'Grains']
+  for (let i = 0; i < 500; i += 1) {
+    data.push({
+      id: i,
+      name: `Item ${i}`,
+      group: groups[i % groups.length],
+    })
+  }
 
-function scrollToTop() {
-  listRef.value?.scrollTo(0)
-}
+  const listRef = ref<ListyRef>()
+  const virtual = ref(true)
 
-function scrollToBottom() {
-  listRef.value?.scrollTo({ key: String(data.length - 1), align: 'bottom' })
-}
+  function toggleMode() {
+    virtual.value = !virtual.value
+  }
 
-function scrollToGroup() {
-  listRef.value?.scrollTo({ groupKey: 'Dairy', align: 'top' })
-}
+  function scrollToTop() {
+    listRef.value?.scrollTo(0)
+  }
 
-function scrollToItem() {
-  listRef.value?.scrollTo({ key: '100', align: 'top', offset: 10 })
-}
+  function scrollToBottom() {
+    listRef.value?.scrollTo({ key: String(data.length - 1), align: 'bottom' })
+  }
 
-function onScroll(e: Event) {
-  const target = e.currentTarget as HTMLElement
-  console.log('scroll:', target.scrollTop)
-}
+  function scrollToGroup() {
+    listRef.value?.scrollTo({ groupKey: 'Dairy', align: 'top' })
+  }
+
+  function scrollToItem() {
+    listRef.value?.scrollTo({ key: '100', align: 'top', offset: 10 })
+  }
+
+  function onScroll(e: Event) {
+    const target = e.currentTarget as HTMLElement
+    console.log('scroll:', target.scrollTop)
+  }
 </script>
 
 <template>
@@ -70,7 +72,10 @@ function onScroll(e: Event) {
       :virtual="virtual"
       :height="400"
       :item-height="38"
-      :group="{ key: (item: Item) => item.group, title: (key: any, items: any[]) => `${key} (${items.length})` }"
+      :group="{
+        key: (item: Item) => item.group,
+        title: (key: any, items: any[]) => `${key} (${items.length})`,
+      }"
       :sticky="true"
       @scroll="onScroll"
     >
@@ -84,7 +89,9 @@ function onScroll(e: Event) {
             boxSizing: 'border-box',
           }"
         >
-          {{ (slotProps as any).item.name }} ({{ (slotProps as any).item.group }}) — #{{ (slotProps as any).index }}
+          {{ (slotProps as any).item.name }} ({{
+            (slotProps as any).item.group
+          }}) — #{{ (slotProps as any).index }}
         </div>
       </template>
     </Listy>
@@ -92,11 +99,11 @@ function onScroll(e: Event) {
 </template>
 
 <style scoped>
-button {
-  padding: 4px 12px;
-  cursor: pointer;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: #fff;
-}
+  button {
+    padding: 4px 12px;
+    cursor: pointer;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+  }
 </style>

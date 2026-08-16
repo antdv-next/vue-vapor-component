@@ -7,8 +7,6 @@ export interface MotionThumbInterface {
   getValueIndex: (value: SegmentedValue) => number
   prefixCls: string
   motionName: string
-  onMotionStart: VoidFunction
-  onMotionEnd: VoidFunction
   direction?: 'ltr' | 'rtl'
   vertical?: boolean
 }
@@ -42,7 +40,6 @@ export interface SegmentedProps {
   options: SegmentedOptions
   defaultValue?: SegmentedValue
   value?: SegmentedValue
-  onChange?: (value: SegmentedValue) => void
   disabled?: boolean
   prefixCls?: string
   direction?: 'ltr' | 'rtl'

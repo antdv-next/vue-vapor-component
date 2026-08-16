@@ -2,25 +2,37 @@
   import type { CSSProperties } from 'vue'
 
   import raf from '@v-c/util/dist/raf'
-  import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, useTemplateRef, watch } from 'vue'
+  import {
+    computed,
+    nextTick,
+    onMounted,
+    onUnmounted,
+    ref,
+    shallowRef,
+    useTemplateRef,
+    watch,
+  } from 'vue'
 
   defineOptions({ name: 'ScrollBar', inheritAttrs: false })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    scrollOffset: number
-    scrollRange: number
-    rtl: boolean
-    horizontal?: boolean
-    style?: CSSProperties
-    thumbStyle?: CSSProperties
-    spinSize: number
-    containerSize: number
-    showScrollBar?: boolean | 'optional'
-  }>(), {
-    horizontal: false,
-    showScrollBar: 'optional',
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      scrollOffset: number
+      scrollRange: number
+      rtl: boolean
+      horizontal?: boolean
+      style?: CSSProperties
+      thumbStyle?: CSSProperties
+      spinSize: number
+      containerSize: number
+      showScrollBar?: boolean | 'optional'
+    }>(),
+    {
+      horizontal: false,
+      showScrollBar: 'optional',
+    },
+  )
 
   const emit = defineEmits<{
     scroll: [scrollOffset: number, horizontal: boolean]
@@ -37,22 +49,26 @@
   const scrollbarRef = useTemplateRef<HTMLDivElement>('scrollbar')
   const thumbRef = useTemplateRef<HTMLDivElement>('thumb')
 
-  const visible = ref(props.showScrollBar === 'optional' ? true : props.showScrollBar)
+  const visible = ref(
+    props.showScrollBar === 'optional' ? true : props.showScrollBar,
+  )
   let visibleTimeout: ReturnType<typeof setTimeout> | null = null
 
   const delayHidden = () => {
-    if (props.showScrollBar === true || props.showScrollBar === false)
-      return
-    if (visibleTimeout)
-      clearTimeout(visibleTimeout)
+    if (props.showScrollBar === true || props.showScrollBar === false) return
+    if (visibleTimeout) clearTimeout(visibleTimeout)
     visible.value = true
     visibleTimeout = setTimeout(() => {
       visible.value = false
     }, 3000)
   }
 
-  const enableScrollRange = computed(() => props.scrollRange - props.containerSize || 0)
-  const enableOffsetRange = computed(() => props.containerSize - props.spinSize || 0)
+  const enableScrollRange = computed(
+    () => props.scrollRange - props.containerSize || 0,
+  )
+  const enableOffsetRange = computed(
+    () => props.containerSize - props.spinSize || 0,
+  )
 
   const top = computed(() => {
     if (props.scrollOffset === 0 || enableScrollRange.value === 0) {
@@ -153,7 +169,10 @@
 
   function getPageXY(e: MouseEvent | TouchEvent, horizontal: boolean): number {
     const obj = 'touches' in e ? e.touches[0] : e
-    return obj[horizontal ? 'pageX' : 'pageY'] - window[horizontal ? 'scrollX' : 'scrollY']
+    return (
+      obj[horizontal ? 'pageX' : 'pageY'] -
+      window[horizontal ? 'scrollX' : 'scrollY']
+    )
   }
 
   function getScrollOffsetByThumbTop(
@@ -188,15 +207,23 @@
     if (props.horizontal) {
       const horizontalStart = isLTR.value ? rect.left : rect.right
       if (!Number.isFinite(horizontalStart)) return
-      nextTop = (isLTR.value ? pagePosition - horizontalStart : horizontalStart - pagePosition) - props.spinSize / 2
-    }
-    else {
+      nextTop =
+        (isLTR.value
+          ? pagePosition - horizontalStart
+          : horizontalStart - pagePosition) -
+        props.spinSize / 2
+    } else {
       if (!Number.isFinite(rect.top)) return
       nextTop = pagePosition - rect.top - props.spinSize / 2
     }
 
-    emit('scroll',
-      getScrollOffsetByThumbTop(nextTop, enableScrollRange.value, enableOffsetRange.value),
+    emit(
+      'scroll',
+      getScrollOffsetByThumbTop(
+        nextTop,
+        enableScrollRange.value,
+        enableOffsetRange.value,
+      ),
       props.horizontal,
     )
   }
@@ -235,8 +262,12 @@
 
       if (scrollbarEle && thumbEle && !touchStartBound) {
         touchStartBound = true
-        scrollbarEle.addEventListener('touchstart', onScrollbarTouchStart, { passive: false })
-        thumbEle.addEventListener('touchstart', onThumbMouseDown as any, { passive: false })
+        scrollbarEle.addEventListener('touchstart', onScrollbarTouchStart, {
+          passive: false,
+        })
+        thumbEle.addEventListener('touchstart', onThumbMouseDown as any, {
+          passive: false,
+        })
       }
     })
   })
@@ -255,16 +286,17 @@
 
         const rect = scrollbarRef.value?.getBoundingClientRect()
         if (!rect) return
-        const scale = props.containerSize / (props.horizontal ? rect.width : rect.height)
+        const scale =
+          props.containerSize / (props.horizontal ? rect.width : rect.height)
 
         if (stateDragging) {
-          const offset = (getPageXY(e, props.horizontal) - (statePageY || 0)) * scale
+          const offset =
+            (getPageXY(e, props.horizontal) - (statePageY || 0)) * scale
           let newTop = stateStartTop || 0
 
           if (!isLTR.value && props.horizontal) {
             newTop -= offset
-          }
-          else {
+          } else {
             newTop += offset
           }
 
@@ -285,8 +317,12 @@
         emit('stop-move')
       }
 
-      window.addEventListener('mousemove', onMouseMove, { passive: true } as any)
-      window.addEventListener('touchmove', onMouseMove, { passive: true } as any)
+      window.addEventListener('mousemove', onMouseMove, {
+        passive: true,
+      } as any)
+      window.addEventListener('touchmove', onMouseMove, {
+        passive: true,
+      } as any)
       window.addEventListener('mouseup', onMouseUp, { passive: true } as any)
       window.addEventListener('touchend', onMouseUp, { passive: true } as any)
 
@@ -300,9 +336,12 @@
     }
   })
 
-  watch(() => props.scrollOffset, () => {
-    delayHidden()
-  })
+  watch(
+    () => props.scrollOffset,
+    () => {
+      delayHidden()
+    },
+  )
 
   onUnmounted(() => {
     if (visibleTimeout) {

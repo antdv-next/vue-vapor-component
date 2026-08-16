@@ -36,7 +36,34 @@
     mode: 'input',
     stringMode: false,
   })
-  const emit = defineEmits()
+  const emit = defineEmits<{
+    'update:value': [value: any]
+    input: [text: string]
+    change: [value: any]
+    'press-enter': [e: KeyboardEvent]
+    step: [
+      value: any,
+      info: {
+        offset: any
+        type: 'up' | 'down'
+        emitter: 'handler' | 'keyboard' | 'wheel'
+      },
+    ]
+    mousedown: [e: MouseEvent]
+    click: [e: MouseEvent]
+    mouseup: [e: MouseEvent]
+    mouseleave: [e: MouseEvent]
+    mousemove: [e: MouseEvent]
+    mouseenter: [e: MouseEvent]
+    mouseout: [e: MouseEvent]
+    focus: [e: FocusEvent]
+    blur: [e: FocusEvent]
+    keydown: [e: KeyboardEvent]
+    keyup: [e: KeyboardEvent]
+    compositionstart: [e: CompositionEvent]
+    compositionend: [e: CompositionEvent]
+    beforeinput: [e: InputEvent]
+  }>()
   const attrs = useAttrs()
   const slots = useSlots()
 
@@ -275,7 +302,7 @@
           ? null
           : getDecimalValue(props.stringMode, updateValue)
         emit('update:value', outValue as any)
-        props.onChange?.(outValue as any)
+        emit('change', outValue as any)
 
         if (props.value === undefined) {
           setInputValue(updateValue, userTyping)
@@ -305,7 +332,7 @@
       }
     }
 
-    props.onInput?.(inputStr)
+    emit('input', inputStr)
 
     onNextPromise(() => {
       let nextInputStr = inputStr
@@ -322,12 +349,12 @@
   // >>> Composition
   const onCompositionStart = (e: CompositionEvent) => {
     compositionRef.value = true
-    props.onCompositionStart?.(e)
+    emit('compositionstart', e)
   }
 
   const onCompositionEnd = (e: CompositionEvent) => {
     compositionRef.value = false
-    props.onCompositionEnd?.(e)
+    emit('compositionend', e)
 
     if (inputRef.value) {
       collectInputValue(inputRef.value.value)
@@ -364,7 +391,7 @@
     const updatedValue = triggerValueUpdate(target, false)
 
     const outValue = getDecimalValue(props.stringMode, updatedValue)
-    props.onStep?.(outValue as any, {
+    emit('step', outValue as any, {
       offset: shiftKeyRef.value
         ? getDecupleSteps(props.step ?? 1)
         : (props.step ?? 1),
@@ -395,7 +422,7 @@
 
   const onBeforeInput = (e: InputEvent) => {
     userTypingRef.value = true
-    props.onBeforeInput?.(e)
+    emit('beforeinput', e)
   }
 
   const onKeyDown = (event: KeyboardEvent) => {
@@ -409,11 +436,11 @@
         userTypingRef.value = false
       }
       flushInputValue(false)
-      props.onPressEnter?.(event)
+      emit('press-enter', event)
     }
 
     if (props.keyboard === false) {
-      props.onKeyDown?.(event)
+      emit('keydown', event)
       return
     }
 
@@ -425,13 +452,13 @@
       event.preventDefault()
     }
 
-    props.onKeyDown?.(event)
+    emit('keydown', event)
   }
 
   const onKeyUp = (event: KeyboardEvent) => {
     userTypingRef.value = false
     shiftKeyRef.value = false
-    props.onKeyUp?.(event)
+    emit('keyup', event)
   }
 
   // ============================ Wheel ============================
@@ -454,12 +481,12 @@
 
     focus.value = false
     userTypingRef.value = false
-    props.onBlur?.(e)
+    emit('blur', e)
   }
 
   const onFocus = (e: FocusEvent) => {
     focus.value = true
-    props.onFocus?.(e)
+    emit('focus', e)
   }
 
   // >>> Mouse events
@@ -469,7 +496,7 @@
       event.preventDefault()
     }
 
-    props.onMouseDown?.(event)
+    emit('mousedown', event)
   }
 
   // ========================== Controlled ==========================
@@ -543,27 +570,9 @@
       'formatter',
       'precision',
       'decimalSeparator',
-      'onChange',
-      'onInput',
-      'onPressEnter',
-      'onStep',
       'changeOnBlur',
       'class',
       'style',
-      'onMouseDown',
-      'onClick',
-      'onMouseUp',
-      'onMouseLeave',
-      'onMouseMove',
-      'onMouseEnter',
-      'onMouseOut',
-      'onFocus',
-      'onBlur',
-      'onKeyDown',
-      'onKeyUp',
-      'onCompositionStart',
-      'onCompositionEnd',
-      'onBeforeInput',
     ],
   )
   const rootClass = computed(() => {
@@ -593,27 +602,27 @@
     @mousedown="onInternalMouseDown"
     @mouseup="
       (e: MouseEvent) => {
-        emit('mouseUp', e)
+        emit('mouseup', e)
       }
     "
     @mouseleave="
       (e: MouseEvent) => {
-        emit('mouseLeave', e)
+        emit('mouseleave', e)
       }
     "
     @mousemove="
       (e: MouseEvent) => {
-        emit('mouseMove', e)
+        emit('mousemove', e)
       }
     "
     @mouseenter="
       (e: MouseEvent) => {
-        emit('mouseEnter', e)
+        emit('mouseenter', e)
       }
     "
     @mouseout="
       (e: MouseEvent) => {
-        emit('mouseOut', e)
+        emit('mouseout', e)
       }
     "
     @click="

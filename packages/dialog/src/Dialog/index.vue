@@ -24,6 +24,11 @@
     maskClosable: true,
     forceRender: false,
   })
+  const emit = defineEmits<{
+    close: [e?: any]
+    'after-close': []
+    'after-open-change': [open: boolean]
+  }>()
   if (process.env.NODE_ENV !== 'production') {
     ;['wrapStyle', 'bodyStyle', 'maskStyle'].forEach(prop => {
       warning(
@@ -65,7 +70,6 @@
       focusDialogContent()
     } else {
       const _animatedVisible = animatedVisible.value
-      // Clean up scroll bar & focus back
       animatedVisible.value = false
 
       if (
@@ -81,17 +85,16 @@
         lastOutSideActiveElementRef.value = null
       }
 
-      // Trigger afterClose only when change visible from true to false
       if (_animatedVisible) {
-        props?.afterClose?.()
+        emit('after-close')
       }
     }
 
-    props?.afterOpenChange?.(newVisible)
+    emit('after-open-change', newVisible)
   }
 
   function onInternalClose(e: any) {
-    props?.onClose?.(e)
+    emit('close', e)
   }
 
   // >>> Content
@@ -197,11 +200,7 @@
       v-bind="wrapProps"
     >
       <Content
-        v-bind="{
-          ...props,
-          onClose: onInternalClose,
-          onVisibleChanged: onDialogVisibleChanged,
-        }"
+        v-bind="props"
         ref="contentRef"
         :closable="closable"
         :ariaId="ariaId"
@@ -209,6 +208,7 @@
         :visible="!!visible"
         :isFixedPos="isFixedPos"
         :motionName="getMotionName(prefixCls!, transitionName, animation)!"
+        @close="onInternalClose"
       >
         <template v-for="slotName in panelSlots" #[slotName]>
           <slot :name="slotName" />

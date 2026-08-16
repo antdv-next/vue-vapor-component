@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'vue'
+
 import type { Direction } from './interface'
 
 export function getOffset(value: number, min: number, max: number) {

@@ -10,7 +10,7 @@ export function findExpandedKeys(prev: Key[] = [], next: Key[] = []) {
 
   function find(shorter: Key[], longer: Key[]) {
     const cache = new Map<Key, boolean>()
-    shorter.forEach((key) => {
+    shorter.forEach(key => {
       cache.set(key, true)
     })
 
@@ -32,13 +32,19 @@ export function findExpandedKeys(prev: Key[] = [], next: Key[] = []) {
   }
 }
 
-export function getExpandRange(shorter: FlattenNode[], longer: FlattenNode[], key: Key) {
+export function getExpandRange(
+  shorter: FlattenNode[],
+  longer: FlattenNode[],
+  key: Key,
+) {
   const shorterStartIndex = shorter.findIndex(data => data.key === key)
   const shorterEndNode = shorter[shorterStartIndex + 1]
   const longerStartIndex = longer.findIndex(data => data.key === key)
 
   if (shorterEndNode) {
-    const longerEndIndex = longer.findIndex(data => data.key === shorterEndNode.key)
+    const longerEndIndex = longer.findIndex(
+      data => data.key === shorterEndNode.key,
+    )
     return longer.slice(longerStartIndex + 1, longerEndIndex)
   }
   return longer.slice(longerStartIndex + 1)

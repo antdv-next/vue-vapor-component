@@ -5,10 +5,11 @@ import type { CSSProperties } from 'vue'
  */
 export type NotificationListConfig = Partial<
   Omit<NotificationProps, 'prefixCls' | 'key'>
-> & {
-  key: Key
-  placement?: Placement
-}
+> &
+  NotificationCallbacks & {
+    key: Key
+    placement?: Placement
+  }
 
 export type Placement =
   | 'top'
@@ -101,8 +102,9 @@ export interface NotificationProps {
   showProgress?: boolean
   hovering?: boolean
   pauseOnHover?: boolean
+}
 
-  // Function
+export interface NotificationCallbacks {
   onClick?: (e: MouseEvent) => void
   onMouseEnter?: (e: MouseEvent) => void
   onMouseLeave?: (e: MouseEvent) => void
@@ -133,8 +135,6 @@ export interface NotificationListProps {
   motion?: any
   className?: string
   style?: CSSProperties
-  onNoticeClose?: (key: Key) => void
-  onAllRemoved?: (placement: Placement) => void
 }
 
 // ===== Notifications types =====
@@ -150,7 +150,6 @@ export interface NotificationsProps {
   components?: ComponentsType
   className?: (placement: Placement) => string
   style?: (placement: Placement) => CSSProperties
-  onAllRemoved?: VoidFunction
   stack?: StackConfig
 }
 
@@ -191,6 +190,4 @@ export interface NotificationAPI {
 
 export interface NotificationProgressProps {
   percent: number
-  className?: string
-  style?: CSSProperties
 }

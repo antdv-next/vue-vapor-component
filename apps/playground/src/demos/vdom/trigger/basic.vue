@@ -173,7 +173,7 @@
         }"
         :popup="'i am a popup'"
         :popup-motion="{ name: state.transitionName }"
-        :on-after-open-change="handleAfterOpenChange"
+        :after-open-change="handleAfterOpenChange"
       >
         <template v-slot="{ open, trigger: triggerProps }">
           <button type="button" class="trigger-target" v-bind="triggerProps">

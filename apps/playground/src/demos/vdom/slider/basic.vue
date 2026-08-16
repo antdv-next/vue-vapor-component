@@ -4,7 +4,8 @@
   import { useSlider } from '@/composables/useSlider.ts'
   import '@/styles/slider.less'
 
-  const { value, rangeValue, marksValue, disabledValue, verticalValue, marks } = useSlider()
+  const { value, rangeValue, marksValue, disabledValue, verticalValue, marks } =
+    useSlider()
 </script>
 
 <template>
@@ -17,7 +18,11 @@
       :min="0"
       :max="100"
       :step="1"
-      @change="(v) => { value = v as number }"
+      @change="
+        v => {
+          value = v as number
+        }
+      "
     />
     <p>Value: {{ value }}</p>
 
@@ -28,7 +33,11 @@
       :max="100"
       :step="1"
       :range="true"
-      @change="(v) => { rangeValue = v as number[] }"
+      @change="
+        v => {
+          rangeValue = v as number[]
+        }
+      "
     />
     <p>Range: {{ rangeValue.join(' - ') }}</p>
 
@@ -40,9 +49,13 @@
       :step="5"
       :marks="marks"
       :dots="true"
-      @change="(v) => { marksValue = v as number }"
+      @change="
+        v => {
+          marksValue = v as number
+        }
+      "
     />
-    <p style="margin-top: 15px;">Marks: {{ marksValue }}</p>
+    <p style="margin-top: 15px">Marks: {{ marksValue }}</p>
 
     <h4>Disabled</h4>
     <Slider
@@ -61,7 +74,11 @@
         :max="100"
         :step="1"
         :vertical="true"
-        @change="(v) => { verticalValue = v as number }"
+        @change="
+          v => {
+            verticalValue = v as number
+          }
+        "
       />
       <span>{{ verticalValue }}</span>
     </div>

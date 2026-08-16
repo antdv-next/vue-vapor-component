@@ -94,17 +94,12 @@ export interface TriggerProps {
 
   zIndex?: number
 
-  onPopupAlign?: (element: HTMLElement, align: AlignType) => void
-
   stretch?: string
 
   // Open
   popupVisible?: boolean
   defaultPopupVisible?: boolean
-  onOpenChange?: (visible: boolean) => void
   afterOpenChange?: (visible: boolean) => void
-  /** @deprecated Use `onOpenChange` instead */
-  onPopupVisibleChange?: (visible: boolean) => void
   /** @deprecated Use `afterOpenChange` instead */
   afterPopupVisibleChange?: (visible: boolean) => void
 
@@ -137,7 +132,6 @@ export interface TriggerProps {
   uniqueContainerStyle?: CSSProperties
   popupStyle?: CSSProperties
   getPopupClassNameFromAlign?: (align: AlignType) => string
-  onPopupClick?: (e: MouseEvent) => void
 
   alignPoint?: boolean
 
@@ -154,21 +148,13 @@ export interface TriggerProps {
 // ======================== Popup Props ========================
 
 export interface PopupProps {
-  onEsc?: any // PortalProps['onEsc']
-
   prefixCls: string
   className?: string
-  style?: CSSProperties
   popup?: TriggerProps['popup']
   target: HTMLElement
-  onMouseEnter?: (e: MouseEvent) => void
-  onMouseLeave?: (e: MouseEvent) => void
-  onPointerEnter?: (e: PointerEvent) => void
-  onPointerDownCapture?: (e: PointerEvent) => void
   zIndex?: number
 
   mask?: boolean
-  onVisibleChanged: (visible: boolean) => void
 
   // Arrow
   align?: AlignType
@@ -180,9 +166,6 @@ export interface PopupProps {
   keepDom: boolean
   fresh?: boolean
 
-  // Click
-  onClick?: (e: MouseEvent) => void
-
   // Motion
   motion?: any
   maskMotion?: any
@@ -192,16 +175,12 @@ export interface PopupProps {
   getPopupContainer?: TriggerProps['getPopupContainer']
   autoDestroy?: boolean
 
-  // children
-
   // Align
   ready: boolean
   offsetX: number
   offsetY: number
   offsetR: number
   offsetB: number
-  onAlign: VoidFunction
-  onPrepare: (element?: Element) => Promise<void>
 
   // stretch
   stretch?: string
@@ -246,7 +225,6 @@ export interface UniqueShowOptions {
   arrow?: ArrowTypeOuter
   getPopupContainer?: TriggerProps['getPopupContainer']
   getPopupClassNameFromAlign?: (align: AlignType) => string
-  onEsc?: any
 }
 
 export interface UniqueProviderProps {

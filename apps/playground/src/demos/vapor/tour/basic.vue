@@ -1,6 +1,5 @@
 <script setup vapor lang="ts">
   import Tour from '@vapor-component/tour'
-
   import { computed, ref } from 'vue'
 
   import '@/styles/tour.less'
@@ -35,7 +34,15 @@
     <h4>Tour (Vapor)</h4>
 
     <div class="demo-controls">
-      <button @click="() => { open = !open }">{{ open ? 'Close Tour' : 'Start Tour' }}</button>
+      <button
+        @click="
+          () => {
+            open = !open
+          }
+        "
+      >
+        {{ open ? 'Close Tour' : 'Start Tour' }}
+      </button>
       <span>Open: {{ open }}</span>
     </div>
 
@@ -49,8 +56,16 @@
       :open="open"
       :steps="steps"
       :z-index="1001"
-      @close="() => { open = false }"
-      @finish="() => { open = false }"
+      @close="
+        () => {
+          open = false
+        }
+      "
+      @finish="
+        () => {
+          open = false
+        }
+      "
     />
   </div>
 </template>

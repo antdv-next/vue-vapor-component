@@ -1,4 +1,3 @@
-import type { MouseEventHandler } from '@v-c/util/dist/EventInterface'
 import type { CSSProperties } from 'vue'
 
 export type SemanticName = 'root' | 'rail' | 'track'
@@ -18,7 +17,6 @@ export interface ProgressProps {
   gapDegree?: number
   gapPosition?: GapPositionType
   transition?: string
-  onClick?: MouseEventHandler
   loading?: boolean
   steps?: number | { count: number; gap: number }
 }

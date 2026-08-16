@@ -1,16 +1,13 @@
 <script setup vapor lang="ts">
   import type { Key } from '@v-c/util/dist/type'
   import type { CSSProperties } from 'vue'
-  import type {
-    ExtraRenderInfo,
-    GetKey,
-    ListProps,
-  } from './interface'
 
-  import ResizeObserver from '@vapor-component/resize-observer'
+  import type { ExtraRenderInfo, GetKey, ListProps } from './interface'
+
+  import { clsx } from '@v-c/util'
   import { getDOM } from '@v-c/util/dist/Dom/findDOMNode'
   import omit from '@v-c/util/dist/omit'
-  import { clsx } from '@v-c/util'
+  import ResizeObserver from '@vapor-component/resize-observer'
   import {
     computed,
     nextTick,
@@ -24,14 +21,14 @@
   } from 'vue'
 
   import Filler from './Filler.vue'
-  import ScrollBar from './ScrollBar.vue'
   import useDiffItem from './hooks/useDiffItem'
+  import useFrameWheel from './hooks/useFrameWheel'
   import { useGetSize } from './hooks/useGetSize'
   import useHeights from './hooks/useHeights'
-  import useFrameWheel from './hooks/useFrameWheel'
   import useMobileTouchMove from './hooks/useMobileTouchMove'
   import useScrollDrag from './hooks/useScrollDrag'
   import useScrollTo from './hooks/useScrollTo'
+  import ScrollBar from './ScrollBar.vue'
   import { getSpinSize } from './utils/scrollbarUtil'
 
   defineOptions({ name: 'VirtualList', inheritAttrs: false })
@@ -45,6 +42,11 @@
   })
 
   const attrs = useAttrs()
+  const emit = defineEmits<{
+    scroll: [e: Event]
+    'virtual-scroll': [info: { x: number; y: number }]
+    'visible-change': [renderList: any[], data: any[]]
+  }>()
 
   const EMPTY_DATA: any[] = []
 
@@ -57,7 +59,7 @@
   let itemKeyProp: Key | ((item: any) => Key) = props.itemKey
   watch(
     () => props.itemKey,
-    (val) => {
+    val => {
       itemKeyProp = val
     },
   )
@@ -71,11 +73,13 @@
   }
 
   // ================================ Height ================================
-  const [_setInstanceRef, collectHeight, heights, heightUpdatedMark, instanceRef] = useHeights(
-    getKey,
-    undefined,
-    undefined,
-  )
+  const [
+    _setInstanceRef,
+    collectHeight,
+    heights,
+    heightUpdatedMark,
+    instanceRef,
+  ] = useHeights(getKey, undefined, undefined)
 
   // Auto-measure item heights via ResizeObserver on each item wrapper
   let itemResizeObserver: any = null
@@ -91,21 +95,23 @@
 
   // ================================= MISC =================================
   const mergedData = shallowRef(props.data || EMPTY_DATA)
-  watch(() => props.data, () => {
-    mergedData.value = props.data || EMPTY_DATA
-  })
+  watch(
+    () => props.data,
+    () => {
+      mergedData.value = props.data || EMPTY_DATA
+    },
+  )
 
-  const useVirtual = computed(() =>
-    !!(props.virtual !== false && props.height && props.itemHeight),
+  const useVirtual = computed(
+    () => !!(props.virtual !== false && props.height && props.itemHeight),
   )
 
   const inVirtual = computed(() => {
     const data = mergedData.value
     return (
-      useVirtual.value
-      && data
-      && (props.itemHeight! * data.length > props.height!
-        || !!props.scrollWidth)
+      useVirtual.value &&
+      data &&
+      (props.itemHeight! * data.length > props.height! || !!props.scrollWidth)
     )
   })
 
@@ -134,8 +140,7 @@
     let value: number
     if (typeof newTop === 'function') {
       value = newTop(offsetTop.value)
-    }
-    else {
+    } else {
       value = newTop
     }
 
@@ -190,7 +195,10 @@
         const safeItemHeight = itemHeight!
         const safeListHeight = height!
 
-        const startIndex = Math.max(0, Math.floor(offsetTop.value / safeItemHeight))
+        const startIndex = Math.max(
+          0,
+          Math.floor(offsetTop.value / safeItemHeight),
+        )
         const startOffset = startIndex * safeItemHeight
 
         let endIndex = startIndex + Math.ceil(safeListHeight / safeItemHeight)
@@ -215,14 +223,18 @@
         const key = getKey(item)
 
         const cacheHeight = heights.get(key)
-        const currentItemBottom = itemTop + (cacheHeight === undefined ? itemHeight! : cacheHeight)
+        const currentItemBottom =
+          itemTop + (cacheHeight === undefined ? itemHeight! : cacheHeight)
 
         if (currentItemBottom >= _offsetTop && startIndex === undefined) {
           startIndex = i
           startOffset = itemTop
         }
 
-        if (currentItemBottom > _offsetTop + height! && endIndex === undefined) {
+        if (
+          currentItemBottom > _offsetTop + height! &&
+          endIndex === undefined
+        ) {
           endIndex = i
         }
 
@@ -249,40 +261,40 @@
   )
 
   // Sync scroll top when height changes
-  watch(
-    scrollHeight,
-    () => {
-      const changedRecord = heights.getRecord()
-      if (changedRecord.size === 1) {
-        const recordKey = Array.from(changedRecord.keys())[0]
-        const prevCacheHeight = changedRecord.get(recordKey)
+  watch(scrollHeight, () => {
+    const changedRecord = heights.getRecord()
+    if (changedRecord.size === 1) {
+      const recordKey = Array.from(changedRecord.keys())[0]
+      const prevCacheHeight = changedRecord.get(recordKey)
 
-        const startItem = mergedData.value[start.value]
-        if (startItem && prevCacheHeight === undefined) {
-          const startIndexKey = getKey(startItem)
-          if (startIndexKey === recordKey) {
-            const realStartHeight = heights.get(recordKey)
-            const diffHeight = realStartHeight - props.itemHeight!
-            syncScrollTop(ori => ori + diffHeight)
-          }
+      const startItem = mergedData.value[start.value]
+      if (startItem && prevCacheHeight === undefined) {
+        const startIndexKey = getKey(startItem)
+        if (startIndexKey === recordKey) {
+          const realStartHeight = heights.get(recordKey)
+          const diffHeight = realStartHeight - props.itemHeight!
+          syncScrollTop(ori => ori + diffHeight)
         }
       }
+    }
 
-      if (useVirtual.value && props.height) {
-        const maxScrollTop = Math.max(0, scrollHeight.value - props.height)
-        if (offsetTop.value > maxScrollTop) {
-          syncScrollTop(maxScrollTop)
-        }
+    if (useVirtual.value && props.height) {
+      const maxScrollTop = Math.max(0, scrollHeight.value - props.height)
+      if (offsetTop.value > maxScrollTop) {
+        syncScrollTop(maxScrollTop)
       }
+    }
 
-      heights.resetRecord()
-    },
-  )
+    heights.resetRecord()
+  })
 
   // ================================= Size =================================
   const size = shallowRef({ width: 0, height: props.height || 0 })
 
-  const onHolderResize = (sizeInfo: { offsetWidth: number; offsetHeight: number }) => {
+  const onHolderResize = (sizeInfo: {
+    offsetWidth: number
+    offsetHeight: number
+  }) => {
     size.value = {
       width: sizeInfo.offsetWidth,
       height: sizeInfo.offsetHeight,
@@ -301,16 +313,14 @@
   const lastVirtualScrollInfo = shallowRef(getVirtualScrollInfo())
 
   const triggerScroll = (params?: { x?: number; y?: number }) => {
-    if (props.onVirtualScroll) {
-      const nextInfo = { ...getVirtualScrollInfo(), ...params }
+    const nextInfo = { ...getVirtualScrollInfo(), ...params }
 
-      if (
-        lastVirtualScrollInfo.value.x !== nextInfo.x
-        || lastVirtualScrollInfo.value.y !== nextInfo.y
-      ) {
-        props.onVirtualScroll(nextInfo)
-        lastVirtualScrollInfo.value = nextInfo
-      }
+    if (
+      lastVirtualScrollInfo.value.x !== nextInfo.x ||
+      lastVirtualScrollInfo.value.y !== nextInfo.y
+    ) {
+      emit('virtual-scroll', nextInfo)
+      lastVirtualScrollInfo.value = nextInfo
     }
   }
 
@@ -321,9 +331,13 @@
   const hasHorizontalScroll = computed(() => horizontalRange.value > 0)
 
   const isScrollAtTop = computed(() => offsetTop.value === 0)
-  const isScrollAtBottom = computed(() => offsetTop.value + props.height! >= scrollHeight.value)
+  const isScrollAtBottom = computed(
+    () => offsetTop.value + props.height! >= scrollHeight.value,
+  )
   const isScrollAtLeft = computed(() => offsetLeft.value === 0)
-  const isScrollAtRight = computed(() => offsetLeft.value >= horizontalRange.value)
+  const isScrollAtRight = computed(
+    () => offsetLeft.value >= horizontalRange.value,
+  )
 
   const keepInHorizontalRange = (nextOffsetLeft: number) => {
     const max = horizontalRange.value
@@ -345,12 +359,13 @@
     hasHorizontalScroll,
     (offsetY, isHorizontal) => {
       if (isHorizontal) {
-        const next = isRTL.value ? offsetLeft.value - offsetY : offsetLeft.value + offsetY
+        const next = isRTL.value
+          ? offsetLeft.value - offsetY
+          : offsetLeft.value + offsetY
         const aligned = keepInHorizontalRange(next)
         offsetLeft.value = aligned
         triggerScroll({ x: isRTL.value ? -aligned : aligned })
-      }
-      else {
+      } else {
         syncScrollTop(top => top + offsetY)
       }
     },
@@ -363,7 +378,7 @@
         return
       }
 
-      const onMozMousePixelScroll: EventListener = (rawEvent) => {
+      const onMozMousePixelScroll: EventListener = rawEvent => {
         const event = rawEvent as WheelEvent & { detail?: number }
         const detail = event.detail ?? 0
         const scrollingUpAtTop = isScrollAtTop.value && detail < 0
@@ -375,13 +390,20 @@
       }
 
       element.addEventListener('wheel', onWheel, { passive: false })
-      element.addEventListener('DOMMouseScroll', onFireFoxScroll, { passive: true })
-      element.addEventListener('MozMousePixelScroll', onMozMousePixelScroll, { passive: false })
+      element.addEventListener('DOMMouseScroll', onFireFoxScroll, {
+        passive: true,
+      })
+      element.addEventListener('MozMousePixelScroll', onMozMousePixelScroll, {
+        passive: false,
+      })
 
       onCleanup(() => {
         element.removeEventListener('wheel', onWheel)
         element.removeEventListener('DOMMouseScroll', onFireFoxScroll)
-        element.removeEventListener('MozMousePixelScroll', onMozMousePixelScroll)
+        element.removeEventListener(
+          'MozMousePixelScroll',
+          onMozMousePixelScroll,
+        )
       })
     },
     {
@@ -395,34 +417,30 @@
     componentRef,
     (isHorizontal, offset, _smoothOffset, _e) => {
       if (isHorizontal) {
-        const next = isRTL.value ? offsetLeft.value - offset : offsetLeft.value + offset
+        const next = isRTL.value
+          ? offsetLeft.value - offset
+          : offsetLeft.value + offset
         const aligned = keepInHorizontalRange(next)
         offsetLeft.value = aligned
         triggerScroll({ x: isRTL.value ? -aligned : aligned })
         return true
-      }
-      else {
+      } else {
         syncScrollTop(top => top + offset)
         return true
       }
     },
   )
 
-  useScrollDrag(
-    inVirtual,
-    componentRef,
-    (offset) => {
-      syncScrollTop(top => top + offset)
-    },
-  )
+  useScrollDrag(inVirtual, componentRef, offset => {
+    syncScrollTop(top => top + offset)
+  })
 
   // ========================== ScrollBar =========================
   const onScrollBar = (newScrollOffset: number, horizontal?: boolean) => {
     if (horizontal) {
       offsetLeft.value = newScrollOffset
       triggerScroll({ x: isRTL.value ? -newScrollOffset : newScrollOffset })
-    }
-    else {
+    } else {
       syncScrollTop(newScrollOffset)
     }
   }
@@ -442,7 +460,10 @@
     [() => props.height, scrollHeight, inVirtual, () => size.value.height],
     () => {
       if (inVirtual.value && props.height && scrollHeight.value) {
-        verticalScrollBarSpinSize.value = getSpinSize(size.value.height, scrollHeight.value)
+        verticalScrollBarSpinSize.value = getSpinSize(
+          size.value.height,
+          scrollHeight.value,
+        )
       }
     },
     { immediate: true },
@@ -452,7 +473,10 @@
     [() => size.value.width, contentScrollWidth],
     () => {
       if (inVirtual.value && contentScrollWidth.value) {
-        horizontalScrollBarSpinSize.value = getSpinSize(size.value.width, contentScrollWidth.value)
+        horizontalScrollBarSpinSize.value = getSpinSize(
+          size.value.width,
+          contentScrollWidth.value,
+        )
       }
     },
     { immediate: true },
@@ -460,7 +484,7 @@
 
   watch(
     () => props.scrollWidth,
-    (val) => {
+    val => {
       contentScrollWidth.value = val ?? size.value.width
       offsetLeft.value = keepInHorizontalRange(offsetLeft.value)
     },
@@ -473,17 +497,21 @@
 
     if (!useVirtual.value || !inVirtual.value) {
       offsetTop.value = newScrollTop
-    }
-    else if (newScrollTop !== offsetTop.value) {
+    } else if (newScrollTop !== offsetTop.value) {
       syncScrollTop(newScrollTop)
     }
 
-    props.onScroll?.(e)
+    emit('scroll', e)
     triggerScroll()
   }
 
   // ================================= Ref ==================================
-  const getSize = useGetSize(mergedData, getKey, heights, shallowRef(props.itemHeight || 0))
+  const getSize = useGetSize(
+    mergedData,
+    getKey,
+    heights,
+    shallowRef(props.itemHeight || 0),
+  )
 
   const [scrollTo, getTotalHeight] = useScrollTo(
     componentRef as any,
@@ -495,7 +523,8 @@
     () => collectHeight(true),
     (newTop: number) => {
       const totalHeight = getTotalHeight()
-      const maxScrollHeight = Math.max(scrollHeight.value, totalHeight) - props.height!
+      const maxScrollHeight =
+        Math.max(scrollHeight.value, totalHeight) - props.height!
       const alignedTop = Math.max(0, Math.min(newTop, maxScrollHeight || 0))
 
       if (componentRef.value) {
@@ -518,8 +547,7 @@
           offsetLeft.value = keepInHorizontalRange(config.left)
         }
         scrollTo(config.top as any)
-      }
-      else {
+      } else {
         scrollTo(config)
       }
     },
@@ -529,10 +557,8 @@
   watch(
     [start, end, mergedData],
     () => {
-      if (props.onVisibleChange) {
-        const renderList = mergedData.value.slice(start.value, end.value + 1)
-        props.onVisibleChange(renderList, mergedData.value)
-      }
+      const renderList = mergedData.value.slice(start.value, end.value + 1)
+      emit('visible-change', renderList, mergedData.value)
     },
     {
       flush: 'post',
@@ -569,7 +595,7 @@
 
   const parseStringStyle = (cssText: string): CSSProperties => {
     const ret: CSSProperties = {}
-    cssText.split(';').forEach((item) => {
+    cssText.split(';').forEach(item => {
       const idx = item.indexOf(':')
       if (idx > 0) {
         ret[item.slice(0, idx).trim()] = item.slice(idx + 1).trim()
@@ -585,8 +611,7 @@
     for (const s of styles) {
       if (typeof s === 'string') {
         Object.assign(style, parseStringStyle(s))
-      }
-      else if (s && typeof s === 'object') {
+      } else if (s && typeof s === 'object') {
         Object.assign(style, s as CSSProperties)
       }
     }
@@ -598,16 +623,16 @@
     return style
   })
 
-  const getHolderSizeStyle = (style: CSSProperties): Pick<CSSProperties, 'height' | 'maxHeight'> => {
+  const getHolderSizeStyle = (
+    style: CSSProperties,
+  ): Pick<CSSProperties, 'height' | 'maxHeight'> => {
     if (!style) {
       return {}
     }
     const { height, maxHeight } = style
     const sizeStyle: Pick<CSSProperties, 'height' | 'maxHeight'> = {}
-    if (height !== undefined)
-      sizeStyle.height = height
-    if (maxHeight !== undefined)
-      sizeStyle.maxHeight = maxHeight
+    if (height !== undefined) sizeStyle.height = height
+    if (maxHeight !== undefined) sizeStyle.maxHeight = maxHeight
     return sizeStyle
   }
 
@@ -629,12 +654,14 @@
           style.pointerEvents = 'none'
         }
       }
-    }
-    else {
+    } else {
       const mergedAttrsStyle: CSSProperties = {}
       mergeAttrsStyle(mergedAttrsStyle)
       const holderSizeStyle = getHolderSizeStyle(mergedAttrsStyle)
-      if (holderSizeStyle.height !== undefined || holderSizeStyle.maxHeight !== undefined) {
+      if (
+        holderSizeStyle.height !== undefined ||
+        holderSizeStyle.maxHeight !== undefined
+      ) {
         Object.assign(style, holderSizeStyle, ScrollStyle)
       }
     }
@@ -656,11 +683,14 @@
     if (el) {
       instanceRef.value.set(key, el)
       const dom = getDOM(el)
-      if (dom instanceof window.Element && dom.isConnected && itemResizeObserver) {
+      if (
+        dom instanceof window.Element &&
+        dom.isConnected &&
+        itemResizeObserver
+      ) {
         itemResizeObserver.observe(dom)
       }
-    }
-    else {
+    } else {
       instanceRef.value.delete(key)
     }
     if (!itemCollectPending) {
@@ -672,15 +702,13 @@
     }
   }
 
-  const showVerticalScrollBar = computed(() =>
-    inVirtual.value && scrollHeight.value > (props.height || 0),
+  const showVerticalScrollBar = computed(
+    () => inVirtual.value && scrollHeight.value > (props.height || 0),
   )
 
-  const showHorizontalScrollBar = computed(() =>
-    inVirtual.value && contentScrollWidth.value > size.value.width,
+  const showHorizontalScrollBar = computed(
+    () => inVirtual.value && contentScrollWidth.value > size.value.width,
   )
-
-  
 </script>
 
 <template>
@@ -693,21 +721,21 @@
   >
     <ResizeObserver @resize="onHolderResize">
       <component
-        :is="props.component"
-        :class="`${props.prefixCls}-holder`"
+        :is="component"
+        :class="`${prefixCls}-holder`"
         :style="componentStyle"
         ref="componentRef"
         @scroll="onFallbackScroll"
         @mouseenter="delayHideScrollBar"
       >
         <Filler
-          :prefix-cls="props.prefixCls"
+          :prefix-cls="prefixCls"
           :height="scrollHeight"
           :offset-y="fillerOffset"
           :offset-x="offsetLeft"
           :scroll-width="contentScrollWidth"
           :rtl="isRTL"
-          :inner-props="props.innerProps"
+          :inner-props="innerProps"
           @inner-resize="collectHeight"
         >
           <template v-for="(item, idx) in visibleItems" :key="getKey(item)">
@@ -732,16 +760,18 @@
     <ScrollBar
       v-if="showVerticalScrollBar"
       ref="verticalScrollBarRef"
-      :prefix-cls="props.prefixCls"
+      :prefix-cls="prefixCls"
       :scroll-offset="offsetTop"
       :scroll-range="scrollHeight"
       :rtl="isRTL"
       :spin-size="verticalScrollBarSpinSize"
       :container-size="size.height"
-      :show-scroll-bar="props.showScrollBar"
-      :style="props.styles?.verticalScrollBar"
-      :thumb-style="props.styles?.verticalScrollBarThumb"
-      @scroll="(offset: number, horizontal: boolean) => onScrollBar(offset, horizontal)"
+      :show-scroll-bar="showScrollBar"
+      :style="styles?.verticalScrollBar"
+      :thumb-style="styles?.verticalScrollBarThumb"
+      @scroll="
+        (offset: number, horizontal: boolean) => onScrollBar(offset, horizontal)
+      "
       @start-move="onScrollbarStartMove"
       @stop-move="onScrollbarStopMove"
     />
@@ -749,17 +779,19 @@
     <ScrollBar
       v-if="showHorizontalScrollBar"
       ref="horizontalScrollBarRef"
-      :prefix-cls="props.prefixCls"
+      :prefix-cls="prefixCls"
       :scroll-offset="offsetLeft"
       :scroll-range="contentScrollWidth"
       :rtl="isRTL"
       :horizontal="true"
       :spin-size="horizontalScrollBarSpinSize"
       :container-size="size.width"
-      :show-scroll-bar="props.showScrollBar"
-      :style="props.styles?.horizontalScrollBar"
-      :thumb-style="props.styles?.horizontalScrollBarThumb"
-      @scroll="(offset: number, horizontal: boolean) => onScrollBar(offset, horizontal)"
+      :show-scroll-bar="showScrollBar"
+      :style="styles?.horizontalScrollBar"
+      :thumb-style="styles?.horizontalScrollBarThumb"
+      @scroll="
+        (offset: number, horizontal: boolean) => onScrollBar(offset, horizontal)
+      "
       @start-move="onScrollbarStartMove"
       @stop-move="onScrollbarStopMove"
     />

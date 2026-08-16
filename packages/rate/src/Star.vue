@@ -5,6 +5,10 @@
   import { cloneVNode, computed, isVNode } from 'vue'
   defineOptions({ name: 'Star' })
   const props = defineProps<StarProps>()
+  const emit = defineEmits<{
+    hover: [e: MouseEvent, index: number]
+    click: [e: MouseEvent, index: number]
+  }>()
 
   function cloneCharacterNode(node: any): any {
     if (Array.isArray(node)) {
@@ -15,16 +19,16 @@
   }
   const onHover = (e: MouseEvent) => {
     const { index } = props
-    props?.onHover?.(e, index)
+    emit('hover', e, index)
   }
   const onClick = (e: MouseEvent) => {
     const { index } = props
-    props?.onClick?.(e, index)
+    emit('click', e, index)
   }
   const onKeyDown = (e: KeyboardEvent) => {
     const { index } = props
     if (e.keyCode === KeyCode.ENTER) {
-      props?.onClick?.(e, index)
+      emit('click', e as MouseEvent, index)
     }
   }
 

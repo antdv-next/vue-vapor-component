@@ -1,6 +1,11 @@
 import type { Key } from '@v-c/util/dist/type'
 
-export function getIndexByStartLoc(min: number, max: number, start: number, index: number): number {
+export function getIndexByStartLoc(
+  min: number,
+  max: number,
+  start: number,
+  index: number,
+): number {
   const beforeCount = start - min
   const afterCount = max - start
   const balanceCount = Math.min(beforeCount, afterCount) * 2
@@ -37,8 +42,7 @@ export function findListDiffIndex<T>(
   if (originLen < targetLen) {
     shortList = originList
     longList = targetList
-  }
-  else {
+  } else {
     shortList = targetList
     longList = originList
   }

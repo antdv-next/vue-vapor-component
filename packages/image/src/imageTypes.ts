@@ -65,10 +65,6 @@ export interface ImageProps {
 
   preview?: boolean | PreviewConfig
 
-  onClick?: (e: MouseEvent) => void
-  onError?: (e: Event) => void
-  onKeydown?: (e: KeyboardEvent) => void
-
   width?: string | number
   height?: string | number
   fetchPriority?: HTMLImageElement['fetchPriority']

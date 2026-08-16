@@ -68,10 +68,7 @@
       </button>
     </div>
 
-    <ContextHolder
-      :config="configRef"
-      :on-ready="onReady"
-    />
+    <ContextHolder :config="configRef" @ready="onReady" />
   </div>
 </template>
 

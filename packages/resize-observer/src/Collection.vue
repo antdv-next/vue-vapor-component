@@ -9,6 +9,10 @@
 
   const props = defineProps<CollectionProps>()
 
+  const emit = defineEmits<{
+    'batch-resize': [resizeInfos: ResizeInfo[]]
+  }>()
+
   const resizeIdRef = shallowRef(0)
   const resizeInfosRef = shallowRef<ResizeInfo[]>([])
   const onCollectionResize = inject(CollectionContext, () => {})
@@ -20,7 +24,7 @@
       if (resizeIdRef.value === resizeId) {
         const resizeInfos = resizeInfosRef.value
         resizeInfosRef.value = []
-        props.onBatchResize?.(resizeInfos)
+        emit('batch-resize', resizeInfos)
       }
     })
     onCollectionResize?.(size, element, data)

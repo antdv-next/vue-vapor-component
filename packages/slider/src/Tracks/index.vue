@@ -1,24 +1,30 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
-  import type { OnStartMove } from '../interface'
+
   import { clsx } from '@v-c/util'
   import { computed } from 'vue'
+
   import { useInjectSlider } from '../SliderContextKey'
   import { getIndex } from '../util'
   import Track from './Track.vue'
 
   defineOptions({ name: 'SliderTracks' })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    trackStyle?: CSSProperties | CSSProperties[]
-    values: number[]
-    onStartMove?: OnStartMove
-    startPoint?: number
-  }>(), {
-    prefixCls: 'vc-slider',
-    values: () => [],
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      trackStyle?: CSSProperties | CSSProperties[]
+      values: number[]
+      startPoint?: number
+    }>(),
+    {
+      prefixCls: 'vc-slider',
+      values: () => [],
+    },
+  )
+  const emit = defineEmits<{
+    'start-move': [e: MouseEvent | TouchEvent, valueIndex: number]
+  }>()
 
   const sliderContext = useInjectSlider()
 
@@ -33,7 +39,12 @@
       }
       const startValue = props.startPoint ?? min
       const endValue = props.values[0]
-      return [{ start: Math.min(startValue, endValue), end: Math.max(startValue, endValue) }]
+      return [
+        {
+          start: Math.min(startValue, endValue),
+          end: Math.max(startValue, endValue),
+        },
+      ]
     }
 
     const list: { start: number; end: number }[] = []
@@ -43,7 +54,9 @@
     return list
   })
 
-  const shouldRender = computed(() => sliderContext.value.included && trackList.value.length > 0)
+  const shouldRender = computed(
+    () => sliderContext.value.included && trackList.value.length > 0,
+  )
 
   const tracksCls = computed(() => {
     const ctx = sliderContext.value
@@ -51,8 +64,16 @@
   })
 
   const hasDisabledHandle = computed(() =>
-    props.values.some((_, index) => sliderContext.value.isHandleDisabled(index)),
+    props.values.some((_, index) =>
+      sliderContext.value.isHandleDisabled(index),
+    ),
   )
+
+  function onTrackStartMove(e: MouseEvent | TouchEvent, valueIndex: number) {
+    if (!hasDisabledHandle.value) {
+      emit('start-move', e, valueIndex)
+    }
+  }
 </script>
 
 <template>
@@ -72,8 +93,11 @@
         :prefix-cls="prefixCls"
         :start="item.start"
         :end="item.end"
-        :style="{ ...getIndex(trackStyle, index), ...sliderContext.styles?.track }"
-        :on-start-move="hasDisabledHandle ? undefined : onStartMove"
+        :style="{
+          ...getIndex(trackStyle, index),
+          ...sliderContext.styles?.track,
+        }"
+        @start-move="onTrackStartMove"
       />
     </template>
   </template>

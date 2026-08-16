@@ -17,6 +17,9 @@
   const props = withDefaults(defineProps<NotificationsProps>(), {
     prefixCls: 'vc-notification',
   })
+  const emit = defineEmits<{
+    'all-removed': []
+  }>()
 
   const configList = shallowRef<InnerOpenConfig[]>([])
   const placements = shallowRef<Partial<Record<Placement, InnerOpenConfig[]>>>(
@@ -59,7 +62,7 @@
     if (Object.keys(placements.value).length > 0) {
       emptyRef.value = true
     } else if (emptyRef.value) {
-      props.onAllRemoved?.()
+      emit('all-removed')
       emptyRef.value = false
     }
   })
@@ -96,27 +99,27 @@
 
 <template>
   <Portal
-    v-if="props.container"
+    v-if="container"
     :open="true"
     :auto-destroy="false"
-    :get-container="() => props.container!"
+    :get-container="() => container!"
   >
     <NotificationList
       v-for="placement in placementKeys"
       :key="placement"
       :config-list="placements[placement as Placement]"
       :placement="placement as Placement"
-      :prefix-cls="props.prefixCls"
-      :pause-on-hover="props.pauseOnHover"
-      :class-names="props.classNames"
-      :styles="props.styles"
-      :components="props.components"
-      :class-name="props.className?.(placement as Placement)"
-      :style="props.style?.(placement as Placement)"
-      :motion="props.motion"
-      :stack="props.stack"
-      :on-notice-close="onNoticeClose"
-      :on-all-removed="onAllNoticeRemoved"
+      :prefix-cls="prefixCls"
+      :pause-on-hover="pauseOnHover"
+      :class-names="classNames"
+      :styles="styles"
+      :components="components"
+      :class-name="className?.(placement as Placement)"
+      :style="style?.(placement as Placement)"
+      :motion="motion"
+      :stack="stack"
+      @notice-close="onNoticeClose"
+      @all-removed="onAllNoticeRemoved"
     />
   </Portal>
 </template>

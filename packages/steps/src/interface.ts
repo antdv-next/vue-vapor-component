@@ -74,5 +74,4 @@ export interface StepsProps {
   current?: number
   initial?: number
   items?: StepItem[]
-  onChange?: (current: number) => void
 }

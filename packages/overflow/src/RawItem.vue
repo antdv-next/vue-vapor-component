@@ -32,13 +32,37 @@
     clsx(contextValue.value?.className, attrs.class as any),
   )
 
-  const mergedStyle = computed<CSSProperties | undefined>(
-    () => attrs.style as CSSProperties | undefined,
+  const mergedStyle = computed<CSSProperties | undefined>(() => {
+    const parentStyle = attrs.style
+    if (!parentStyle) return undefined
+    if (typeof parentStyle === 'string') return parentStyle as any
+    const result: CSSProperties = {}
+    if (!Array.isArray(parentStyle)) {
+      for (const key in parentStyle) {
+        result[key] = parentStyle[key]
+      }
+    }
+    return result
+  })
+
+  const rawAttrs = computed(() =>
+    omit(attrs as Record<string, any>, [
+      'class',
+      'style',
+      'default',
+      'component',
+    ]),
   )
 </script>
 
 <template>
-  <component v-if="!contextValue" :is="props.component ?? 'div'" v-bind="attrs">
+  <component
+    v-if="!contextValue"
+    :is="component ?? 'div'"
+    v-bind="rawAttrs"
+    :class="mergedCls"
+    :style="mergedStyle"
+  >
     <slot />
   </component>
   <OverflowContextProvider v-else :value="null">
@@ -53,7 +77,7 @@
       :itemKey="contextValue!.itemKey"
       :class="mergedCls"
       :style="mergedStyle"
-      :component="props.component"
+      :component="component"
       v-bind="restAttrs"
     >
       <slot />

@@ -25,6 +25,14 @@
     tabIndex: 0,
   })
   const attrs = useAttrs()
+  const emit = defineEmits<{
+    change: [value: number]
+    focus: []
+    blur: []
+    'hover-change': [value: number | undefined]
+    'mouse-leave': [e: MouseEvent]
+    keydown: [e: KeyboardEvent]
+  }>()
 
   const [setStarRef, starRefs] = useRefs()
   const rateRef = ref<HTMLUListElement | null>(null)
@@ -72,19 +80,19 @@
 
   const changeValue = (nextValue: number) => {
     setStateValue(nextValue)
-    props?.onChange?.(nextValue)
+    emit('change', nextValue)
   }
 
   const focused = ref(false)
 
   const onInternalFocus = () => {
     focused.value = true
-    props?.onFocus?.()
+    emit('focus')
   }
 
   const onInternalBlur = () => {
     focused.value = false
-    props?.onBlur?.()
+    emit('blur')
   }
 
   // =========================== Hover ============================
@@ -96,7 +104,7 @@
       hoverValue.value = nextHoverValue
       setCleanedValue(null)
     }
-    props?.onHoverChange?.(nextHoverValue)
+    emit('hover-change', nextHoverValue)
   }
 
   const onMouseLeaveCallback = (event?: MouseEvent) => {
@@ -104,10 +112,10 @@
     if (!disabled) {
       hoverValue.value = null
       setCleanedValue(null)
-      props?.onHoverChange?.(undefined)
+      emit('hover-change', undefined)
     }
     if (event) {
-      props?.onMouseLeave?.(event)
+      emit('mouse-leave', event)
     }
   }
 
@@ -146,7 +154,7 @@
       }
     }
 
-    props?.onKeyDown?.(event)
+    emit('keydown', event)
   }
 
   onMounted(() => {

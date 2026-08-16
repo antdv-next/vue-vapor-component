@@ -1,22 +1,28 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
+
   import type { InternalMarkObj } from '../interface'
+
   import { computed } from 'vue'
+
   import { useInjectSlider } from '../SliderContextKey'
   import Dot from './Dot.vue'
 
   defineOptions({ name: 'SliderSteps' })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    marks: InternalMarkObj[]
-    dots?: boolean
-    style?: CSSProperties | ((dotValue: number) => CSSProperties)
-    activeStyle?: CSSProperties | ((dotValue: number) => CSSProperties)
-  }>(), {
-    prefixCls: 'vc-slider',
-    marks: () => [],
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      marks: InternalMarkObj[]
+      dots?: boolean
+      style?: CSSProperties | ((dotValue: number) => CSSProperties)
+      activeStyle?: CSSProperties | ((dotValue: number) => CSSProperties)
+    }>(),
+    {
+      prefixCls: 'vc-slider',
+      marks: () => [],
+    },
+  )
 
   const sliderContext = useInjectSlider()
 
@@ -25,7 +31,7 @@
     const { marks, dots } = props
     const dotSet = new Set<number>()
 
-    marks.forEach((mark) => {
+    marks.forEach(mark => {
       dotSet.add(mark.value)
     })
 

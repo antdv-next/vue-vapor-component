@@ -22,6 +22,16 @@
     maskClosable: true,
     destroyOnHidden: false,
   })
+  const emit = defineEmits<{
+    close: [e?: MouseEvent | KeyboardEvent]
+    'after-open-change': [open: boolean]
+    'mouse-enter': [e: MouseEvent]
+    'mouse-over': [e: MouseEvent]
+    'mouse-leave': [e: MouseEvent]
+    click: [e: MouseEvent]
+    keydown: [e: KeyboardEvent]
+    keyup: [e: KeyboardEvent]
+  }>()
   const attrs = useAttrs()
 
   const mergedOpen = shallowRef<boolean>(!!props.open)
@@ -83,7 +93,7 @@
     nextTick(() => {
       animatedVisible.value = nextVisible
     })
-    mergedProps.value.afterOpenChange?.(nextVisible)
+    emit('after-open-change', nextVisible)
 
     if (
       !nextVisible &&
@@ -106,7 +116,7 @@
   const onEsc: PortalProps['onEsc'] = ({ top, event }) => {
     if (top && props.keyboard) {
       event.stopPropagation()
-      props?.onClose?.(event)
+      emit('close', event)
     }
   }
 
@@ -131,20 +141,21 @@
     <Portal
       :open="open || forceRender || animatedVisible"
       :autoDestroy="false"
-      :onEsc="onEsc"
+      @esc="onEsc"
       :getContainer="getContainer"
       :autoLock="mask !== false && (open || animatedVisible)"
     >
       <DrawerPopup
         ref="popupRef"
-        v-bind="omit(mergedProps, ['onClose'])"
-        @mouseenter="mergedProps.onMouseEnter"
-        @mouseover="mergedProps.onMouseOver"
-        @mouseleave="mergedProps.onMouseLeave"
-        @click="mergedProps.onClick"
-        @keydown="mergedProps.onKeyDown"
-        @keyup="mergedProps.onKeyUp"
-        @close="e => mergedProps?.onClose?.(e)"
+        v-bind="omit(mergedProps, ['onClose', 'afterOpenChange'])"
+        @mouseenter="e => emit('mouse-enter', e)"
+        @mouseover="e => emit('mouse-over', e)"
+        @mouseleave="e => emit('mouse-leave', e)"
+        @click="e => emit('click', e)"
+        @keydown="e => emit('keydown', e)"
+        @keyup="e => emit('keyup', e)"
+        @close="e => emit('close', e)"
+        @after-open-change="internalAfterOpenChange"
         :mask="mask !== false"
         :maskClosable="maskClosable !== false"
         :placement="placement ?? 'right'"
@@ -153,7 +164,6 @@
         :prefixCls="prefixCls"
         :inline="getContainer === false"
         :open="open"
-        :afterOpenChange="internalAfterOpenChange"
       >
         <slot />
       </DrawerPopup>

@@ -47,7 +47,6 @@ export interface TextAreaProps {
         formatter: ShowCountFormatter
       }
   placeholder?: string
-  class?: any
   classes?: {
     affixWrapper?: string
     group?: string
@@ -63,7 +62,6 @@ export interface TextAreaProps {
     textarea?: string
     count?: string
   }
-  style?: CSSProperties
   styles?: {
     affixWrapper?: CSSProperties
     prefix?: CSSProperties
@@ -73,20 +71,10 @@ export interface TextAreaProps {
     clear?: CSSProperties
   }
   count?: CountConfig
-  onClear?: () => void
   maxLength?: number
   readOnly?: boolean
   hidden?: boolean
   autoFocus?: boolean
-  onResize?: (size: { width: number; height: number }) => void
-  onChange?: ChangeEventHandler
-  onFocus?: FocusEventHandler
-  onBlur?: FocusEventHandler
-  onKeydown?: KeyboardEventHandler
-  onKeyUp?: KeyboardEventHandler
-  onCompositionStart?: CompositionEventHandler
-  onCompositionEnd?: CompositionEventHandler
-  onPressEnter?: KeyboardEventHandler
   changeOnComposing?: boolean
   handleReset?: MouseEventHandler
   components?: {

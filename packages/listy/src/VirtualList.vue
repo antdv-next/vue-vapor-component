@@ -1,149 +1,162 @@
 <script setup vapor lang="ts">
-import type { ListRef as VcListRef } from '@vapor-component/virtual-list'
-import type { ListyRef, ListyScrollToConfig, ScrollAlign } from './interface'
-import VcVirtualList from '@vapor-component/virtual-list'
-import { computed, ref } from 'vue'
-import GroupHeader from './GroupHeader.vue'
-import StickyHeader from './StickyHeader.vue'
-import useFlattenRows from './hooks/useFlattenRows'
-import useGroupSegments from './hooks/useGroupSegments'
-import useItemKey from './hooks/useItemKey'
-import { toTaggedKey } from './util'
-import type { ListComponentProps } from './interface'
+  import type { ListRef as VcListRef } from '@vapor-component/virtual-list'
 
-defineOptions({ name: 'ListyVirtualList', inheritAttrs: false })
+  import type { ListyRef, ListyScrollToConfig, ScrollAlign } from './interface'
+  import type { ListComponentProps } from './interface'
 
-const props = defineProps<ListComponentProps>()
+  import VcVirtualList from '@vapor-component/virtual-list'
+  import { computed, ref } from 'vue'
 
-const listRef = ref<VcListRef>()
-const getItemKey = useItemKey(props.rowKey)
-const groupData = useGroupSegments(props.data, props.group)
+  import GroupHeader from './GroupHeader.vue'
+  import useFlattenRows from './hooks/useFlattenRows'
+  import useGroupSegments from './hooks/useGroupSegments'
+  import useItemKey from './hooks/useItemKey'
+  import StickyHeader from './StickyHeader.vue'
+  import { toTaggedKey } from './util'
 
-const flattenRows = computed(() =>
-  useFlattenRows(props.data, groupData.value, getItemKey, props.group),
-)
+  defineOptions({ name: 'ListyVirtualList', inheritAttrs: false })
 
-const itemKeyToGroupKey = computed(() => {
-  const map = new Map<string, any>()
-  let currentGroupKey: any | undefined
-  flattenRows.value.rows.forEach((row) => {
-    if (row.type === 'group') {
-      currentGroupKey = row.groupKey
-    }
-    else if (currentGroupKey !== undefined) {
-      map.set(row.taggedKey, currentGroupKey)
-    }
-  })
-  return map
-})
+  const props = defineProps<ListComponentProps>()
+  const emit = defineEmits<{
+    scroll: [e: Event]
+  }>()
 
-const getGroupItems = (groupKey: any) =>
-  flattenRows.value.groupKeyToItems.get(groupKey) || []
+  const listRef = ref<VcListRef>()
+  const getItemKey = useItemKey(props.rowKey)
+  const groupData = useGroupSegments(props.data, props.group)
 
-const scrollTo: ListyRef['scrollTo'] = (config?: ListyScrollToConfig) => {
-  if (config === null || typeof config === 'number') {
-    listRef.value?.scrollTo(config)
-    return
-  }
+  const flattenRows = computed(() =>
+    useFlattenRows(props.data, groupData.value, getItemKey, props.group),
+  )
 
-  const cfg = config as
-    | { groupKey: string; align?: ScrollAlign; offset?: number }
-    | { key: string; align?: ScrollAlign; offset?: number }
-    | { left?: number; top?: number }
-
-  if ('groupKey' in cfg) {
-    listRef.value?.scrollTo({
-      key: toTaggedKey(cfg.groupKey, 'group'),
-      align: cfg.align,
-      offset: cfg.offset,
+  const itemKeyToGroupKey = computed(() => {
+    const map = new Map<string, any>()
+    let currentGroupKey: any | undefined
+    flattenRows.value.rows.forEach(row => {
+      if (row.type === 'group') {
+        currentGroupKey = row.groupKey
+      } else if (currentGroupKey !== undefined) {
+        map.set(row.taggedKey, currentGroupKey)
+      }
     })
-    return
-  }
+    return map
+  })
 
-  if ('key' in cfg) {
-    const taggedItemKey = toTaggedKey(cfg.key, 'item')
-    const shouldCompensate = !!(
-      props.sticky
-      && props.group
-      && cfg.align !== 'bottom'
-    )
-    const stickyGroupKey = shouldCompensate
-      ? itemKeyToGroupKey.value.get(taggedItemKey)
-      : undefined
+  const getGroupItems = (groupKey: any) =>
+    flattenRows.value.groupKeyToItems.get(groupKey) || []
 
-    if (!stickyGroupKey) {
-      listRef.value?.scrollTo({ ...cfg, key: taggedItemKey })
+  const scrollTo: ListyRef['scrollTo'] = (config?: ListyScrollToConfig) => {
+    if (config === null || typeof config === 'number') {
+      listRef.value?.scrollTo(config)
       return
     }
 
-    listRef.value?.scrollTo({
-      ...cfg,
-      key: taggedItemKey,
-      offset: ({ getSize, align }: { getSize: (key: any) => { top: number; bottom: number }; align: ScrollAlign }) => {
-        const baseOffset = cfg.offset ?? 0
-        if (align !== 'top') return baseOffset
-        const headerSize = getSize(toTaggedKey(stickyGroupKey, 'group'))
-        const headerHeight = headerSize.bottom - headerSize.top
-        return baseOffset + (Number.isFinite(headerHeight) ? headerHeight : 0)
-      },
-    })
-    return
+    const cfg = config as
+      | { groupKey: string; align?: ScrollAlign; offset?: number }
+      | { key: string; align?: ScrollAlign; offset?: number }
+      | { left?: number; top?: number }
+
+    if ('groupKey' in cfg) {
+      listRef.value?.scrollTo({
+        key: toTaggedKey(cfg.groupKey, 'group'),
+        align: cfg.align,
+        offset: cfg.offset,
+      })
+      return
+    }
+
+    if ('key' in cfg) {
+      const taggedItemKey = toTaggedKey(cfg.key, 'item')
+      const shouldCompensate = !!(
+        props.sticky &&
+        props.group &&
+        cfg.align !== 'bottom'
+      )
+      const stickyGroupKey = shouldCompensate
+        ? itemKeyToGroupKey.value.get(taggedItemKey)
+        : undefined
+
+      if (!stickyGroupKey) {
+        listRef.value?.scrollTo({ ...cfg, key: taggedItemKey })
+        return
+      }
+
+      listRef.value?.scrollTo({
+        ...cfg,
+        key: taggedItemKey,
+        offset: ({
+          getSize,
+          align,
+        }: {
+          getSize: (key: any) => { top: number; bottom: number }
+          align: ScrollAlign
+        }) => {
+          const baseOffset = cfg.offset ?? 0
+          if (align !== 'top') return baseOffset
+          const headerSize = getSize(toTaggedKey(stickyGroupKey, 'group'))
+          const headerHeight = headerSize.bottom - headerSize.top
+          return baseOffset + (Number.isFinite(headerHeight) ? headerHeight : 0)
+        },
+      })
+      return
+    }
+
+    listRef.value?.scrollTo(cfg)
   }
 
-  listRef.value?.scrollTo(cfg)
-}
-
-defineExpose({ scrollTo })
+  defineExpose({ scrollTo })
 </script>
 
 <template>
   <VcVirtualList
     ref="listRef"
     :data="flattenRows.rows"
-    :height="props.height"
-    :item-height="props.itemHeight"
-    :direction="props.direction"
-    :prefix-cls="props.prefixCls"
+    :height="height"
+    :item-height="itemHeight"
+    :direction="direction"
+    :prefix-cls="prefixCls"
     :full-height="false"
     item-key="taggedKey"
     :virtual="true"
-    :class="props.classNames?.root"
-    :style="props.styles?.root"
-    @scroll="props.onScroll"
+    :class="classNames?.root"
+    :style="styles?.root"
+    @scroll="(e: Event) => emit('scroll', e)"
   >
     <template #default="{ item: row }">
       <template v-if="(row as any).type === 'group'">
         <GroupHeader
-          :group="props.group!"
+          :group="group!"
           :group-key="(row as any).groupKey"
           :group-items="getGroupItems((row as any).groupKey)"
-          :prefix-cls="props.prefixCls"
-          :class-name="props.classNames?.groupHeader"
-          :style="props.styles?.groupHeader"
+          :prefix-cls="prefixCls"
+          :class-name="classNames?.groupHeader"
+          :style="styles?.groupHeader"
         />
       </template>
       <template v-else>
         <div
           style="pointer-events: auto"
-          :class="`${props.prefixCls}-item`"
-          :style="props.styles?.item"
+          :class="`${prefixCls}-item`"
+          :style="styles?.item"
         >
-          <slot v-bind="{ item: (row as any).item, index: (row as any).index }" />
+          <slot
+            v-bind="{ item: (row as any).item, index: (row as any).index }"
+          />
         </div>
       </template>
     </template>
     <template #extraRender="{ getSize, scrollTop, virtual: isVirtual }">
       <StickyHeader
-        v-if="isVirtual && props.sticky && props.group && flattenRows.groupKeys.length"
+        v-if="isVirtual && sticky && group && flattenRows.groupKeys.length"
         :get-size="getSize"
         :scroll-top="scrollTop"
         :group-keys="flattenRows.groupKeys"
         :group-key-to-items="flattenRows.groupKeyToItems"
-        :group="props.group"
-        :prefix-cls="props.prefixCls"
+        :group="group"
+        :prefix-cls="prefixCls"
         :list-ref="listRef"
-        :header-class-name="props.classNames?.groupHeader"
-        :header-style="props.styles?.groupHeader"
+        :header-class-name="classNames?.groupHeader"
+        :header-style="styles?.groupHeader"
       />
     </template>
   </VcVirtualList>

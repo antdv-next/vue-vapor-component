@@ -45,8 +45,14 @@
       <div class="card card-left">
         <h3 class="card-title">
           <svg class="card-icon" viewBox="0 0 128 128">
-            <path fill="#42b883" d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z"></path>
-            <path fill="#35495e" d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z"></path>
+            <path
+              fill="#42b883"
+              d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z"
+            ></path>
+            <path
+              fill="#35495e"
+              d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z"
+            ></path>
           </svg>
           混合模式优势
         </h3>

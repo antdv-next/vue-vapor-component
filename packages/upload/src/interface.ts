@@ -81,24 +81,6 @@ export interface UploadProps {
   accept?: string | AcceptConfig
   multiple?: boolean
   capture?: string
-  onBatchStart?: (
-    fileList: {
-      file: VcFile
-      parsedFile: Exclude<BeforeUploadFileType, boolean> | null
-    }[],
-  ) => void
-  onStart?: (file: VcFile) => void
-  onError?: (
-    error: Error,
-    ret: Record<string, unknown>,
-    file: VcFile | null,
-  ) => void
-  onSuccess?: (
-    response: Record<string, unknown>,
-    file: VcFile | null,
-    xhr: XMLHttpRequest,
-  ) => void
-  onProgress?: (event: UploadProgressEvent, file: VcFile | null) => void
   beforeUpload?: (
     file: VcFile,
     FileList: VcFile[],
@@ -108,9 +90,6 @@ export interface UploadProps {
   openFileDialogOnClick?: boolean
   prefixCls?: string
   id?: string
-  onMouseEnter?: (e: MouseEvent) => void
-  onMouseLeave?: (e: MouseEvent) => void
-  onClick?: (e: MouseEvent | KeyboardEvent) => void
   classNames?: {
     input?: string
   }

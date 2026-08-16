@@ -1,5 +1,7 @@
 import type { ComputedRef } from 'vue'
+
 import type { Group } from '../interface'
+
 import { computed } from 'vue'
 
 export interface GroupSegmentItem {
@@ -16,16 +18,14 @@ export default function useGroupSegments(
     if (!group) return map
 
     data.forEach((item, index) => {
-      const groupKey = typeof group.key === 'function'
-        ? group.key(item)
-        : group.key
+      const groupKey =
+        typeof group.key === 'function' ? group.key(item) : group.key
       const groupItems = map.get(groupKey)
       const groupSegmentItem = { item, index }
 
       if (groupItems) {
         groupItems.push(groupSegmentItem)
-      }
-      else {
+      } else {
         map.set(groupKey, [groupSegmentItem])
       }
     })

@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import { onUnmounted, watch } from 'vue'
 
 function smoothScrollOffset(offset: number) {
@@ -10,7 +11,10 @@ export function getPageXY(
   horizontal: boolean,
 ): number {
   const obj = 'touches' in e ? e.touches[0] : e
-  return obj[horizontal ? 'pageX' : 'pageY'] - window[horizontal ? 'scrollX' : 'scrollY']
+  return (
+    obj[horizontal ? 'pageX' : 'pageY'] -
+    window[horizontal ? 'scrollX' : 'scrollY']
+  )
 }
 
 export default function useScrollDrag(
@@ -67,13 +71,11 @@ export default function useScrollDrag(
         const diff = top - mouseY
         offset = -smoothScrollOffset(diff)
         continueScroll()
-      }
-      else if (mouseY >= bottom) {
+      } else if (mouseY >= bottom) {
         const diff = mouseY - bottom
         offset = smoothScrollOffset(diff)
         continueScroll()
-      }
-      else {
+      } else {
         stopScroll()
       }
     }
@@ -112,8 +114,7 @@ export default function useScrollDrag(
         onCleanup(() => {
           teardown()
         })
-      }
-      else {
+      } else {
         teardown()
       }
     },

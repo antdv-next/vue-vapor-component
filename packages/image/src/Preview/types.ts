@@ -83,11 +83,6 @@ export interface InternalPreviewConfig {
   icons?: OperationIcons
   closeIcon?: VueNode | boolean | null
 
-  onTransform?: (info: {
-    transform: TransformType
-    action: TransformAction
-  }) => void
-
   countRender?: (current: number, total: number) => VueNode
   imageRender?: (
     originalNode: VueNode,
@@ -117,9 +112,6 @@ export interface PreviewProps extends InternalPreviewConfig {
 
   current?: number
   count?: number
-  onChange?: (current: number, prev: number) => void
-
-  onClose?: () => void
 
   mousePosition: null | { x: number; y: number }
 }

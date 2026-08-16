@@ -1,7 +1,9 @@
 import type { Ref } from 'vue'
+
 import type { TourProps } from '../interface'
 import type { TourStepInfo } from '../interface'
 import type { ClosableConfig } from '../interface'
+
 import { computed } from 'vue'
 
 type StepClosable = TourStepInfo['closable']
@@ -19,8 +21,8 @@ function getClosableConfig(
   preset: boolean,
 ): ClosableConfig | null | 'empty' {
   if (
-    closable === false
-    || (closeIcon === false && (!isConfigObj(closable) || !closable?.closeIcon))
+    closable === false ||
+    (closeIcon === false && (!isConfigObj(closable) || !closable?.closeIcon))
   ) {
     return null
   }

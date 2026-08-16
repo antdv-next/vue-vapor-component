@@ -17,11 +17,7 @@
       :slides-to-show="1"
       :slides-to-scroll="1"
     >
-      <div
-        v-for="(img, i) in images"
-        :key="`${img}-${i}`"
-        class="slide-item"
-      >
+      <div v-for="(img, i) in images" :key="`${img}-${i}`" class="slide-item">
         <img :src="img" :alt="`slide-${i + 1}`" />
       </div>
     </Slick>
@@ -32,11 +28,7 @@
       :slides-to-show="1"
       :slides-to-scroll="1"
     >
-      <div
-        v-for="i in 6"
-        :key="i"
-        class="slide-item"
-      >
+      <div v-for="i in 6" :key="i" class="slide-item">
         <h3>{{ i }}</h3>
       </div>
     </Slick>

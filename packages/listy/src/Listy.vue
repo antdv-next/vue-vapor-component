@@ -1,43 +1,48 @@
 <script setup vapor lang="ts">
-import type { ListyRef, ListyScrollToConfig } from './interface'
-import { computed, ref } from 'vue'
-import RawList from './RawList.vue'
-import VirtualList from './VirtualList.vue'
-import type { ListyProps } from './interface'
+  import type { ListyRef, ListyScrollToConfig } from './interface'
+  import type { ListyProps } from './interface'
 
-defineOptions({ name: 'Listy', inheritAttrs: false })
+  import { computed, ref } from 'vue'
 
-const props = withDefaults(defineProps<ListyProps>(), {
-  prefixCls: 'vc-listy',
-  virtual: true,
-})
+  import RawList from './RawList.vue'
+  import VirtualList from './VirtualList.vue'
 
-const data = computed(() => props.items || [])
+  defineOptions({ name: 'Listy', inheritAttrs: false })
 
-const listRef = ref<{ scrollTo: ListyRef['scrollTo'] }>()
+  const props = withDefaults(defineProps<ListyProps>(), {
+    prefixCls: 'vc-listy',
+    virtual: true,
+  })
 
-function scrollTo(config?: ListyScrollToConfig) {
-  listRef.value?.scrollTo(config)
-}
+  const data = computed(() => props.items || [])
+  const emit = defineEmits<{
+    scroll: [e: Event]
+  }>()
 
-defineExpose({ scrollTo })
+  const listRef = ref<{ scrollTo: ListyRef['scrollTo'] }>()
+
+  function scrollTo(config?: ListyScrollToConfig) {
+    listRef.value?.scrollTo(config)
+  }
+
+  defineExpose({ scrollTo })
 </script>
 
 <template>
   <VirtualList
-    v-if="props.virtual"
+    v-if="virtual"
     ref="listRef"
     :data="data"
-    :row-key="props.rowKey"
-    :prefix-cls="props.prefixCls"
-    :height="props.height"
-    :item-height="props.itemHeight"
-    :group="props.group"
-    :sticky="props.sticky"
-    :direction="props.direction"
-    :class-names="props.classNames"
-    :styles="props.styles"
-    @scroll="props.onScroll"
+    :row-key="rowKey"
+    :prefix-cls="prefixCls"
+    :height="height"
+    :item-height="itemHeight"
+    :group="group"
+    :sticky="sticky"
+    :direction="direction"
+    :class-names="classNames"
+    :styles="styles"
+    @scroll="(e: Event) => emit('scroll', e)"
   >
     <template #default="slotProps">
       <slot v-bind="slotProps" />
@@ -47,16 +52,16 @@ defineExpose({ scrollTo })
     v-else
     ref="listRef"
     :data="data"
-    :row-key="props.rowKey"
-    :prefix-cls="props.prefixCls"
-    :height="props.height"
-    :item-height="props.itemHeight"
-    :group="props.group"
-    :sticky="props.sticky"
-    :direction="props.direction"
-    :class-names="props.classNames"
-    :styles="props.styles"
-    @scroll="props.onScroll"
+    :row-key="rowKey"
+    :prefix-cls="prefixCls"
+    :height="height"
+    :item-height="itemHeight"
+    :group="group"
+    :sticky="sticky"
+    :direction="direction"
+    :class-names="classNames"
+    :styles="styles"
+    @scroll="(e: Event) => emit('scroll', e)"
   >
     <template #default="slotProps">
       <slot v-bind="slotProps" />

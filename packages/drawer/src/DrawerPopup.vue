@@ -23,6 +23,16 @@
     mask: true,
     maskClosable: true,
   })
+  const emit = defineEmits<{
+    close: [e: MouseEvent]
+    'after-open-change': [open: boolean]
+    mouseenter: [e: MouseEvent]
+    mouseover: [e: MouseEvent]
+    mouseleave: [e: MouseEvent]
+    click: [e: MouseEvent]
+    keydown: [e: KeyboardEvent]
+    keyup: [e: KeyboardEvent]
+  }>()
   const attrs = useAttrs()
 
   const panelRef = shallowRef<HTMLDivElement>()
@@ -166,7 +176,7 @@
 
   const onMaskClose = (e: MouseEvent) => {
     if (props.maskClosable && openRef.value) {
-      props.onClose?.(e)
+      emit('close', e)
     }
   }
 
@@ -208,8 +218,8 @@
 
     <Transition
       v-bind="panelMotionProps"
-      @afterEnter="() => afterOpenChange?.(true)"
-      @afterLeave="() => afterOpenChange?.(false)"
+      @afterEnter="() => emit('after-open-change', true)"
+      @afterLeave="() => emit('after-open-change', false)"
     >
       <div
         v-show="open"
@@ -235,12 +245,12 @@
             :prefixCls="prefixCls"
             :class="[attrs.class, classNames?.section]"
             :style="[attrs.style, styles?.section]"
-            @mouseenter="onMouseEnter"
-            @mouseover="onMouseOver"
-            @mouseleave="onMouseLeave"
-            @click="onClick"
-            @keydown="onKeyDown"
-            @keyup="onKeyUp"
+            @mouseenter="e => emit('mouseenter', e)"
+            @mouseover="e => emit('mouseover', e)"
+            @mouseleave="e => emit('mouseleave', e)"
+            @click="e => emit('click', e)"
+            @keydown="e => emit('keydown', e)"
+            @keyup="e => emit('keyup', e)"
           >
             <slot />
           </DrawerPanel>

@@ -27,6 +27,10 @@
   })
 
   const attrs = useAttrs()
+  const emit = defineEmits<{
+    change: [page: number, pageSize: number]
+    'show-size-change': [current: number, size: number]
+  }>()
 
   // ==================== Merged values ====================
   const mergedPrefixCls = computed(() => props.prefixCls)
@@ -164,7 +168,7 @@
       internalInputVal.value = newPage
     }
     setCurrent(newPage)
-    props.onChange?.(newPage, pageSize.value)
+    emit('change', newPage, pageSize.value)
     return newPage
   }
 
@@ -291,9 +295,9 @@
 
     setPageSize(size)
     internalInputVal.value = nextCurrent
-    props.onShowSizeChange?.(current.value, size)
+    emit('show-size-change', current.value, size)
     setCurrent(nextCurrent)
-    props.onChange?.(nextCurrent, size)
+    emit('change', nextCurrent, size)
   }
 
   // ==================== Pager list ====================
@@ -499,7 +503,7 @@
 </script>
 
 <template>
-  <template v-if="props.hideOnSinglePage && mergedTotal <= pageSize">
+  <template v-if="hideOnSinglePage && mergedTotal <= pageSize">
     <!-- hidden -->
   </template>
   <ul
@@ -527,7 +531,7 @@
       :style="itemStyle"
       :aria-disabled="prevDisabled"
     >
-      <template v-if="props.itemRender">
+      <template v-if="itemRender">
         <component :is="prevButtonContent" />
       </template>
       <button
@@ -539,7 +543,7 @@
     </li>
 
     <!-- simple mode pager -->
-    <template v-if="props.simple">
+    <template v-if="simple">
       <li
         :title="mergedShowTitle ? `${current}/${allPages}` : undefined"
         :class="clsx(`${mergedPrefixCls}-simple-pager`, itemClassName)"
@@ -555,7 +559,7 @@
             type="text"
             :aria-label="mergedLocale.jump_to"
             :value="internalInputVal"
-            :disabled="props.disabled"
+            :disabled="disabled"
             @keydown="handleKeyDown"
             @keyup="handleKeyUp"
             @change="handleKeyUp"
@@ -596,7 +600,7 @@
         v-if="showJumpPrev"
         :title="
           mergedShowTitle
-            ? props.showLessItems
+            ? showLessItems
               ? mergedLocale.prev_3
               : mergedLocale.prev_5
             : undefined
@@ -606,11 +610,11 @@
         tabindex="0"
         :class="
           clsx(`${mergedPrefixCls}-jump-prev`, {
-            [`${mergedPrefixCls}-jump-prev-custom-icon`]: !!props.jumpPrevIcon,
+            [`${mergedPrefixCls}-jump-prev-custom-icon`]: !!jumpPrevIcon,
           })
         "
       >
-        <template v-if="props.itemRender">
+        <template v-if="itemRender">
           <component :is="jumpPrevContent" />
         </template>
         <button v-else type="button"></button>
@@ -628,7 +632,7 @@
           @keydown.stop="handlePagerKeydown"
           tabindex="0"
         >
-          <template v-if="props.itemRender">
+          <template v-if="itemRender">
             <component :is="getPagerContent(page)" />
           </template>
           <a v-else rel="nofollow">{{ page }}</a>
@@ -640,7 +644,7 @@
         v-if="showJumpNext"
         :title="
           mergedShowTitle
-            ? props.showLessItems
+            ? showLessItems
               ? mergedLocale.next_3
               : mergedLocale.next_5
             : undefined
@@ -650,11 +654,11 @@
         tabindex="0"
         :class="
           clsx(`${mergedPrefixCls}-jump-next`, {
-            [`${mergedPrefixCls}-jump-next-custom-icon`]: !!props.jumpNextIcon,
+            [`${mergedPrefixCls}-jump-next-custom-icon`]: !!jumpNextIcon,
           })
         "
       >
-        <template v-if="props.itemRender">
+        <template v-if="itemRender">
           <component :is="jumpNextContent" />
         </template>
         <button v-else type="button"></button>
@@ -675,7 +679,7 @@
       :style="itemStyle"
       :aria-disabled="nextDisabled"
     >
-      <template v-if="props.itemRender">
+      <template v-if="itemRender">
         <component :is="nextButtonContent" />
       </template>
       <button
@@ -690,15 +694,15 @@
     <Options
       :locale="mergedLocale"
       :root-prefix-cls="mergedPrefixCls"
-      :disabled="props.disabled"
+      :disabled="disabled"
       :select-prefix-cls="mergedSelectPrefixCls"
       :change-size="changePageSize"
-      :page-size-options="props.pageSizeOptions"
+      :page-size-options="pageSizeOptions"
       :page-size="pageSize!"
       :quick-go="shouldDisplayQuickJumper ? handleChange : undefined"
       :go-button="goButton"
       :show-size-changer="showSizeChanger"
-      :size-changer-render="props.sizeChangerRender"
+      :size-changer-render="sizeChangerRender"
     />
   </ul>
 </template>

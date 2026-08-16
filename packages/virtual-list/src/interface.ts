@@ -5,7 +5,10 @@ export type ScrollBarDirectionType = 'ltr' | 'rtl'
 
 export type GetKey<T> = (item: T) => Key
 
-export type GetSize = (startKey: Key, endKey?: Key) => { top: number; bottom: number }
+export type GetSize = (
+  startKey: Key,
+  endKey?: Key,
+) => { top: number; bottom: number }
 
 export interface ExtraRenderInfo {
   start: number
@@ -89,8 +92,5 @@ export interface ListProps {
     verticalScrollBarThumb?: CSSProperties
   }
   showScrollBar?: boolean | 'optional'
-  onScroll?: (e: Event) => void
-  onVirtualScroll?: (info: ScrollInfo) => void
-  onVisibleChange?: (visibleList: any[], fullList: any[]) => void
   innerProps?: InnerProps
 }

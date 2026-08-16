@@ -1,7 +1,12 @@
 import type { SliderProps, SliderRef } from './interface'
-import Slider from './Slider.vue'
+
 import { defineComponent, provide } from 'vue'
-import { UnstableContextKey, defaultUnstableContextValue } from './SliderContextKey'
+
+import Slider from './Slider.vue'
+import {
+  UnstableContextKey,
+  defaultUnstableContextValue,
+} from './SliderContextKey'
 
 export const UnstableProvider = defineComponent({
   name: 'SliderUnstableProvider',

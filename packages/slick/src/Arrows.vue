@@ -1,7 +1,9 @@
 <script setup vapor lang="ts">
   import type { VNodeChild } from 'vue'
+
   import { clsx } from '@v-c/util'
   import { computed } from 'vue'
+
   import { canGoNext } from './utils/innerSliderUtils'
 
   defineOptions({ name: 'Arrow' })
@@ -32,7 +34,10 @@
 
   const isDisabled = computed(() => {
     if (isPrev.value) {
-      return !props.infinite && (props.currentSlide === 0 || props.slideCount <= props.slidesToShow)
+      return (
+        !props.infinite &&
+        (props.currentSlide === 0 || props.slideCount <= props.slidesToShow)
+      )
     }
     return !canGoNext({
       infinite: props.infinite,

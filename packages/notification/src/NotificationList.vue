@@ -4,6 +4,8 @@
   import type {
     NotificationListConfig,
     NotificationListProps,
+    Key,
+    Placement,
   } from './interface'
 
   import { clsx } from '@v-c/util'
@@ -23,6 +25,10 @@
     configList: () => [],
     pauseOnHover: true,
   })
+  const emit = defineEmits<{
+    'notice-close': [key: Key]
+    'all-removed': [placement: Placement]
+  }>()
 
   const ctx = useNotificationContext()
 
@@ -104,7 +110,7 @@
   // ===== Motion =====
   const checkAllClosed = () => {
     if (configList.value.length === 0) {
-      props.onAllRemoved?.(props.placement)
+      emit('all-removed', props.placement)
     }
   }
 
@@ -157,7 +163,9 @@
 
   // String/number → text, VNode/component → <component :is>
   function isPrimitive(value: unknown): boolean {
-    return value == null || typeof value === 'string' || typeof value === 'number'
+    return (
+      value == null || typeof value === 'string' || typeof value === 'number'
+    )
   }
 
   function buildMotionGroupProps(
@@ -232,21 +240,21 @@
       :height="positionResult.totalHeight"
       :top-notice-height="positionResult.topNoticeHeight"
       :top-notice-width="positionResult.topNoticeWidth"
-      :class-name="props.classNames?.listContent"
-      :style="props.styles?.listContent"
+      :class-name="classNames?.listContent"
+      :style="styles?.listContent"
     >
       <TransitionGroup v-bind="motionGroupProps" @after-leave="checkAllClosed">
         <template v-for="config in keys" :key="config.key">
           <Notification
-            :prefix-cls="props.prefixCls"
+            :prefix-cls="prefixCls"
             :key="config.key"
             :class="clsx(ctxClassNamesNotice, config.className)"
             :style="config.style"
-            :class-names="fillClassNames([props.classNames, config.classNames])"
-            :styles="fillStyles([props.styles, config.styles])"
-            :components="{ ...props.components, ...config.components }"
+            :class-names="fillClassNames([classNames, config.classNames])"
+            :styles="fillStyles([styles, config.styles])"
+            :components="{ ...components, ...config.components }"
             :hovering="stackEnabled && listHovering"
-            :pause-on-hover="config.pauseOnHover ?? props.pauseOnHover"
+            :pause-on-hover="config.pauseOnHover ?? pauseOnHover"
             :offset="positionResult.notificationPosition.get(config.key)"
             :notification-index="
               getIndex(config.key) >= 0 ? getIndex(config.key) : undefined
@@ -260,13 +268,13 @@
             :closable="config.closable"
             :duration="config.duration"
             :show-progress="config.showProgress"
-            :on-click="(e: MouseEvent) => config.onClick?.(e)"
-            :on-mouse-enter="(e: MouseEvent) => config.onMouseEnter?.(e)"
-            :on-mouse-leave="(e: MouseEvent) => config.onMouseLeave?.(e)"
-            :on-close="
+            @click="(e: MouseEvent) => config.onClick?.(e)"
+            @mouse-enter="(e: MouseEvent) => config.onMouseEnter?.(e)"
+            @mouse-leave="(e: MouseEvent) => config.onMouseLeave?.(e)"
+            @close="
               () => {
                 config.onClose?.()
-                onNoticeClose?.(config.key)
+                emit('notice-close', config.key)
               }
             "
           >
@@ -275,7 +283,9 @@
               <component v-else :is="config.title" />
             </template>
             <template #description>
-              <span v-if="isPrimitive(config.description)">{{ config.description }}</span>
+              <span v-if="isPrimitive(config.description)">{{
+                config.description
+              }}</span>
               <component v-else :is="config.description" />
             </template>
             <template #icon>
@@ -283,7 +293,9 @@
               <component v-else :is="config.icon" />
             </template>
             <template #actions>
-              <span v-if="isPrimitive(config.actions)">{{ config.actions }}</span>
+              <span v-if="isPrimitive(config.actions)">{{
+                config.actions
+              }}</span>
               <component v-else :is="config.actions" />
             </template>
           </Notification>

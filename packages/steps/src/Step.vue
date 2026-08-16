@@ -26,15 +26,15 @@
       active?: boolean
       index: number
       last: boolean
-
-      // Event
-      onClick?: (index: number) => void
     }>(),
     {},
   )
 
   const { railFollowPrevStatus } = useUnstableContext()
   const stepsContext = useStepsContext()
+  const emit = defineEmits<{
+    click: [index: number]
+  }>()
 
   const {
     prefixCls,
@@ -95,21 +95,19 @@
 
   // ========================= Click =========================
   const clickable = computed(
-    () =>
-      !!(props.onClick || dataItem.value.onItemClick) &&
-      !dataItem.value.disabled,
+    () => !!dataItem.value.onItemClick && !dataItem.value.disabled,
   )
 
   function handleKeydown(e: KeyboardEvent) {
     const { keyCode } = e
     if (keyCode === KeyCode.ENTER || keyCode === KeyCode.SPACE) {
-      props.onClick?.(props.index)
+      emit('click', props.index)
     }
   }
 
   function handleClick(e: MouseEvent) {
     dataItem.value.onItemClick?.(e)
-    props.onClick?.(props.index)
+    emit('click', props.index)
   }
 
   // ========================= Render =========================

@@ -20,7 +20,17 @@
   const props = withDefaults(defineProps<PopupProps>(), {
     autoDestroy: true,
   })
-  const emits = defineEmits()
+  const emits = defineEmits<{
+    'mouse-enter': [e: MouseEvent]
+    'mouse-leave': [e: MouseEvent]
+    'pointer-enter': [e: PointerEvent]
+    'pointer-down-capture': [e: PointerEvent]
+    click: [e: MouseEvent]
+    esc: [info: { top: boolean; event: KeyboardEvent }]
+    'visible-changed': [visible: boolean]
+    prepare: [element: Element]
+    align: []
+  }>()
 
   const focusBoundary = useFocusBoundary()
   const isMobile = computed(() => !!props.mobile)
@@ -40,7 +50,7 @@
   })
 
   const onInternalResize = () => {
-    props.onAlign?.()
+    emits('align')
   }
 
   const offsetStyle = useOffsetStyle(
@@ -93,30 +103,30 @@
     appear: true,
     ...baseTransitionProps,
     onBeforeEnter: (element: Element) => {
-      props.onPrepare?.(element)
+      emits('prepare', element)
       ;(baseTransitionProps as any)?.onBeforeEnter?.(element)
     },
     onBeforeAppear: (element: Element) => {
-      props.onPrepare?.(element)
+      emits('prepare', element)
       ;(baseTransitionProps as any)?.onBeforeAppear?.(element) ??
         (baseTransitionProps as any)?.onBeforeEnter?.(element)
     },
     onAfterEnter: (element: Element) => {
       ;(baseTransitionProps as any)?.onAfterEnter?.(element)
       setTimeout(() => {
-        if (props.open) props.onVisibleChanged?.(true)
+        if (props.open) emits('visible-changed', true)
       }, 0)
     },
     onAfterAppear: (element: Element) => {
       ;(baseTransitionProps as any)?.onAfterAppear?.(element) ??
         (baseTransitionProps as any)?.onAfterEnter?.(element)
       setTimeout(() => {
-        if (props.open) props.onVisibleChanged?.(true)
+        if (props.open) emits('visible-changed', true)
       }, 0)
     },
     onAfterLeave: (element: Element) => {
       ;(baseTransitionProps as any)?.onAfterLeave?.(element)
-      props.onVisibleChanged?.(false)
+      emits('visible-changed', false)
     },
   }
 
@@ -163,7 +173,7 @@
       :open="forceRender || isNodeVisible"
       :get-container="portalGetContainer"
       :auto-destroy="autoDestroy"
-      :on-esc="onEsc"
+      @esc="info => emits('esc', info)"
     >
       <Transition v-bind="mergedTransitionProps">
         <div
@@ -178,13 +188,13 @@
             offsetStyle,
             miscStyle,
             { boxSizing: 'border-box', zIndex: zIndex },
-            props.style,
+            attrs.style,
           ]"
-          @mouseenter="onMouseEnter"
-          @mouseleave="onMouseLeave"
-          @pointerenter="onPointerEnter"
-          @click="onClick"
-          @pointerdown="onPointerDownCapture"
+          @mouseenter="e => emits('mouse-enter', e)"
+          @mouseleave="e => emits('mouse-leave', e)"
+          @pointerenter="e => emits('pointer-enter', e)"
+          @click="e => emits('click', e)"
+          @pointerdown="e => emits('pointer-down-capture', e)"
         >
           <Arrow
             v-if="arrow && align"

@@ -14,8 +14,6 @@ export interface StarProps {
   disabled?: boolean
   character?: ((props: StarProps) => any) | VueNode
   characterRender?: (origin: any, props: StarProps) => any
-  onClick?: (e: MouseEvent | KeyboardEvent, index: number) => void
-  onHover?: (e: MouseEvent, index: number) => void
   focused?: boolean
   count?: number
 }
@@ -32,12 +30,6 @@ export interface RateProps extends Pick<
   direction?: Direction
   tabIndex?: number | string
   autoFocus?: boolean
-  onHoverChange?: (value: number) => void
-  onChange?: (value: number) => void
-  onFocus?: () => void
-  onBlur?: () => void
-  onKeyDown?: KeyboardEventHandler
-  onMouseLeave?: FocusEventHandler
   'onUpdate:value'?: (value: number) => void
   id?: string
 }

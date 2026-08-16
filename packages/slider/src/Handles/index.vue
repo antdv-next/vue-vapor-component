@@ -1,30 +1,38 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
+
   import type { OnStartMove } from '../interface'
+
   import { computed, shallowRef, useSlots } from 'vue'
+
   import { getIndex } from '../util'
   import Handle from './Handle.vue'
 
   defineOptions({ name: 'SliderHandles' })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    values: number[]
-    handleStyle?: CSSProperties | CSSProperties[]
-    onStartMove: OnStartMove
-    onOffsetChange: (offset: number | 'min' | 'max', valueIndex: number) => void
-    onFocus?: (e: FocusEvent) => void
-    onBlur?: (e: FocusEvent) => void
-    onDelete: (index: number) => void
-    draggingIndex?: number
-    draggingDelete?: boolean
-    onChangeComplete?: () => void
-  }>(), {
-    prefixCls: 'vc-slider',
-    values: () => [],
-    draggingIndex: -1,
-    draggingDelete: false,
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      values: number[]
+      handleStyle?: CSSProperties | CSSProperties[]
+      draggingIndex?: number
+      draggingDelete?: boolean
+    }>(),
+    {
+      prefixCls: 'vc-slider',
+      values: () => [],
+      draggingIndex: -1,
+      draggingDelete: false,
+    },
+  )
+  const emit = defineEmits<{
+    'start-move': [e: MouseEvent | TouchEvent, valueIndex: number]
+    'offset-change': [offset: number | 'min' | 'max', valueIndex: number]
+    delete: [index: number]
+    focus: [e: FocusEvent]
+    blur: [e: FocusEvent]
+    'change-complete': []
+  }>()
 
   const slots = useSlots()
   const handleRefs = shallowRef<Record<number, any>>({})
@@ -46,15 +54,15 @@
 
   function onHandleFocus(e: FocusEvent, index: number) {
     onActive(index)
-    props.onFocus?.(e)
+    emit('focus', e)
   }
 
   function onHandleMouseEnter(_e: MouseEvent, index: number) {
     onActive(index)
   }
 
-  const activeHandleValue = computed(() =>
-    props.values[activeIndex.value] as number,
+  const activeHandleValue = computed(
+    () => props.values[activeIndex.value] as number,
   )
 
   defineExpose({
@@ -77,13 +85,17 @@
       :dragging="draggingIndex === index"
       :dragging-delete="draggingIndex === index && draggingDelete"
       :style="getIndex(handleStyle, index)"
-      :on-start-move="onStartMove"
-      :on-offset-change="onOffsetChange"
-      :on-delete="onDelete"
-      :on-focus="onHandleFocus"
-      :on-mouseenter="onHandleMouseEnter"
-      :on-blur="onBlur"
-      :on-change-complete="onChangeComplete"
+      @start-move="
+        (e: MouseEvent | TouchEvent, vi: number) => emit('start-move', e, vi)
+      "
+      @offset-change="
+        (offset: number | 'min' | 'max', vi: number) =>
+          emit('offset-change', offset, vi)
+      "
+      @delete="(i: number) => emit('delete', i)"
+      @focus="(e: FocusEvent) => onHandleFocus(e, index)"
+      @mouseenter="(_e: MouseEvent) => onHandleMouseEnter(_e, index)"
+      @change-complete="() => emit('change-complete')"
     >
       <template v-if="slots.handle" #handle="data">
         <slot name="handle" v-bind:data="data" />
@@ -98,10 +110,15 @@
     :value-index="null"
     :dragging="draggingIndex !== -1"
     :dragging-delete="draggingDelete"
-    :on-start-move="onStartMove"
-    :on-offset-change="onOffsetChange"
-    :on-delete="onDelete"
-    :on-change-complete="onChangeComplete"
+    @start-move="
+      (e: MouseEvent | TouchEvent, vi: number) => emit('start-move', e, vi)
+    "
+    @offset-change="
+      (offset: number | 'min' | 'max', vi: number) =>
+        emit('offset-change', offset, vi)
+    "
+    @delete="(i: number) => emit('delete', i)"
+    @change-complete="() => emit('change-complete')"
   >
     <template #handle="data">
       <slot name="active-handle" v-bind:data="data" />

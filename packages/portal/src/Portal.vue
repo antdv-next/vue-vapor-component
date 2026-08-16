@@ -16,6 +16,10 @@
     autoDestroy: true,
   })
 
+  const emit = defineEmits<{
+    esc: [info: { top: boolean; event: KeyboardEvent }]
+  }>()
+
   // ====================== Should Render ======================
   const shouldRender = shallowRef(props.open)
   const mergedRender = computed(() => shouldRender.value || props.open)
@@ -90,7 +94,7 @@
   useEscKeyDown(
     computed(() => !!props.open),
     (...args) => {
-      props.onEsc?.(...args)
+      emit('esc', ...args)
     },
   )
 

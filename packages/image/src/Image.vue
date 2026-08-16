@@ -30,6 +30,12 @@
   const attrs = useAttrs()
   const slots = useSlots()
 
+  const emit = defineEmits<{
+    click: [e: MouseEvent]
+    error: [e: Event]
+    keydown: [e: KeyboardEvent]
+  }>()
+
   const groupContext = usePreviewGroupContext()
 
   const prefixCls = computed(() => props.prefixCls ?? 'vc-image')
@@ -133,20 +139,20 @@
       }
     })
 
-    props.onClick?.(e)
+    emit('click', e)
   }
 
   const onInternalClick = (e: MouseEvent) => {
-    props.onClick?.(e)
+    emit('click', e)
   }
 
   const onImgError = (e: Event) => {
-    props.onError?.(e)
+    emit('error', e)
   }
 
   // ======================= Keyboard Preview =====================
   const onPreviewKeyDown = (event: KeyboardEvent) => {
-    props.onKeydown?.(event)
+    emit('keydown', event)
 
     if (!canPreview.value) return
 
@@ -257,6 +263,8 @@
       onOpenChange: _onPreviewOpenChange,
       cover: _cover,
       rootClassName: _previewRootCls,
+      onClose: _onClose,
+      onChange: _onChange,
       ...rest
     } = config
     return rest
@@ -334,7 +342,7 @@
     :aria-hidden="!isShowPreview"
     :open="isShowPreview"
     :prefixCls="previewPrefixCls"
-    :onClose="onPreviewClose"
+    @close="onPreviewClose"
     :mousePosition="mousePosition"
     :src="src"
     :alt="imgCommonProps.alt as any"

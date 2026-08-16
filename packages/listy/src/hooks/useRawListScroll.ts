@@ -1,5 +1,7 @@
 import type { Ref } from 'vue'
+
 import type { ListyRef, ScrollAlign } from '../interface'
+
 import { toTaggedKey } from '../util'
 
 export default function useRawListScroll(
@@ -17,7 +19,8 @@ export default function useRawListScroll(
     )
     if (!groupHeader) return 0
     const rect = groupHeader.getBoundingClientRect()
-    const height = rect.height || rect.bottom - rect.top || groupHeader.offsetHeight
+    const height =
+      rect.height || rect.bottom - rect.top || groupHeader.offsetHeight
     return Number.isFinite(height) ? height : 0
   }
 
@@ -27,9 +30,8 @@ export default function useRawListScroll(
     offset: number,
     isItem: boolean,
   ) => {
-    const headerOffset = isItem && align !== 'bottom'
-      ? getStickyHeaderHeight(targetElement)
-      : 0
+    const headerOffset =
+      isItem && align !== 'bottom' ? getStickyHeaderHeight(targetElement) : 0
 
     const prevTop = targetElement.style.scrollMarginTop
     const prevBottom = targetElement.style.scrollMarginBottom
@@ -38,7 +40,8 @@ export default function useRawListScroll(
     targetElement.style.scrollMarginBottom = `${offset}px`
 
     targetElement.scrollIntoView({
-      block: align === 'bottom' ? 'end' : align === 'auto' ? 'nearest' : 'start',
+      block:
+        align === 'bottom' ? 'end' : align === 'auto' ? 'nearest' : 'start',
       inline: 'nearest',
     })
 
@@ -46,7 +49,7 @@ export default function useRawListScroll(
     targetElement.style.scrollMarginBottom = prevBottom
   }
 
-  const scrollTo: ListyRef['scrollTo'] = (config) => {
+  const scrollTo: ListyRef['scrollTo'] = config => {
     const holder = holderRef.value
     if (!holder || config == null) return
 

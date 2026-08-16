@@ -25,5 +25,5 @@
 </script>
 
 <template>
-  <div :class="nodeCls" :style="props.style"></div>
+  <div :class="nodeCls" :style="style"></div>
 </template>

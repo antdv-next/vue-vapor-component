@@ -1,6 +1,8 @@
 import type { Ref } from 'vue'
+
 import type { GetKey, GetSize } from '../interface'
 import type CacheMap from '../utils/CacheMap'
+
 import { watch } from 'vue'
 
 export function useGetSize<T>(
@@ -11,13 +13,10 @@ export function useGetSize<T>(
 ) {
   let key2Index = new Map()
   let bottomList: any[] = []
-  watch(
-    [mergedData, () => heights.id.value, itemHeight],
-    () => {
-      key2Index = new Map()
-      bottomList = []
-    },
-  )
+  watch([mergedData, () => heights.id.value, itemHeight], () => {
+    key2Index = new Map()
+    bottomList = []
+  })
 
   const getSize: GetSize = (startKey, endKey = startKey) => {
     let startIndex = key2Index.get(startKey)

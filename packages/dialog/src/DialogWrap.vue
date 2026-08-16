@@ -1,6 +1,4 @@
 <script setup vapor lang="ts">
-  import type { PortalProps } from '@vapor-component/portal'
-
   import type { IDialogPropTypes } from './IDialogPropTypes'
 
   import Portal from '@vapor-component/portal'
@@ -23,12 +21,24 @@
     forceRender: false,
   })
   const animatedVisible = shallowRef(false)
+  const emit = defineEmits<{
+    close: [e?: any]
+  }>()
   useRefProvide(props)
-  const onEsc: PortalProps['onEsc'] = ({ top, event }) => {
+  const onEsc = ({ top, event }: { top: boolean; event: KeyboardEvent }) => {
     const { keyboard = true } = props
     if (top && keyboard) {
       event.stopPropagation()
-      props?.onClose?.(event)
+      emit('close', event)
+    }
+  }
+  const onAfterClose = () => {
+    animatedVisible.value = false
+    if (props.afterClose) {
+      props.afterClose()
+    }
+    if (typeof props.closable === 'object' && props.closable?.afterClose) {
+      props.closable.afterClose()
     }
   }
   watch(
@@ -52,24 +62,15 @@
     <Portal
       :open="visible || forceRender || animatedVisible"
       :autoDestroy="false"
-      :onEsc="onEsc"
+      @esc="onEsc"
       :getContainer="getContainer"
       :autoLock="visible || animatedVisible"
     >
       <Dialog
         v-bind="props"
         :destroyOnHidden="destroyOnHidden"
-        :afterClose="
-          () => {
-            const closableObj =
-              props.closable && typeof props.closable === 'object'
-                ? props.closable
-                : {}
-            closableObj.afterClose?.()
-            afterClose?.()
-            animatedVisible = false
-          }
-        "
+        @close="e => emit('close', e)"
+        @after-close="onAfterClose"
       >
         <template v-for="slotName in panelSlots" #[slotName]>
           <slot :name="slotName" />

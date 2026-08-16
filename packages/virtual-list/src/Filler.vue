@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
+
   import type { InnerProps } from './interface'
 
   import ResizeObserver from '@vapor-component/resize-observer'
@@ -7,18 +8,20 @@
 
   defineOptions({ name: 'Filler', inheritAttrs: false })
 
-  const props = withDefaults(defineProps<{
-    prefixCls?: string
-    height?: number
-    offsetY?: number
-    offsetX?: number
-    scrollWidth?: number
-    rtl?: boolean
-    onInnerResize?: () => void
-    innerProps?: InnerProps
-  }>(), {
-    rtl: false,
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls?: string
+      height?: number
+      offsetY?: number
+      offsetX?: number
+      scrollWidth?: number
+      rtl?: boolean
+      innerProps?: InnerProps
+    }>(),
+    {
+      rtl: false,
+    },
+  )
 
   const emit = defineEmits<{
     'inner-resize': []
@@ -60,10 +63,7 @@
     props.prefixCls ? `${props.prefixCls}-holder-inner` : undefined,
   )
 
-  const handleInnerResize = (size: { offsetHeight: number }) => {
-    if (size.offsetHeight && props.onInnerResize) {
-      props.onInnerResize()
-    }
+  const handleInnerResize = (_size: { offsetHeight: number }) => {
     emit('inner-resize')
   }
 </script>

@@ -22,6 +22,9 @@
   })
 
   const attrs = useAttrs()
+  const emit = defineEmits<{
+    'visible-change': [count: number]
+  }>()
   const notifyEffectUpdate = useBatcher()
 
   const [containerWidth, setContainerWidth] = useEffectState<number | null>(
@@ -142,7 +145,7 @@
     displayCount.value = count
     if (notReady !== true) {
       restReady.value = count < data.value.length - 1
-      props.onVisibleChange?.(count)
+      emit('visible-change', count)
     }
 
     if (suffixFixedStartVal !== undefined) {
@@ -287,6 +290,21 @@
     clsx(!invalidate.value && props.prefixCls, attrs.class as any),
   )
 
+  const rootStyle = computed<CSSProperties>(() => {
+    const result: CSSProperties = {}
+    const parentStyle = attrs.style
+    if (
+      parentStyle &&
+      typeof parentStyle === 'object' &&
+      !Array.isArray(parentStyle)
+    ) {
+      for (const key in parentStyle) {
+        result[key] = parentStyle[key]
+      }
+    }
+    return result
+  })
+
   const restAttrs = computed(() =>
     omit(attrs as Record<string, any>, ['class', 'style', 'default']),
   )
@@ -310,9 +328,9 @@
 <template>
   <ResizeObserver :disabled="!shouldResponsive" @resize="onOverflowResize">
     <component
-      :is="props.component ?? 'div'"
+      :is="component ?? 'div'"
       :class="rootCls"
-      :style="attrs.style"
+      :style="rootStyle"
       v-bind="restAttrs"
     >
       <!-- Prefix -->
@@ -323,7 +341,7 @@
         :responsive="isResponsive"
         :responsiveDisabled="!shouldResponsive"
         :registerSize="registerPrefixSize"
-        :component="props.itemComponent"
+        :component="itemComponent"
         :invalidate="invalidate"
       >
         {{ prefixContent }}
@@ -332,12 +350,12 @@
       <!-- Data items -->
       <template v-for="(item, idx) in mergedData">
         <OverflowContextProvider
-          v-if="props.renderRawItem"
+          v-if="renderRawItem"
           :value="
             {
               prefixCls: itemPrefixCls,
               responsive: shouldResponsive,
-              component: props.itemComponent,
+              component: itemComponent,
               invalidate,
               order: idx,
               item,
@@ -347,7 +365,7 @@
             } as OverflowContextType
           "
         >
-          <component :is="props.renderRawItem(item, idx)" />
+          <component :is="renderRawItem(item, idx)" />
         </OverflowContextProvider>
         <Item
           v-else
@@ -358,9 +376,9 @@
           :itemKey="getKey(item, idx)"
           :registerSize="registerSize"
           :display="idx <= mergedDisplayCount"
-          :renderItem="props.renderItem"
+          :renderItem="renderItem"
           :responsive="shouldResponsive"
-          :component="props.itemComponent"
+          :component="itemComponent"
           :invalidate="invalidate"
         />
       </template>
@@ -368,12 +386,12 @@
       <!-- Rest -->
       <template v-if="showRest">
         <OverflowContextProvider
-          v-if="props.renderRawRest"
+          v-if="renderRawRest"
           :value="
             {
               prefixCls: itemPrefixCls,
               responsive: shouldResponsive,
-              component: props.itemComponent,
+              component: itemComponent,
               invalidate,
               order: displayRest ? mergedDisplayCount : Number.MAX_SAFE_INTEGER,
               className: itemPrefixCls + '-rest',
@@ -382,7 +400,7 @@
             } as OverflowContextType
           "
         >
-          <component :is="props.renderRawRest(omittedItems)" />
+          <component :is="renderRawRest(omittedItems)" />
         </OverflowContextProvider>
         <Item
           v-else
@@ -391,7 +409,7 @@
           :registerSize="registerOverflowSize"
           :display="displayRest"
           :responsive="shouldResponsive"
-          :component="props.itemComponent"
+          :component="itemComponent"
           :invalidate="invalidate"
         >
           {{ restContent }}
@@ -407,7 +425,7 @@
         :responsive="isResponsive"
         :responsiveDisabled="!shouldResponsive"
         :registerSize="registerSuffixSize"
-        :component="props.itemComponent"
+        :component="itemComponent"
         :invalidate="invalidate"
       >
         {{ suffixContent }}

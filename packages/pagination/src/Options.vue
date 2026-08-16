@@ -123,33 +123,33 @@
 
 <template>
   <li :class="prefixCls">
-    <template v-if="props.showSizeChanger || props.quickGo">
+    <template v-if="showSizeChanger || quickGo">
       <component :is="changeSelect" />
       <div v-if="showQuickJumper" :class="`${prefixCls}-quick-jumper`">
-        {{ props.locale.jump_to }}
+        {{ locale.jump_to }}
         <input
-          :disabled="props.disabled"
+          :disabled="disabled"
           type="text"
           :value="goInputText"
           @input="handleChange"
           @keyup="go"
           @blur="handleBlur"
-          :aria-label="props.locale.page"
+          :aria-label="locale.page"
         />
-        {{ props.locale.page }}
+        {{ locale.page }}
         <template v-if="showGotoButton">
           <button
-            v-if="typeof props.goButton === 'boolean'"
+            v-if="typeof goButton === 'boolean'"
             type="button"
             @click="go"
             @keyup="go"
-            :disabled="props.disabled"
+            :disabled="disabled"
             :class="`${prefixCls}-quick-jumper-button`"
           >
-            {{ props.locale.jump_to_confirm }}
+            {{ locale.jump_to_confirm }}
           </button>
           <span v-else @click="go" @keyup="go">
-            {{ props.goButton }}
+            {{ goButton }}
           </span>
         </template>
       </div>

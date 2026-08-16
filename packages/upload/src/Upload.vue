@@ -37,7 +37,25 @@
     hasControlInside: false,
     pastable: false,
   })
-
+  const emit = defineEmits<{
+    'batch-start': [
+      fileList: {
+        file: VcFile
+        parsedFile: Exclude<BeforeUploadFileType, boolean> | null
+      }[],
+    ]
+    start: [file: VcFile]
+    error: [error: Error, ret: Record<string, unknown>, file: VcFile | null]
+    success: [
+      response: Record<string, unknown>,
+      file: VcFile | null,
+      xhr: XMLHttpRequest,
+    ]
+    progress: [event: UploadProgressEvent, file: VcFile | null]
+    click: [e: MouseEvent | KeyboardEvent]
+    'mouse-enter': [e: MouseEvent]
+    'mouse-leave': [e: MouseEvent]
+  }>()
   const attrs = useAttrs()
 
   // ==================== State ====================
@@ -115,7 +133,7 @@
     }
 
     fileInputRef.value.click()
-    props.onClick?.(event)
+    emit('click', event)
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -229,7 +247,8 @@
     })
 
     Promise.all(postFiles).then(fileList => {
-      props.onBatchStart?.(
+      emit(
+        'batch-start',
         fileList.map(({ origin, parsedFile }) => ({
           file: origin,
           parsedFile,
@@ -244,8 +263,7 @@
     if (!isMounted.value) return
     if (!parsedFile || !action) return
 
-    const { onStart, customRequest, name, headers, withCredentials, method } =
-      props
+    const { customRequest, name, headers, withCredentials, method } = props
     const { uid: fileUid } = origin
     const request = customRequest || defaultRequest
 
@@ -258,23 +276,23 @@
       withCredentials,
       method: method ?? 'post',
       onProgress: (e: UploadProgressEvent) => {
-        props.onProgress?.(e, parsedFile)
+        emit('progress', e, parsedFile)
       },
       onSuccess: (ret: any, xhr?: XMLHttpRequest) => {
         if (xhr) {
-          props.onSuccess?.(ret, parsedFile, xhr)
+          emit('success', ret, parsedFile, xhr)
         }
         delete reqs.value[fileUid]
       },
       onError: (err: UploadRequestError | ProgressEvent, ret?: any) => {
         if (err instanceof Error) {
-          props.onError?.(err, ret as Record<string, unknown>, parsedFile)
+          emit('error', err, ret as Record<string, unknown>, parsedFile)
         }
         delete reqs.value[fileUid]
       },
     }
 
-    onStart?.(origin)
+    emit('start', origin)
     const abortHandle = request(requestOption, { defaultRequest })
     if (abortHandle?.abort) {
       reqs.value[fileUid] = abortHandle
@@ -367,12 +385,12 @@
 
   const onWrapMouseEnter = (e: MouseEvent) => {
     if (isDisabled.value) return
-    props.onMouseEnter?.(e)
+    emit('mouse-enter', e)
   }
 
   const onWrapMouseLeave = (e: MouseEvent) => {
     if (isDisabled.value) return
-    props.onMouseLeave?.(e)
+    emit('mouse-leave', e)
   }
 
   const onWrapClick = (e: MouseEvent) => {

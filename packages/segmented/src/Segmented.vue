@@ -150,12 +150,12 @@
         :motionName="`${prefixCls}-${motionName}`"
         :direction="direction"
         :getValueIndex="val => segmentedOptions.findIndex(n => n.value === val)"
-        @motionStart="
+        @motion-start="
           () => {
             thumbShow = true
           }
         "
-        @motionEnd="
+        @motion-end="
           () => {
             thumbShow = false
           }
@@ -184,11 +184,11 @@
           :styles="styles"
           :checked="item.value === rawValue"
           @change="handleChange"
-          :onFocus="handleFocus"
-          :onBlur="handleBlur"
-          @keyDown="handleKeyDown"
-          @keyUp="handleKeyUp"
-          @mouseDown="handleMouseDown"
+          @focus="handleFocus"
+          @blur="handleBlur"
+          @keydown="handleKeyDown"
+          @keyup="handleKeyUp"
+          @mousedown="handleMouseDown"
           :disabled="!!disabled || !!item.disabled"
         >
           <template #itemRender>

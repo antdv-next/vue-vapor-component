@@ -1,14 +1,15 @@
 import type { RangeConfig } from '../interface'
+
 import { warning } from '@v-c/util/dist/warning'
 
 export default function useRange(
   range?: boolean | RangeConfig,
 ): [
-    range: boolean,
-    rangeEditable: boolean,
-    rangeDraggableTrack: boolean,
-    minCount: number,
-    maxCount?: number,
+  range: boolean,
+  rangeEditable: boolean,
+  rangeDraggableTrack: boolean,
+  minCount: number,
+  maxCount?: number,
 ] {
   if (range === true || !range) {
     return [!!range, false, false, 0]
@@ -17,7 +18,10 @@ export default function useRange(
   const { editable = false, draggableTrack = false, minCount, maxCount } = range
 
   if (process.env.NODE_ENV !== 'production') {
-    warning(!editable || !draggableTrack, '`editable` can not work with `draggableTrack`.')
+    warning(
+      !editable || !draggableTrack,
+      '`editable` can not work with `draggableTrack`.',
+    )
   }
 
   return [true, editable, !editable && draggableTrack, minCount || 0, maxCount]

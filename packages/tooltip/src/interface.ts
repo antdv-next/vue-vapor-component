@@ -11,7 +11,6 @@ export type SemanticName = 'root' | 'arrow' | 'container' | 'uniqueContainer'
 
 export interface TooltipProps extends Pick<
   TriggerProps,
-  | 'onPopupAlign'
   | 'builtinPlacements'
   | 'fresh'
   | 'mouseLeaveDelay'
@@ -33,7 +32,6 @@ export interface TooltipProps extends Pick<
   visible?: boolean
   placement?: string
 
-  onVisibleChange?: (visible: boolean) => void
   afterVisibleChange?: (visible: boolean) => void
   overlay: (() => VueNode) | VueNode
 

@@ -1,14 +1,23 @@
 import type { Key } from '@v-c/util/dist/type'
 import type { Ref } from 'vue'
-import type { GetKey, GetSize, ScrollAlign, ScrollOffset, ScrollOffsetInfo } from '../interface'
+
+import type {
+  GetKey,
+  GetSize,
+  ScrollAlign,
+  ScrollOffset,
+  ScrollOffsetInfo,
+} from '../interface'
 import type CacheMap from '../utils/CacheMap'
+
 import { warning } from '@v-c/util'
 import { shallowRef, watch } from 'vue'
 
 const MAX_TIMES = 10
 
 function getOffset(rawOffset: ScrollOffset, info: ScrollOffsetInfo) {
-  const resolvedOffset = typeof rawOffset === 'function' ? rawOffset(info) : rawOffset
+  const resolvedOffset =
+    typeof rawOffset === 'function' ? rawOffset(info) : rawOffset
   return Number.isFinite(resolvedOffset) ? resolvedOffset : 0
 }
 
@@ -22,7 +31,19 @@ export default function useScrollTo(
   collectHeight: () => void,
   syncScrollTop: (newTop: number) => void,
   triggerFlash: () => void,
-): [(arg: number | { index?: number; key?: Key; align?: ScrollAlign; offset?: ScrollOffset }) => void, () => number] {
+): [
+  (
+    arg:
+      | number
+      | {
+          index?: number
+          key?: Key
+          align?: ScrollAlign
+          offset?: ScrollOffset
+        },
+  ) => void,
+  () => number,
+] {
   const syncState = shallowRef<{
     times: number
     index: number
@@ -37,7 +58,7 @@ export default function useScrollTo(
     for (let i = 0; i < data.value.length; i += 1) {
       const key = getKey(data.value[i])
       const cacheHeight = heights.get(key)
-      totalHeight += (cacheHeight === undefined ? itemHeight.value : cacheHeight)
+      totalHeight += cacheHeight === undefined ? itemHeight.value : cacheHeight
     }
     return totalHeight
   }
@@ -53,7 +74,12 @@ export default function useScrollTo(
 
         collectHeight()
 
-        const { targetAlign, originAlign, index, offset: rawOffset } = syncState.value
+        const {
+          targetAlign,
+          originAlign,
+          index,
+          offset: rawOffset,
+        } = syncState.value
         const mergedAlign = targetAlign || originAlign
         const offset = getOffset(rawOffset, { getSize, align: mergedAlign })
 
@@ -73,7 +99,9 @@ export default function useScrollTo(
             const key = getKey(data.value[i])
             itemTop = stackTop
             const cacheHeight = heights.get(key)
-            itemBottom = itemTop + (cacheHeight === undefined ? itemHeight.value : cacheHeight)
+            itemBottom =
+              itemTop +
+              (cacheHeight === undefined ? itemHeight.value : cacheHeight)
             stackTop = itemBottom
           }
 
@@ -105,8 +133,7 @@ export default function useScrollTo(
               const scrollBottom = scrollTop + height
               if (itemTop < scrollTop) {
                 newTargetAlign = 'top'
-              }
-              else if (itemBottom > scrollBottom) {
+              } else if (itemBottom > scrollBottom) {
                 newTargetAlign = 'bottom'
               }
             }
@@ -129,8 +156,7 @@ export default function useScrollTo(
             lastTop: targetTop as any,
           }
         }
-      }
-      else if (syncState.value?.times === MAX_TIMES) {
+      } else if (syncState.value?.times === MAX_TIMES) {
         warning(
           false,
           'Seems `scrollTo` with `rc-virtual-list` reach the max limitation. Please fire issue for us. Thanks.',
@@ -143,7 +169,18 @@ export default function useScrollTo(
     },
   )
 
-  const scrollTo = (arg: number | { index?: number; key?: Key; align?: ScrollAlign; offset?: ScrollOffset } | null | undefined) => {
+  const scrollTo = (
+    arg:
+      | number
+      | {
+          index?: number
+          key?: Key
+          align?: ScrollAlign
+          offset?: ScrollOffset
+        }
+      | null
+      | undefined,
+  ) => {
     if (arg === null || arg === undefined) {
       triggerFlash()
       return
@@ -151,15 +188,13 @@ export default function useScrollTo(
 
     if (typeof arg === 'number') {
       syncScrollTop(arg)
-    }
-    else if (arg && typeof arg === 'object') {
+    } else if (arg && typeof arg === 'object') {
       let index: number
       const { align } = arg
 
       if ('index' in arg && arg.index !== undefined) {
         index = arg.index
-      }
-      else {
+      } else {
         index = data.value.findIndex(item => getKey(item) === arg.key)
       }
 

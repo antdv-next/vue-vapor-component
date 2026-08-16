@@ -64,8 +64,6 @@ export interface PaginationProps {
   styles?: Partial<Record<SemanticName, CSSProperties>>
   itemRender?: ItemRender
   showTotal?: ShowTotal
-  onChange?: (page: number, pageSize: number) => void
-  onShowSizeChange?: (current: number, size: number) => void
   role?: string
   totalBoundaryShowSizeChanger?: number
 }
@@ -74,11 +72,8 @@ export interface PagerProps {
   rootPrefixCls: string
   page: number
   active?: boolean
-  class?: string | object | string[]
-  style?: CSSProperties
   showTitle: boolean
   itemRender?: ItemRender
-  onClick?: (page: number) => void
 }
 
 export interface OptionsProps {

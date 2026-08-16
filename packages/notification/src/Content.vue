@@ -50,9 +50,9 @@
     ref="contentRef"
     :class="
       clsx(
-        `${props.listPrefixCls}-content`,
-        `${props.listPrefixCls}-content-${heightStatus}`,
-        props.className,
+        `${listPrefixCls}-content`,
+        `${listPrefixCls}-content-${heightStatus}`,
+        className,
       )
     "
     :style="contentStyle"

@@ -149,7 +149,6 @@
           :ref="setPopupRef"
           :prefix-cls="prefixCls!"
           :popup="mergedOptions.popup"
-          :on-esc="mergedOptions.onEsc"
           :class="
             clsx(
               mergedOptions.popupClassName,
@@ -163,14 +162,11 @@
           :keep-dom="true"
           :fresh="true"
           :auto-destroy="false"
-          :on-visible-changed="onVisibleChanged"
           :ready="ready"
           :offset-x="offsetX"
           :offset-y="offsetY"
           :offset-r="offsetR"
           :offset-b="offsetB"
-          :on-align="triggerAlign"
-          :on-prepare="onPrepare"
           :arrow-pos="{ x: arrowX, y: arrowY }"
           :align="alignInfo"
           :z-index="mergedOptions.zIndex"
@@ -179,6 +175,10 @@
           :motion="mergedOptions.popupMotion"
           :mask-motion="mergedOptions.maskMotion"
           :get-container="mergedOptions.getPopupContainer"
+          @esc="mergedOptions.onEsc"
+          @visible-changed="onVisibleChanged"
+          @align="triggerAlign"
+          @prepare="onPrepare"
           @resize="
             (size: any) => {
               popupSize = { width: size.offsetWidth, height: size.offsetHeight }

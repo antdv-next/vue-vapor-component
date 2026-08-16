@@ -1,20 +1,22 @@
 import type { MaybeRefOrGetter } from 'vue'
+
 import { warning } from '@v-c/util/dist/warning'
 import { computed, toValue } from 'vue'
 
 export type IsHandleDisabled = (index: number) => boolean
-export type GetDisabledState = (rawValues: number[]) => [disabled: boolean, hasDisabledHandle: boolean]
+export type GetDisabledState = (
+  rawValues: number[],
+) => [disabled: boolean, hasDisabledHandle: boolean]
 
 export default function useDisabled(
   rawDisabled: MaybeRefOrGetter<boolean | boolean[] | undefined>,
 ): {
-    isHandleDisabled: IsHandleDisabled
-    getDisabledState: GetDisabledState
-  } {
+  isHandleDisabled: IsHandleDisabled
+  getDisabledState: GetDisabledState
+} {
   const isHandleDisabled: IsHandleDisabled = (index: number) => {
     const value = toValue(rawDisabled)
-    if (typeof value === 'boolean')
-      return value
+    if (typeof value === 'boolean') return value
     return value?.[index] ?? false
   }
 
@@ -23,7 +25,8 @@ export default function useDisabled(
     if (typeof value === 'boolean')
       return [!!value, !!value && rawValues.length > 0]
     return [
-      rawValues.length > 0 && rawValues.every((_, index) => isHandleDisabled(index)),
+      rawValues.length > 0 &&
+        rawValues.every((_, index) => isHandleDisabled(index)),
       rawValues.some((_, index) => isHandleDisabled(index)),
     ]
   }

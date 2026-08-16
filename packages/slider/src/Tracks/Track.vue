@@ -1,25 +1,31 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
-  import type { OnStartMove } from '../interface'
+
   import { clsx } from '@v-c/util'
   import { computed } from 'vue'
+
   import { useInjectSlider } from '../SliderContextKey'
   import { getOffset } from '../util'
 
   defineOptions({ name: 'SliderTrack' })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    replaceCls?: string
-    start: number
-    end: number
-    index?: number
-    onStartMove?: OnStartMove
-    style?: CSSProperties
-  }>(), {
-    prefixCls: 'vc-slider',
-    index: 0,
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      replaceCls?: string
+      start: number
+      end: number
+      index?: number
+      style?: CSSProperties
+    }>(),
+    {
+      prefixCls: 'vc-slider',
+      index: 0,
+    },
+  )
+  const emit = defineEmits<{
+    'start-move': [e: MouseEvent | TouchEvent, valueIndex: number]
+  }>()
 
   const sliderContext = useInjectSlider()
 
@@ -59,8 +65,9 @@
     return clsx(
       trackPrefixCls.value,
       {
-        [`${trackPrefixCls.value}-${props.index + 1}`]: props.index !== null && ctx.range,
-        [`${props.prefixCls}-track-draggable`]: !!props.onStartMove,
+        [`${trackPrefixCls.value}-${props.index + 1}`]:
+          props.index !== null && ctx.range,
+        [`${props.prefixCls}-track-draggable`]: true,
       },
       ctx.classNames?.track,
     )
@@ -73,8 +80,8 @@
 
   function onInternalStartMove(e: MouseEvent | TouchEvent) {
     const ctx = sliderContext.value
-    if (!ctx.disabled && props.onStartMove) {
-      props.onStartMove(e, -1)
+    if (!ctx.disabled) {
+      emit('start-move', e, -1)
     }
   }
 </script>
@@ -84,6 +91,6 @@
     :class="trackCls"
     :style="mergedStyle"
     v-if="positionStyle"
-    @mousedown="onStartMove ? onInternalStartMove : undefined"
+    @mousedown="onInternalStartMove"
   />
 </template>

@@ -25,6 +25,16 @@
     prefixCls: 'vc-input',
     type: 'text',
   })
+  const emit = defineEmits<{
+    change: [e: any]
+    'press-enter': [e: KeyboardEvent]
+    keydown: [e: KeyboardEvent]
+    keyup: [e: KeyboardEvent]
+    focus: [e: FocusEvent]
+    blur: [e: FocusEvent]
+    compositionstart: [e: CompositionEvent]
+    compositionend: [e: CompositionEvent]
+  }>()
 
   const slots = useSlots()
 
@@ -40,7 +50,7 @@
   )
 
   function onChange(e: Event) {
-    props?.onChange?.(e as any)
+    emit('change', e as any)
   }
 
   function focus(option?: InputFocusOptions) {
@@ -148,9 +158,8 @@
 
   function onInternalCompositionStart(e: CompositionEvent) {
     compositionRef.value = true
-    // Clear stale dedup marker from previous composition cycle
     compositionEndValueRef.value = null
-    props?.onCompositionStart?.(e as any)
+    emit('compositionstart', e as any)
   }
 
   function onInternalCompositionEnd(e: CompositionEvent) {
@@ -169,27 +178,27 @@
     if (!props.changeOnComposing) {
       compositionEndValueRef.value = currentValue
     }
-    props?.onCompositionEnd?.(e as any)
+    emit('compositionend', e as any)
   }
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === KeyCodeStr.Enter && !keyLockRef.value && !e.isComposing) {
       keyLockRef.value = true
-      props.onPressEnter?.(e)
+      emit('press-enter', e)
     }
-    props?.onKeyDown?.(e)
+    emit('keydown', e)
   }
 
   function handleKeyUp(e: KeyboardEvent) {
     if (e.key === 'Enter') {
       keyLockRef.value = false
     }
-    props?.onKeyUp?.(e)
+    emit('keyup', e)
   }
 
   function handleFocus(e: FocusEvent) {
     focused.value = true
-    props?.onFocus?.(e)
+    emit('focus', e)
   }
 
   function handleBlur(e: FocusEvent) {
@@ -197,7 +206,7 @@
       keyLockRef.value = false
     }
     focused.value = false
-    props?.onBlur?.(e)
+    emit('blur', e)
   }
 
   function handleReset(e: MouseEvent) {
@@ -306,7 +315,7 @@
     :dataAttrs="dataAttrs"
     :components="components"
     :hidden="hidden"
-    :onClear="onClear"
+    @clear="handleReset"
     :classes="classes"
     :class="isOutOfRange && `${prefixCls}-out-of-range`"
   >

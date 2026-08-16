@@ -17,6 +17,12 @@
     pauseOnHover: true,
   })
   const slots = useSlots()
+  const emit = defineEmits<{
+    click: [e: MouseEvent]
+    'mouse-enter': [e: MouseEvent]
+    'mouse-leave': [e: MouseEvent]
+    close: []
+  }>()
   const nodeRef = useTemplateRef<HTMLDivElement>('nodeRef')
   const percent = shallowRef(0)
   const hovering = shallowRef(false)
@@ -30,7 +36,7 @@
 
   const onInternalClose = () => {
     closableConfig.value.onClose?.()
-    props.onClose?.()
+    emit('close')
   }
 
   // ===== Duration / Timer =====
@@ -82,13 +88,13 @@
   const onInternalMouseEnter = (e: MouseEvent) => {
     hovering.value = true
     if (props.pauseOnHover ?? true) onPause()
-    props.onMouseEnter?.(e)
+    emit('mouse-enter', e)
   }
 
   const onInternalMouseLeave = (e: MouseEvent) => {
     hovering.value = false
     if ((props.pauseOnHover ?? true) && !props.hovering) onResume()
-    props.onMouseLeave?.(e)
+    emit('mouse-leave', e)
   }
 
   const onInternalCloseClick = (e: MouseEvent) => {
@@ -156,110 +162,101 @@
     :class="rootClass"
     :style="rootStyle"
     :data-notification-index="mergedIndex"
-    @click="(e: MouseEvent) => props.onClick?.(e)"
+    @click="(e: MouseEvent) => emit('click', e)"
     @mouseenter="onInternalMouseEnter"
     @mouseleave="onInternalMouseLeave"
   >
     <div
       v-if="hasIcon"
-      :class="clsx(`${noticePrefixCls}-wrapper`, props.classNames?.wrapper)"
-      :style="props.styles?.wrapper"
+      :class="clsx(`${noticePrefixCls}-wrapper`, classNames?.wrapper)"
+      :style="styles?.wrapper"
     >
       <div
-        :class="clsx(`${noticePrefixCls}-icon`, props.classNames?.icon)"
-        :style="props.styles?.icon"
+        :class="clsx(`${noticePrefixCls}-icon`, classNames?.icon)"
+        :style="styles?.icon"
       >
         <slot name="icon" />
       </div>
       <div
         v-if="hasBoth"
-        :class="clsx(`${noticePrefixCls}-section`, props.classNames?.section)"
-        :style="props.styles?.section"
+        :class="clsx(`${noticePrefixCls}-section`, classNames?.section)"
+        :style="styles?.section"
       >
         <div
-          :class="clsx(`${noticePrefixCls}-title`, props.classNames?.title)"
-          :style="props.styles?.title"
+          :class="clsx(`${noticePrefixCls}-title`, classNames?.title)"
+          :style="styles?.title"
         >
           <slot name="title" />
         </div>
         <div
           :class="
-            clsx(
-              `${noticePrefixCls}-description`,
-              props.classNames?.description,
-            )
+            clsx(`${noticePrefixCls}-description`, classNames?.description)
           "
-          :style="props.styles?.description"
+          :style="styles?.description"
         >
           <slot name="description" />
         </div>
       </div>
       <div
         v-else-if="hasTitle"
-        :class="clsx(`${noticePrefixCls}-title`, props.classNames?.title)"
-        :style="props.styles?.title"
+        :class="clsx(`${noticePrefixCls}-title`, classNames?.title)"
+        :style="styles?.title"
       >
         <slot name="title" />
       </div>
       <div
         v-else-if="hasDescription"
-        :class="
-          clsx(`${noticePrefixCls}-description`, props.classNames?.description)
-        "
-        :style="props.styles?.description"
+        :class="clsx(`${noticePrefixCls}-description`, classNames?.description)"
+        :style="styles?.description"
       >
         <slot name="description" />
       </div>
     </div>
     <div
       v-else-if="hasBoth"
-      :class="clsx(`${noticePrefixCls}-section`, props.classNames?.section)"
-      :style="props.styles?.section"
+      :class="clsx(`${noticePrefixCls}-section`, classNames?.section)"
+      :style="styles?.section"
     >
       <div
-        :class="clsx(`${noticePrefixCls}-title`, props.classNames?.title)"
-        :style="props.styles?.title"
+        :class="clsx(`${noticePrefixCls}-title`, classNames?.title)"
+        :style="styles?.title"
       >
         <slot name="title" />
       </div>
       <div
-        :class="
-          clsx(`${noticePrefixCls}-description`, props.classNames?.description)
-        "
-        :style="props.styles?.description"
+        :class="clsx(`${noticePrefixCls}-description`, classNames?.description)"
+        :style="styles?.description"
       >
         <slot name="description" />
       </div>
     </div>
     <div
       v-else-if="hasTitle"
-      :class="clsx(`${noticePrefixCls}-title`, props.classNames?.title)"
-      :style="props.styles?.title"
+      :class="clsx(`${noticePrefixCls}-title`, classNames?.title)"
+      :style="styles?.title"
     >
       <slot name="title" />
     </div>
     <div
       v-else-if="hasDescription"
-      :class="
-        clsx(`${noticePrefixCls}-description`, props.classNames?.description)
-      "
-      :style="props.styles?.description"
+      :class="clsx(`${noticePrefixCls}-description`, classNames?.description)"
+      :style="styles?.description"
     >
       <slot name="description" />
     </div>
 
     <div
       v-if="slots?.actions"
-      :class="clsx(`${noticePrefixCls}-actions`, props.classNames?.actions)"
-      :style="props.styles?.actions"
+      :class="clsx(`${noticePrefixCls}-actions`, classNames?.actions)"
+      :style="styles?.actions"
     >
       <slot name="actions" />
     </div>
 
     <button
       v-if="isClosable"
-      :class="clsx(`${noticePrefixCls}-close`, props.classNames?.close)"
-      :style="props.styles?.close"
+      :class="clsx(`${noticePrefixCls}-close`, classNames?.close)"
+      :style="styles?.close"
       aria-label="Close"
       v-bind="closeBtnAriaProps"
       @click="onInternalCloseClick"
@@ -269,8 +266,8 @@
 
     <Progress
       v-if="showProgressBar"
-      :class="clsx(`${noticePrefixCls}-progress`, props.classNames?.progress)"
-      :style="props.styles?.progress"
+      :class="clsx(`${noticePrefixCls}-progress`, classNames?.progress)"
+      :style="styles?.progress"
       :percent="validPercent"
     />
   </div>

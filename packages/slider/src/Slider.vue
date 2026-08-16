@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
   import type { CSSProperties, Ref } from 'vue'
+
   import type {
     AriaValueFormat,
     Direction,
@@ -10,6 +11,7 @@
     SliderProps,
     ValueType,
   } from './interface'
+
   import { clsx } from '@v-c/util'
   import isEqual from '@v-c/util/dist/isEqual'
   import warning from '@v-c/util/dist/warning'
@@ -26,13 +28,14 @@
     watch,
     watchEffect,
   } from 'vue'
-  import { useProviderSliderContext } from './SliderContextKey'
+
+  import Handles from './Handles/index.vue'
   import useDisabled from './hooks/useDisabled'
   import useDrag from './hooks/useDrag'
   import useOffset, { getClosestEnabledHandleIndex } from './hooks/useOffset'
   import useRange from './hooks/useRange'
-  import Handles from './Handles/index.vue'
   import Marks from './Marks/index.vue'
+  import { useProviderSliderContext } from './SliderContextKey'
   import Steps from './Steps/index.vue'
   import Tracks from './Tracks/index.vue'
 
@@ -54,9 +57,11 @@
 
   const emit = defineEmits<{
     change: [value: ValueType]
-    beforeChange: [value: ValueType]
-    afterChange: [value: ValueType]
-    changeComplete: [value: ValueType]
+    'before-change': [value: ValueType]
+    'after-change': [value: ValueType]
+    'change-complete': [value: ValueType]
+    focus: [e: FocusEvent]
+    blur: [e: FocusEvent]
   }>()
 
   const attrs = useAttrs()
@@ -78,7 +83,13 @@
 
   // ============================ Range ============================
   const rangeConfig = computed(() => {
-    const [rangeEnabled, rangeEditable, rangeDraggableTrack, minCount, maxCount] = useRange(props.range)
+    const [
+      rangeEnabled,
+      rangeEditable,
+      rangeDraggableTrack,
+      minCount,
+      maxCount,
+    ] = useRange(props.range)
     return {
       rangeEnabled,
       rangeEditable,
@@ -89,13 +100,19 @@
   })
   const rangeEnabled = computed(() => rangeConfig.value.rangeEnabled)
   const rangeEditable = computed(() => rangeConfig.value.rangeEditable)
-  const rangeDraggableTrack = computed(() => rangeConfig.value.rangeDraggableTrack)
+  const rangeDraggableTrack = computed(
+    () => rangeConfig.value.rangeDraggableTrack,
+  )
   const minCount = computed(() => rangeConfig.value.minCount ?? 0)
   const maxCount = computed(() => rangeConfig.value.maxCount)
 
   // ============================ Min/Max ============================
-  const mergedMin = computed(() => (Number.isFinite(props.min ?? 0) ? props.min ?? 0 : 0))
-  const mergedMax = computed(() => (Number.isFinite(props.max ?? 100) ? props.max ?? 100 : 100))
+  const mergedMin = computed(() =>
+    Number.isFinite(props.min ?? 0) ? (props.min ?? 0) : 0,
+  )
+  const mergedMax = computed(() =>
+    Number.isFinite(props.max ?? 100) ? (props.max ?? 100) : 100,
+  )
 
   // ============================ Step ============================
   const mergedStep = computed<number | null>(() => {
@@ -116,14 +133,14 @@
   // ============================ Marks ============================
   const markList = computed<InternalMarkObj[]>(() => {
     return Object.keys(props.marks || {})
-      .map((key) => {
+      .map(key => {
         const mark = props.marks?.[key]
         const markObj: InternalMarkObj = { value: Number(key) }
 
         if (
-          mark
-          && typeof mark === 'object'
-          && ('label' in mark || 'style' in mark)
+          mark &&
+          typeof mark === 'object' &&
+          ('label' in mark || 'style' in mark)
         ) {
           markObj.style = (mark as any).style
           markObj.label = (mark as any).label
@@ -157,7 +174,7 @@
 
   watch(
     () => props.value,
-    (val) => {
+    val => {
       if (val !== undefined) {
         mergedValue.value = val
       }
@@ -179,10 +196,15 @@
       returnValues = [...valueList]
 
       if (typeof props.count === 'number' || mergedValue.value === undefined) {
-        const pointCount = typeof props.count === 'number' && props.count >= 0 ? props.count + 1 : 2
+        const pointCount =
+          typeof props.count === 'number' && props.count >= 0
+            ? props.count + 1
+            : 2
         returnValues = returnValues.slice(0, pointCount)
         while (returnValues.length < pointCount) {
-          returnValues.push(returnValues[returnValues.length - 1] ?? mergedMin.value)
+          returnValues.push(
+            returnValues[returnValues.length - 1] ?? mergedMin.value,
+          )
         }
       }
       returnValues.sort((a, b) => a - b)
@@ -205,7 +227,6 @@
     if (!isEqual(cloneNextValues, rawValues.value, true)) {
       const triggerValue = getTriggerValue(cloneNextValues)
       emit('change', triggerValue)
-      props.onChange?.(triggerValue)
     }
 
     mergedValue.value = cloneNextValues as ValueType
@@ -217,14 +238,8 @@
     }
 
     const finishValue = getTriggerValue(rawValues.value)
-    emit('afterChange', finishValue)
-    props.onAfterChange?.(finishValue)
-    warning(
-      !props.onAfterChange,
-      '[vc-slider] `onAfterChange` is deprecated. Please use `onChangeComplete` instead.',
-    )
-    emit('changeComplete', finishValue)
-    props.onChangeComplete?.(finishValue)
+    emit('after-change', finishValue)
+    emit('change-complete', finishValue)
   }
 
   // ============================ Disabled State ============================
@@ -237,7 +252,11 @@
 
   // ============================ Delete ============================
   const onDelete = (index: number) => {
-    if (disabled.value || !effectiveRangeEditable.value || rawValues.value.length <= minCount.value) {
+    if (
+      disabled.value ||
+      !effectiveRangeEditable.value ||
+      rawValues.value.length <= minCount.value
+    ) {
       return
     }
 
@@ -245,8 +264,7 @@
     cloneNextValues.splice(index, 1)
 
     const triggerValue = getTriggerValue(cloneNextValues)
-    emit('beforeChange', triggerValue)
-    props.onBeforeChange?.(triggerValue)
+    emit('before-change', triggerValue)
     triggerChange(cloneNextValues)
 
     const nextFocusIndex = Math.max(0, index - 1)
@@ -312,9 +330,9 @@
     let focusIndex = valueIndex
 
     if (
-      effectiveRangeEditable.value
-      && valueDist !== 0
-      && (!maxCount.value || rawValues.value.length < maxCount.value)
+      effectiveRangeEditable.value &&
+      valueDist !== 0 &&
+      (!maxCount.value || rawValues.value.length < maxCount.value)
     ) {
       cloneNextValues.splice(valueBeforeIndex + 1, 0, newValue)
       focusIndex = valueBeforeIndex + 1
@@ -323,12 +341,16 @@
       focusIndex = valueIndex
     }
 
-    if (rangeEnabled.value && !rawValues.value.length && props.count === undefined) {
+    if (
+      rangeEnabled.value &&
+      !rawValues.value.length &&
+      props.count === undefined
+    ) {
       cloneNextValues.push(newValue)
     }
 
     const nextValue = getTriggerValue(cloneNextValues)
-    props.onBeforeChange?.(nextValue)
+    emit('before-change', nextValue)
     triggerChange(cloneNextValues)
 
     if (e) {
@@ -336,13 +358,8 @@
       handlesRef.value?.focus?.(focusIndex)
       onStartDrag(e, focusIndex, cloneNextValues)
     } else {
-      props.onAfterChange?.(nextValue)
-      warning(
-        !props.onAfterChange,
-        '[vc-slider] `onAfterChange` is deprecated. Please use `onChangeComplete` instead.',
-      )
-      emit('changeComplete', nextValue)
-      props.onChangeComplete?.(nextValue)
+      emit('after-change', nextValue)
+      emit('change-complete', nextValue)
     }
   }
 
@@ -370,31 +387,37 @@
         percent = (clientX - left) / width
     }
 
-    const nextValue = mergedMin.value + percent * (mergedMax.value - mergedMin.value)
+    const nextValue =
+      mergedMin.value + percent * (mergedMax.value - mergedMin.value)
     changeToCloseValue(formatValue(nextValue), e)
   }
 
   // ============================ Keyboard ============================
-  const keyboardValue = shallowRef<{ value: number; index: number } | null>(null)
+  const keyboardValue = shallowRef<{ value: number; index: number } | null>(
+    null,
+  )
 
-  const onHandleOffsetChange = (offset: number | 'min' | 'max', valueIndex: number) => {
+  const onHandleOffsetChange = (
+    offset: number | 'min' | 'max',
+    valueIndex: number,
+  ) => {
     if (disabled.value || isHandleDisabled(valueIndex)) return
 
     const next = offsetValuesFn(rawValues.value, offset, valueIndex)
 
     const currentValue = getTriggerValue(rawValues.value)
-    emit('beforeChange', currentValue)
-    props.onBeforeChange?.(currentValue)
+    emit('before-change', currentValue)
     triggerChange(next.values)
 
     keyboardValue.value = { value: next.value, index: valueIndex }
   }
 
-  watch(keyboardValue, (val) => {
+  watch(keyboardValue, val => {
     if (val !== null) {
-      const valueIndex = rawValues.value[val.index] === val.value
-        ? val.index
-        : rawValues.value.indexOf(val.value)
+      const valueIndex =
+        rawValues.value[val.index] === val.value
+          ? val.index
+          : rawValues.value.indexOf(val.value)
       if (valueIndex >= 0) {
         handlesRef.value?.focus?.(valueIndex)
       }
@@ -406,7 +429,10 @@
   const mergedDraggableTrack = computed(() => {
     if (rangeDraggableTrack.value && mergedStep.value === null) {
       if (process.env.NODE_ENV !== 'production') {
-        warning(false, '`draggableTrack` is not supported when `step` is `null`.')
+        warning(
+          false,
+          '`draggableTrack` is not supported when `step` is `null`.',
+        )
       }
       return false
     }
@@ -416,14 +442,17 @@
   const onStartMove: OnStartMove = (e, valueIndex) => {
     onStartDrag(e, valueIndex)
     const triggerValue = getTriggerValue(rawValues.value)
-    emit('beforeChange', triggerValue)
-    props.onBeforeChange?.(triggerValue)
+    emit('before-change', triggerValue)
   }
 
   // ============================ Dragging watch ============================
   const dragging = computed(() => draggingIndex.value !== -1)
-  watch(dragging, (isDragging) => {
-    if (!isDragging && draggingValue.value !== null && draggingValue.value !== undefined) {
+  watch(dragging, isDragging => {
+    if (
+      !isDragging &&
+      draggingValue.value !== null &&
+      draggingValue.value !== undefined
+    ) {
       const valueIndex = rawValues.value.lastIndexOf(draggingValue.value)
       if (valueIndex >= 0) {
         handlesRef.value?.focus?.(valueIndex)
@@ -432,7 +461,9 @@
   })
 
   // ============================ Included ============================
-  const sortedCacheValues = computed(() => [...cacheValues.value].sort((a, b) => a - b))
+  const sortedCacheValues = computed(() =>
+    [...cacheValues.value].sort((a, b) => a - b),
+  )
   const includedRange = computed<[number, number]>(() => {
     if (!rangeEnabled.value) {
       return [mergedMin.value, sortedCacheValues.value[0] ?? mergedMin.value]
@@ -456,7 +487,7 @@
     blur: () => {
       const { activeElement } = document
       if (containerRef.value?.contains(activeElement)) {
-        (activeElement as HTMLElement)?.blur()
+        ;(activeElement as HTMLElement)?.blur()
       }
     },
   })
@@ -496,17 +527,13 @@
 
   // ============================ ClassName / Style ============================
   const mergedClassName = computed(() =>
-    clsx(
-      props.prefixCls ?? 'vc-slider',
-      props.className,
-      attrs.class as any,
-      {
-        [`${props.prefixCls ?? 'vc-slider'}-disabled`]: disabled.value,
-        [`${props.prefixCls ?? 'vc-slider'}-vertical`]: props.vertical,
-        [`${props.prefixCls ?? 'vc-slider'}-horizontal`]: !props.vertical,
-        [`${props.prefixCls ?? 'vc-slider'}-with-marks`]: markList.value.length > 0,
-      },
-    ),
+    clsx(props.prefixCls ?? 'vc-slider', props.className, attrs.class as any, {
+      [`${props.prefixCls ?? 'vc-slider'}-disabled`]: disabled.value,
+      [`${props.prefixCls ?? 'vc-slider'}-vertical`]: props.vertical,
+      [`${props.prefixCls ?? 'vc-slider'}-horizontal`]: !props.vertical,
+      [`${props.prefixCls ?? 'vc-slider'}-with-marks`]:
+        markList.value.length > 0,
+    }),
   )
 
   const mergedStyle = computed<CSSProperties>(() => ({
@@ -534,7 +561,7 @@
       :track-style="trackStyle"
       :values="rawValues"
       :start-point="startPoint"
-      :on-start-move="mergedDraggableTrack ? onStartMove : undefined"
+      @start-move="mergedDraggableTrack ? onStartMove : undefined"
     />
 
     <Steps
@@ -552,12 +579,11 @@
       :handle-style="handleStyle"
       :dragging-index="draggingIndex"
       :dragging-delete="draggingDelete"
-      :on-start-move="onStartMove"
-      :on-offset-change="onHandleOffsetChange"
-      :on-focus="onFocus"
-      :on-blur="onBlur"
-      :on-delete="effectiveRangeEditable ? onDelete : () => {}"
-      :on-change-complete="finishChange"
+      @start-move="onStartMove"
+      @offset-change="onHandleOffsetChange"
+      @focus="(e: FocusEvent) => emit('focus', e)"
+      @delete="effectiveRangeEditable ? onDelete : () => {}"
+      @change-complete="finishChange"
     >
       <template v-if="slots.handle" #handle="data">
         <slot name="handle" v-bind:data="data" />
@@ -570,7 +596,7 @@
     <Marks
       :prefix-cls="prefixCls ?? 'vc-slider'"
       :marks="markList"
-      :on-click="changeToCloseValue"
+      @click="changeToCloseValue"
     >
       <template #mark="{ point, label }">
         {{ label }}

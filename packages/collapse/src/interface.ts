@@ -9,7 +9,6 @@ export interface CollapsePanelProps {
   prefixCls?: string
   headerClass?: string
   showArrow?: boolean
-  class?: string
   classNames?: Partial<Record<SemanticName, string>>
   style?: object
   styles?: Partial<Record<SemanticName, CSSProperties>>
@@ -19,7 +18,6 @@ export interface CollapsePanelProps {
   accordion?: boolean
   forceRender?: boolean
   extra?: VueNode
-  onItemClick?: (panelKey: Key) => void
   expandIcon?: (props: object) => any
   panelKey?: Key
   role?: string
@@ -49,15 +47,10 @@ export interface CollapseProps {
   activeKey?: Key | Key[]
   defaultActiveKey?: Key | Key[]
   openMotion?: TransitionProps
-  onChange?: (key: Key[]) => void
   accordion?: boolean
   destroyOnHidden?: boolean
   expandIcon?: (props: object) => any
   collapsible?: CollapsibleType
-  /**
-   * Collapse items content
-   * @since 3.6.0
-   */
   items?: ItemType[]
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>

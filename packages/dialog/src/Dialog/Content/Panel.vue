@@ -14,6 +14,11 @@
 
   defineOptions({ name: 'Panel' })
   const props = defineProps<PanelProps>()
+  const emit = defineEmits<{
+    close: []
+    'mouse-down': [e: MouseEvent]
+    'mouse-up': [e: MouseEvent]
+  }>()
   const { setPanel } = useGetRefContext()
   const internalRef = shallowRef<HTMLDivElement>()
 
@@ -83,8 +88,8 @@
     ref="mergeRefFun"
     :style="{ ...style, ...contentStyle }"
     :class="[prefixCls, className]"
-    @mousedown="e => onMouseDown?.(e)"
-    @mouseup="e => onMouseUp?.(e)"
+    @mousedown="(e: MouseEvent) => emit('mouse-down', e)"
+    @mouseup="(e: MouseEvent) => emit('mouse-up', e)"
     tabindex="-1"
   >
     <slot name="modalRender">
@@ -95,7 +100,7 @@
         <button
           v-if="closable"
           type="button"
-          @click="onClose"
+          @click="() => emit('close')"
           aria-label="Close"
           v-bind="ariaProps"
           :class="clsx(`${prefixCls}-close`, classNames?.close)"

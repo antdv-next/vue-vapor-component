@@ -46,8 +46,6 @@ export interface SliderProps<Value extends ValueType = ValueType> {
   disabled?: boolean | boolean[]
   keyboard?: boolean
   autoFocus?: boolean
-  onFocus?: (e: FocusEvent) => void
-  onBlur?: (e: FocusEvent) => void
 
   range?: boolean | RangeConfig
   count?: number
@@ -56,10 +54,6 @@ export interface SliderProps<Value extends ValueType = ValueType> {
   step?: number | null
   value?: Value | null
   defaultValue?: Value | null
-  onChange?: (value: Value) => void
-  onBeforeChange?: (value: Value) => void
-  onAfterChange?: (value: Value) => void
-  onChangeComplete?: (value: Value) => void
 
   allowCross?: boolean
   pushable?: boolean | number

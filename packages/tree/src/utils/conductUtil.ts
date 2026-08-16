@@ -1,5 +1,7 @@
 import type { BasicDataNode, DataNode } from '../interface'
+
 import warning from '@v-c/util/dist/warning'
+
 import getEntity from './keyUtil'
 
 interface ConductReturnType {
@@ -9,9 +11,12 @@ interface ConductReturnType {
 
 export type Key = string | number
 
-function removeFromCheckedKeys(halfCheckedKeys: Set<Key>, checkedKeys: Set<Key>) {
+function removeFromCheckedKeys(
+  halfCheckedKeys: Set<Key>,
+  checkedKeys: Set<Key>,
+) {
   const filteredKeys = new Set<Key>()
-  halfCheckedKeys.forEach((key) => {
+  halfCheckedKeys.forEach(key => {
     if (!checkedKeys.has(key)) {
       filteredKeys.add(key)
     }
@@ -42,7 +47,9 @@ function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
 
       if (checkedKeys.has(key) && !syntheticGetCheckDisabled(node)) {
         children
-          .filter((childEntity: any) => !syntheticGetCheckDisabled(childEntity.node))
+          .filter(
+            (childEntity: any) => !syntheticGetCheckDisabled(childEntity.node),
+          )
           .forEach((childEntity: any) => {
             checkedKeys.add(childEntity.key)
           })
@@ -56,7 +63,11 @@ function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
     entities.forEach((entity: any) => {
       const { parent, node } = entity
 
-      if (syntheticGetCheckDisabled(node) || !entity.parent || visitedKeys.has(entity.parent.key)) {
+      if (
+        syntheticGetCheckDisabled(node) ||
+        !entity.parent ||
+        visitedKeys.has(entity.parent.key)
+      ) {
         return
       }
 
@@ -69,7 +80,9 @@ function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
       let partialChecked = false
 
       ;(parent!.children || [])
-        .filter((childEntity: any) => !syntheticGetCheckDisabled(childEntity.node))
+        .filter(
+          (childEntity: any) => !syntheticGetCheckDisabled(childEntity.node),
+        )
         .forEach(({ key }: { key: Key }) => {
           const checked = checkedKeys.has(key)
           if (allChecked && !checked) {
@@ -93,7 +106,9 @@ function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
 
   return {
     checkedKeys: Array.from(checkedKeys),
-    halfCheckedKeys: Array.from(removeFromCheckedKeys(halfCheckedKeys, checkedKeys)),
+    halfCheckedKeys: Array.from(
+      removeFromCheckedKeys(halfCheckedKeys, checkedKeys),
+    ),
   }
 }
 
@@ -112,9 +127,15 @@ function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
     entities.forEach((entity: any) => {
       const { key, node, children = [] } = entity
 
-      if (!checkedKeys.has(key) && !halfCheckedKeys.has(key) && !syntheticGetCheckDisabled(node)) {
+      if (
+        !checkedKeys.has(key) &&
+        !halfCheckedKeys.has(key) &&
+        !syntheticGetCheckDisabled(node)
+      ) {
         children
-          .filter((childEntity: any) => !syntheticGetCheckDisabled(childEntity.node))
+          .filter(
+            (childEntity: any) => !syntheticGetCheckDisabled(childEntity.node),
+          )
           .forEach((childEntity: any) => {
             checkedKeys.delete(childEntity.key)
           })
@@ -130,7 +151,11 @@ function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
     entities.forEach((entity: any) => {
       const { parent, node } = entity
 
-      if (syntheticGetCheckDisabled(node) || !entity.parent || visitedKeys.has(entity.parent.key)) {
+      if (
+        syntheticGetCheckDisabled(node) ||
+        !entity.parent ||
+        visitedKeys.has(entity.parent.key)
+      ) {
         return
       }
 
@@ -143,7 +168,9 @@ function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
       let partialChecked = false
 
       ;(parent!.children || [])
-        .filter((childEntity: any) => !syntheticGetCheckDisabled(childEntity.node))
+        .filter(
+          (childEntity: any) => !syntheticGetCheckDisabled(childEntity.node),
+        )
         .forEach(({ key }: { key: Key }) => {
           const checked = checkedKeys.has(key)
           if (allChecked && !checked) {
@@ -167,11 +194,16 @@ function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
 
   return {
     checkedKeys: Array.from(checkedKeys),
-    halfCheckedKeys: Array.from(removeFromCheckedKeys(halfCheckedKeys, checkedKeys)),
+    halfCheckedKeys: Array.from(
+      removeFromCheckedKeys(halfCheckedKeys, checkedKeys),
+    ),
   }
 }
 
-export type KeyEntities<TreeDataType extends BasicDataNode = any> = Record<string, any>
+export type KeyEntities<TreeDataType extends BasicDataNode = any> = Record<
+  string,
+  any
+>
 
 export function conductCheck<TreeDataType extends BasicDataNode = DataNode>(
   keyList: Key[],
@@ -184,7 +216,7 @@ export function conductCheck<TreeDataType extends BasicDataNode = DataNode>(
   const syntheticGetCheckDisabled = getCheckDisabled || isCheckDisabled
 
   const keys = new Set<Key>(
-    (keyList || []).filter((key) => {
+    (keyList || []).filter(key => {
       const hasEntity = !!getEntity(keyEntities, key)
       if (!hasEntity) {
         warningMissKeys.push(key)
@@ -196,7 +228,7 @@ export function conductCheck<TreeDataType extends BasicDataNode = DataNode>(
   const levelEntities = new Map<number, Set<any>>()
   let maxLevel = 0
 
-  Object.keys(keyEntities).forEach((entityKey) => {
+  Object.keys(keyEntities).forEach(entityKey => {
     const entity = keyEntities[entityKey]
     const { level } = entity
 
@@ -219,8 +251,19 @@ export function conductCheck<TreeDataType extends BasicDataNode = DataNode>(
   )
 
   if (checked === true) {
-    return fillConductCheck<TreeDataType>(keys, levelEntities, maxLevel, syntheticGetCheckDisabled)
+    return fillConductCheck<TreeDataType>(
+      keys,
+      levelEntities,
+      maxLevel,
+      syntheticGetCheckDisabled,
+    )
   }
 
-  return cleanConductCheck(keys, checked.halfCheckedKeys, levelEntities, maxLevel, syntheticGetCheckDisabled)
+  return cleanConductCheck(
+    keys,
+    checked.halfCheckedKeys,
+    levelEntities,
+    maxLevel,
+    syntheticGetCheckDisabled,
+  )
 }

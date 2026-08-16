@@ -8,9 +8,11 @@ import type {
   Key,
   TreeNodeProps,
 } from '../interface'
+
 import { toArray } from '@v-c/util/dist/Children/toArray'
 import { omit } from '@v-c/util/dist/utils/omit'
 import warning from '@v-c/util/dist/warning'
+
 import getEntity from './keyUtil'
 
 export function getPosition(level: string | number, index: number) {
@@ -40,15 +42,21 @@ export function fillFieldNames(fieldNames?: FieldNames): Required<FieldNames> {
   }
 }
 
-export function warningWithoutKey(treeData: DataNode[], fieldNames: FieldNames) {
+export function warningWithoutKey(
+  treeData: DataNode[],
+  fieldNames: FieldNames,
+) {
   const keys: Map<string, boolean> = new Map()
   const mergedFieldNames = fillFieldNames(fieldNames)
 
   function dig(list: DataNode[], path: string = '') {
-    ;(list || []).forEach((treeNode) => {
+    ;(list || []).forEach(treeNode => {
       const key = (treeNode as any)[mergedFieldNames.key]
       const children = (treeNode as any)[mergedFieldNames.children]
-      warning(key !== null && key !== undefined, `Tree node must have a certain key: [${path}${key}]`)
+      warning(
+        key !== null && key !== undefined,
+        `Tree node must have a certain key: [${path}${key}]`,
+      )
 
       const recordKey = String(key)
       warning(
@@ -70,7 +78,10 @@ export function convertTreeToData(rootNodes: any): DataNode[] {
     return treeNodes
       .map((treeNode: any) => {
         if (!isTreeNode(treeNode)) {
-          warning(!treeNode, 'Tree/TreeNode can only accept TreeNode as children.')
+          warning(
+            !treeNode,
+            'Tree/TreeNode can only accept TreeNode as children.',
+          )
           return null
         }
 
@@ -86,8 +97,7 @@ export function convertTreeToData(rootNodes: any): DataNode[] {
           const children = treeNode.children as any
           if (typeof children === 'object' && children.default) {
             childrenNodes = children.default()
-          }
-          else {
+          } else {
             childrenNodes = children as any
           }
         }
@@ -110,12 +120,19 @@ export function flattenTreeData<TreeDataType extends BasicDataNode = DataNode>(
   expandedKeys: Key[] | true,
   fieldNames: FieldNames,
 ): FlattenNode<TreeDataType>[] {
-  const { _title: fieldTitles, key: fieldKey, children: fieldChildren } = fillFieldNames(fieldNames)
+  const {
+    _title: fieldTitles,
+    key: fieldKey,
+    children: fieldChildren,
+  } = fillFieldNames(fieldNames)
 
   const expandedKeySet = new Set(expandedKeys === true ? [] : expandedKeys)
   const flattenList: FlattenNode<TreeDataType>[] = []
 
-  function dig(list: TreeDataType[], parent: FlattenNode<TreeDataType> | null = null): FlattenNode<TreeDataType>[] {
+  function dig(
+    list: TreeDataType[],
+    parent: FlattenNode<TreeDataType> | null = null,
+  ): FlattenNode<TreeDataType>[] {
     return (list || []).map((treeNode, index) => {
       const pos: string = getPosition(parent ? parent.pos : '0', index)
       const mergedKey = getKey((treeNode as any)[fieldKey], pos)
@@ -130,7 +147,10 @@ export function flattenTreeData<TreeDataType extends BasicDataNode = DataNode>(
       }
 
       const flattenNode: FlattenNode<TreeDataType> = Object.assign(
-        omit(treeNode as any, [...fieldTitles, fieldKey, fieldChildren] as any) as any,
+        omit(
+          treeNode as any,
+          [...fieldTitles, fieldKey, fieldChildren] as any,
+        ) as any,
         {
           title: mergedTitle,
           key: mergedKey,
@@ -145,9 +165,11 @@ export function flattenTreeData<TreeDataType extends BasicDataNode = DataNode>(
       flattenList.push(flattenNode)
 
       if (expandedKeys === true || expandedKeySet.has(mergedKey)) {
-        flattenNode.children = dig((treeNode as any)[fieldChildren] || [], flattenNode)
-      }
-      else {
+        flattenNode.children = dig(
+          (treeNode as any)[fieldChildren] || [],
+          flattenNode,
+        )
+      } else {
         flattenNode.children = []
       }
 
@@ -183,8 +205,7 @@ export function traverseDataNodes(
   let mergedConfig: TraverseDataNodesConfig = {}
   if (typeof config === 'object') {
     mergedConfig = config
-  }
-  else {
+  } else {
     mergedConfig = { externalGetKey: config }
   }
 
@@ -196,12 +217,11 @@ export function traverseDataNodes(
   if (externalGetKey) {
     if (typeof externalGetKey === 'string') {
       syntheticGetKey = (node: DataNode) => (node as any)[externalGetKey]
+    } else {
+      syntheticGetKey = (node: DataNode) =>
+        (externalGetKey as (node: DataNode, index?: number) => Key)(node)
     }
-    else {
-      syntheticGetKey = (node: DataNode) => (externalGetKey as (node: DataNode, index?: number) => Key)(node)
-    }
-  }
-  else {
+  } else {
     syntheticGetKey = (node, pos) => getKey((node as any)[fieldKey], pos!)
   }
 
@@ -285,7 +305,7 @@ export function convertDataToEntities(
 
   traverseDataNodes(
     dataNodes,
-    (item) => {
+    item => {
       const { node, index, pos, key, parentPos, level, nodes } = item
       const entity: DataEntity = { node, nodes, index, key, pos, level }
 
@@ -310,7 +330,9 @@ export function convertDataToEntities(
   return wrapper
 }
 
-export interface TreeNodeRequiredProps<TreeDataType extends BasicDataNode = DataNode> {
+export interface TreeNodeRequiredProps<
+  TreeDataType extends BasicDataNode = DataNode,
+> {
   expandedKeys: Key[]
   selectedKeys: Key[]
   loadedKeys: Key[]
@@ -353,9 +375,9 @@ export function getTreeNodeProps<TreeDataType extends BasicDataNode = DataNode>(
   }
 }
 
-export function convertNodePropsToEventData<TreeDataType extends BasicDataNode = DataNode>(
-  props: TreeNodeProps<TreeDataType>,
-): EventDataNode<TreeDataType> {
+export function convertNodePropsToEventData<
+  TreeDataType extends BasicDataNode = DataNode,
+>(props: TreeNodeProps<TreeDataType>): EventDataNode<TreeDataType> {
   const {
     data,
     expanded,
@@ -412,5 +434,9 @@ export function isLeafNode<TreeDataType extends BasicDataNode = DataNode>(
   if (isLeaf === false) {
     return false
   }
-  return !!isLeaf || (!loadData && !hasChildren) || !!(loadData && loaded && !hasChildren)
+  return (
+    !!isLeaf ||
+    (!loadData && !hasChildren) ||
+    !!(loadData && loaded && !hasChildren)
+  )
 }

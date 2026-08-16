@@ -7,6 +7,9 @@
   defineOptions({ name: 'ImagePreviewPrevNext' })
 
   const props = defineProps<PrevNextProps>()
+  const emit = defineEmits<{
+    active: [offset: number]
+  }>()
 
   const switchCls = computed(() => `${props.prefixCls}-switch`)
   const prevIcon = computed(() => props.icons?.prev ?? props.icons?.left)
@@ -26,10 +29,10 @@
   )
 
   function onPrevClick() {
-    if (!prevDisabled.value) props.onActive(-1)
+    if (!prevDisabled.value) emit('active', -1)
   }
   function onNextClick() {
-    if (!nextDisabled.value) props.onActive(1)
+    if (!nextDisabled.value) emit('active', 1)
   }
 </script>
 

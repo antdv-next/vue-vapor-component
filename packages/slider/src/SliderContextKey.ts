@@ -1,6 +1,13 @@
 import type { InjectionKey, Ref } from 'vue'
-import type { AriaValueFormat, Direction, SliderClassNames, SliderStyles } from './interface'
+
 import type { IsHandleDisabled } from './hooks/useDisabled'
+import type {
+  AriaValueFormat,
+  Direction,
+  SliderClassNames,
+  SliderStyles,
+} from './interface'
+
 import { inject, provide } from 'vue'
 
 export interface SliderContextProps {
@@ -24,7 +31,8 @@ export interface SliderContextProps {
   isHandleDisabled: IsHandleDisabled
 }
 
-const SliderContextKey: InjectionKey<Ref<SliderContextProps>> = Symbol('SliderContext')
+const SliderContextKey: InjectionKey<Ref<SliderContextProps>> =
+  Symbol('SliderContext')
 
 export const defaultSliderContextValue: SliderContextProps = {
   min: 0,
@@ -45,7 +53,9 @@ export function useProviderSliderContext(ctx: Ref<SliderContextProps>) {
 }
 
 export function useInjectSlider(): Ref<SliderContextProps> {
-  return inject(SliderContextKey, { value: defaultSliderContextValue } as Ref<SliderContextProps>)
+  return inject(SliderContextKey, {
+    value: defaultSliderContextValue,
+  } as Ref<SliderContextProps>)
 }
 
 export interface UnstableContextProps {
@@ -62,7 +72,8 @@ export interface UnstableContextProps {
   }) => void
 }
 
-export const UnstableContextKey: InjectionKey<UnstableContextProps> = Symbol('UnstableContext')
+export const UnstableContextKey: InjectionKey<UnstableContextProps> =
+  Symbol('UnstableContext')
 export const defaultUnstableContextValue: UnstableContextProps = {}
 
 export function useUnstableContext() {

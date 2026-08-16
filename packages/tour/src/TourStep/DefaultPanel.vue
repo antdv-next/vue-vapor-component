@@ -1,38 +1,40 @@
 <script setup vapor lang="ts">
+  import type { VueNode } from '@v-c/util/dist/type'
   import type { CSSProperties } from 'vue'
+
   import type { SemanticName } from '../interface'
   import type { ClosableConfig } from '../interface'
-  import type { VueNode } from '@v-c/util/dist/type'
 
   import { clsx } from '@v-c/util'
   import { computed, useSlots } from 'vue'
 
   defineOptions({ name: 'TourDefaultPanel', inheritAttrs: false })
 
-  const props = withDefaults(defineProps<{
-    prefixCls?: string
-    current?: number
-    total?: number
-    title?: VueNode
-    description?: VueNode
-    onClose?: () => void
-    onPrev?: () => void
-    onNext?: () => void
-    onFinish?: () => void
-    closable?: ClosableConfig | null
-    closeIcon?: VueNode
-    classNames?: Partial<Record<SemanticName, string>>
-    styles?: Partial<Record<SemanticName, CSSProperties>>
-  }>(), {
-    prefixCls: 'vc-tour',
-    current: 0,
-    total: 1,
-    onClose: () => {},
-    onPrev: () => {},
-    onNext: () => {},
-    onFinish: () => {},
-    closable: null,
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls?: string
+      current?: number
+      total?: number
+      title?: VueNode
+      description?: VueNode
+      closable?: ClosableConfig | null
+      closeIcon?: VueNode
+      classNames?: Partial<Record<SemanticName, string>>
+      styles?: Partial<Record<SemanticName, CSSProperties>>
+    }>(),
+    {
+      prefixCls: 'vc-tour',
+      current: 0,
+      total: 1,
+      closable: null,
+    },
+  )
+  const emit = defineEmits<{
+    close: []
+    prev: []
+    next: []
+    finish: []
+  }>()
 
   const slots = useSlots()
 
@@ -45,7 +47,9 @@
   })
 
   const showPrev = computed(() => props.current !== 0)
-  const isLast = computed(() => props.total > 1 && props.current === props.total - 1)
+  const isLast = computed(
+    () => props.total > 1 && props.current === props.total - 1,
+  )
 </script>
 
 <template>
@@ -60,10 +64,12 @@
         :class="clsx(`${prefixCls}-close`, classNames?.close)"
         :style="styles?.close"
         aria-label="Close"
-        @click="onClose"
+        @click="() => emit('close')"
       >
         <slot name="close-icon">
-          <span v-if="!mergedCloseIcon" :class="`${prefixCls}-close-x`">&times;</span>
+          <span v-if="!mergedCloseIcon" :class="`${prefixCls}-close-x`"
+            >&times;</span
+          >
         </slot>
       </button>
 
@@ -103,13 +109,25 @@
           :class="clsx(`${prefixCls}-actions`, classNames?.actions)"
           :style="styles?.actions"
         >
-          <button v-if="showPrev" :class="`${prefixCls}-prev-btn`" @click="onPrev">
+          <button
+            v-if="showPrev"
+            :class="`${prefixCls}-prev-btn`"
+            @click="() => emit('prev')"
+          >
             Prev
           </button>
-          <button v-if="isLast" :class="`${prefixCls}-finish-btn`" @click="onFinish">
+          <button
+            v-if="isLast"
+            :class="`${prefixCls}-finish-btn`"
+            @click="() => emit('finish')"
+          >
             Finish
           </button>
-          <button v-if="!isLast && total > 1" :class="`${prefixCls}-next-btn`" @click="onNext">
+          <button
+            v-if="!isLast && total > 1"
+            :class="`${prefixCls}-next-btn`"
+            @click="() => emit('next')"
+          >
             Next
           </button>
         </div>

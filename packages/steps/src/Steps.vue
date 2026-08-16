@@ -25,6 +25,9 @@
   }>()
 
   const attrs = useAttrs()
+  const emit = defineEmits<{
+    change: [current: number]
+  }>()
 
   // ============================= layout =============================
   const isVertical = computed(() => props.orientation === 'vertical')
@@ -67,8 +70,8 @@
 
   // ============================= events =============================
   function onStepClick(next: number) {
-    if (props.onChange && props.current !== next) {
-      props.onChange(next)
+    if (props.current !== next) {
+      emit('change', next)
     }
   }
 
@@ -111,7 +114,7 @@
         :active="(initial ?? 0) + index === current"
         :index="(initial ?? 0) + index"
         :last="mergedItems.length - 1 === index"
-        :on-click="onChange ? onStepClick : undefined"
+        @click="onStepClick"
       >
         <template v-if="slots.iconRender" #iconRender="slotProps">
           <slot name="iconRender" v-bind="slotProps"></slot>

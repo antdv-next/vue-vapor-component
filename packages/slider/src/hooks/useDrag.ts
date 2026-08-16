@@ -1,9 +1,15 @@
 import type { ComputedRef, Ref, ShallowRef } from 'vue'
+
 import type { Direction, OnStartMove } from '../interface'
 import type { IsHandleDisabled } from './useDisabled'
 import type { OffsetValues } from './useOffset'
+
 import { computed, inject, onUnmounted, ref, watch } from 'vue'
-import { defaultUnstableContextValue, UnstableContextKey } from '../SliderContextKey'
+
+import {
+  defaultUnstableContextValue,
+  UnstableContextKey,
+} from '../SliderContextKey'
 
 const REMOVE_DIST = 130
 
@@ -18,7 +24,9 @@ export default function useDrag(
   rawValues: Ref<number[]>,
   min: ShallowRef<number> | ComputedRef<number>,
   max: ShallowRef<number> | ComputedRef<number>,
-  formatValue: Ref<(value: number) => number> | ComputedRef<(value: number) => number>,
+  formatValue:
+    | Ref<(value: number) => number>
+    | ComputedRef<(value: number) => number>,
   triggerChange: (values: number[]) => void,
   finishChange: (draggingDelete: boolean) => void,
   offsetValues: Ref<OffsetValues> | ComputedRef<OffsetValues>,
@@ -26,11 +34,11 @@ export default function useDrag(
   minCount: ShallowRef<number> | ComputedRef<number>,
   isHandleDisabled: IsHandleDisabled,
 ): [
-    draggingIndex: Ref<number>,
-    draggingValue: Ref<number | null>,
-    draggingDelete: Ref<boolean>,
-    returnValues: Ref<number[]>,
-    onStartMove: OnStartMove,
+  draggingIndex: Ref<number>,
+  draggingValue: Ref<number | null>,
+  draggingDelete: Ref<boolean>,
+  returnValues: Ref<number[]>,
+  onStartMove: OnStartMove,
 ] {
   const draggingValue = ref<number | null>(null)
   const draggingIndex = ref<number>(-1)
@@ -38,16 +46,23 @@ export default function useDrag(
   const cacheValues = ref<number[]>(rawValues.value)
   const originValues = ref<number[]>(rawValues.value)
 
-  const mouseMoveEventRef = ref<((event: MouseEvent | TouchEvent) => void) | null>(null)
-  const mouseUpEventRef = ref<((event: MouseEvent | TouchEvent) => void) | null>(null)
+  const mouseMoveEventRef = ref<
+    ((event: MouseEvent | TouchEvent) => void) | null
+  >(null)
+  const mouseUpEventRef = ref<
+    ((event: MouseEvent | TouchEvent) => void) | null
+  >(null)
   const touchEventTargetRef = ref<EventTarget | null>(null)
 
-  const unstableContext = inject(UnstableContextKey, defaultUnstableContextValue)
+  const unstableContext = inject(
+    UnstableContextKey,
+    defaultUnstableContextValue,
+  )
   const { onDragStart, onDragChange } = unstableContext
 
   watch(
     rawValues,
-    (val) => {
+    val => {
       if (draggingIndex.value === -1) {
         cacheValues.value = [...val]
         originValues.value = [...val]
@@ -64,12 +79,22 @@ export default function useDrag(
       document.removeEventListener('mouseup', mouseUpEventRef.value)
     }
     if (touchEventTargetRef.value) {
-      touchEventTargetRef.value.removeEventListener('touchmove', mouseMoveEventRef.value as any)
-      touchEventTargetRef.value.removeEventListener('touchend', mouseUpEventRef.value as any)
+      touchEventTargetRef.value.removeEventListener(
+        'touchmove',
+        mouseMoveEventRef.value as any,
+      )
+      touchEventTargetRef.value.removeEventListener(
+        'touchend',
+        mouseUpEventRef.value as any,
+      )
     }
   })
 
-  const flushValues = (nextValues: number[], nextValue?: number, deleteMark?: boolean) => {
+  const flushValues = (
+    nextValues: number[],
+    nextValue?: number,
+    deleteMark?: boolean,
+  ) => {
     if (nextValue !== undefined) {
       draggingValue.value = nextValue
     }
@@ -91,10 +116,13 @@ export default function useDrag(
     }
   }
 
-  const updateCacheValue = (valueIndex: number, offsetPercent: number, deleteMark: boolean) => {
+  const updateCacheValue = (
+    valueIndex: number,
+    offsetPercent: number,
+    deleteMark: boolean,
+  ) => {
     if (valueIndex === -1) {
-      if (originValues.value.some((_, index) => isHandleDisabled(index)))
-        return
+      if (originValues.value.some((_, index) => isHandleDisabled(index))) return
 
       const startValue = originValues.value[0]
       const endValue = originValues.value[originValues.value.length - 1]
@@ -107,24 +135,29 @@ export default function useDrag(
 
       const formatStartValue = formatValue.value(startValue + offset)
       offset = formatStartValue - startValue
-      const cloneCacheValues = originValues.value.map<number>(val => val + offset)
+      const cloneCacheValues = originValues.value.map<number>(
+        val => val + offset,
+      )
       flushValues(cloneCacheValues)
-    }
-    else {
+    } else {
       const offsetDist = (max.value - min.value) * offsetPercent
 
       const cloneValues = [...cacheValues.value]
       cloneValues[valueIndex] = originValues.value[valueIndex]
 
-      const next = offsetValues.value(cloneValues, offsetDist, valueIndex, 'dist')
+      const next = offsetValues.value(
+        cloneValues,
+        offsetDist,
+        valueIndex,
+        'dist',
+      )
       flushValues(next.values, next.value, deleteMark)
     }
   }
 
   const onStartMove: OnStartMove = (e, valueIndex, startValues?) => {
     e.stopPropagation()
-    if (isHandleDisabled(valueIndex))
-      return
+    if (isHandleDisabled(valueIndex)) return
 
     const initialValues = startValues || rawValues.value
     const originValue = initialValues[valueIndex]
@@ -177,7 +210,8 @@ export default function useDrag(
       }
 
       deleteMark = editable.value
-        ? Math.abs(removeDist) > REMOVE_DIST && minCount.value < cacheValues.value.length
+        ? Math.abs(removeDist) > REMOVE_DIST &&
+          minCount.value < cacheValues.value.length
         : false
       draggingDelete.value = deleteMark
 
@@ -190,8 +224,14 @@ export default function useDrag(
       document.removeEventListener('mouseup', onMouseUp)
       document.removeEventListener('mousemove', onMouseMove)
       if (touchEventTargetRef.value) {
-        touchEventTargetRef.value.removeEventListener('touchmove', mouseMoveEventRef.value as any)
-        touchEventTargetRef.value.removeEventListener('touchend', mouseUpEventRef.value as any)
+        touchEventTargetRef.value.removeEventListener(
+          'touchmove',
+          mouseMoveEventRef.value as any,
+        )
+        touchEventTargetRef.value.removeEventListener(
+          'touchend',
+          mouseUpEventRef.value as any,
+        )
       }
       mouseMoveEventRef.value = null
       mouseUpEventRef.value = null
@@ -216,10 +256,10 @@ export default function useDrag(
     const targetValues = [...cacheValues.value].sort((a, b) => a - b)
 
     const counts: Record<number, number> = {}
-    targetValues.forEach((val) => {
+    targetValues.forEach(val => {
       counts[val] = (counts[val] || 0) + 1
     })
-    sourceValues.forEach((val) => {
+    sourceValues.forEach(val => {
       counts[val] = (counts[val] || 0) - 1
     })
 
@@ -232,5 +272,11 @@ export default function useDrag(
     return diffCount <= maxDiffCount ? cacheValues.value : rawValues.value
   })
 
-  return [draggingIndex, draggingValue, draggingDelete, returnValues, onStartMove] as const
+  return [
+    draggingIndex,
+    draggingValue,
+    draggingDelete,
+    returnValues,
+    onStartMove,
+  ] as const
 }

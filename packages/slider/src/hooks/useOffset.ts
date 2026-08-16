@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import type { InternalMarkObj } from '../interface'
 import type { IsHandleDisabled } from './useDisabled'
 
@@ -66,8 +67,7 @@ export function getClosestEnabledHandleIndex(
   let closestDist = max - min
 
   values.forEach((value, index) => {
-    if (isHandleDisabled(index))
-      return
+    if (isHandleDisabled(index)) return
 
     const [minBound, maxBound] = getDisabledBoundaryValues(
       values,
@@ -99,14 +99,18 @@ export default function useOffset(
   pushable: Ref<false | number | null>,
   isHandleDisabled: IsHandleDisabled,
 ): [FormatValue, OffsetValues] {
-  const formatRangeValue: FormatRangeValue = val => Math.max(min.value, Math.min(max.value, val))
+  const formatRangeValue: FormatRangeValue = val =>
+    Math.max(min.value, Math.min(max.value, val))
 
-  const formatStepValue: FormatStepValue = (val) => {
+  const formatStepValue: FormatStepValue = val => {
     if (step.value !== null) {
-      const stepValue = min.value
-        + Math.round((formatRangeValue(val) - min.value) / step.value!) * step.value!
+      const stepValue =
+        min.value +
+        Math.round((formatRangeValue(val) - min.value) / step.value!) *
+          step.value!
 
-      const getDecimal = (num: number) => (String(num).split('.')[1] || '').length
+      const getDecimal = (num: number) =>
+        (String(num).split('.')[1] || '').length
       const maxDecimal = Math.max(
         getDecimal(step.value!),
         getDecimal(max.value),
@@ -114,12 +118,14 @@ export default function useOffset(
       )
       const fixedValue = Number(stepValue.toFixed(maxDecimal))
 
-      return min.value <= fixedValue && fixedValue <= max.value ? fixedValue : null
+      return min.value <= fixedValue && fixedValue <= max.value
+        ? fixedValue
+        : null
     }
     return null
   }
 
-  const formatValue: FormatValue = (val) => {
+  const formatValue: FormatValue = val => {
     const formatNextValue = formatRangeValue(val)
 
     const alignValues = markList.value.map<number>(mark => mark && mark.value)
@@ -135,7 +141,7 @@ export default function useOffset(
     let closeValue = alignValues[0]
     let closeDist = max.value - min.value
 
-    alignValues.forEach((alignValue) => {
+    alignValues.forEach(alignValue => {
       const dist = Math.abs(formatNextValue - alignValue)
       if (dist <= closeDist) {
         closeValue = alignValue
@@ -146,13 +152,18 @@ export default function useOffset(
     return closeValue
   }
 
-  const offsetValue: OffsetValue = (values, offset, valueIndex, mode = 'unit') => {
+  const offsetValue: OffsetValue = (
+    values,
+    offset,
+    valueIndex,
+    mode = 'unit',
+  ) => {
     if (typeof offset === 'number') {
       const originValue = values[valueIndex]
       const targetDistValue = originValue + offset
 
       let potentialValues: number[] = []
-      markList.value.forEach((mark) => {
+      markList.value.forEach(mark => {
         potentialValues.push(mark.value)
       })
 
@@ -167,13 +178,14 @@ export default function useOffset(
 
       if (mode === 'unit') {
         if (step.value !== null) {
-          const allStepValues = formatStepValue(originValue + sign * step.value!)
+          const allStepValues = formatStepValue(
+            originValue + sign * step.value!,
+          )
           if (allStepValues !== null) {
             potentialValues.push(allStepValues)
           }
         }
-      }
-      else if (step.value !== null) {
+      } else if (step.value !== null) {
         const targetStepValue = formatStepValue(targetDistValue)
         if (targetStepValue !== null) {
           potentialValues.push(targetStepValue)
@@ -193,7 +205,7 @@ export default function useOffset(
       let nextValue = potentialValues[0]
       let valueDist = Math.abs(nextValue - compareValue)
 
-      potentialValues.forEach((potentialValue) => {
+      potentialValues.forEach(potentialValue => {
         const dist = Math.abs(potentialValue - compareValue)
         if (dist < valueDist) {
           nextValue = potentialValue
@@ -241,11 +253,18 @@ export default function useOffset(
   }
 
   const needPush = (dist: number) => {
-    return (pushable.value === null && dist === 0)
-      || (typeof pushable.value === 'number' && dist < pushable.value)
+    return (
+      (pushable.value === null && dist === 0) ||
+      (typeof pushable.value === 'number' && dist < pushable.value)
+    )
   }
 
-  const offsetValues: OffsetValues = (values, offset, valueIndex, mode = 'unit') => {
+  const offsetValues: OffsetValues = (
+    values,
+    offset,
+    valueIndex,
+    mode = 'unit',
+  ) => {
     const nextValues = values.map<number>(formatValue)
     const originValue = nextValues[valueIndex]
 
@@ -262,9 +281,11 @@ export default function useOffset(
     nextValues[valueIndex] = nextValue
 
     if (minBound <= maxBound)
-      nextValues[valueIndex] = Math.max(minBound, Math.min(maxBound, nextValues[valueIndex]))
-    else
-      nextValues[valueIndex] = originValue
+      nextValues[valueIndex] = Math.max(
+        minBound,
+        Math.min(maxBound, nextValues[valueIndex]),
+      )
+    else nextValues[valueIndex] = originValue
 
     if (!allowCross.value) {
       const pushNum = pushable.value || 0
@@ -276,20 +297,25 @@ export default function useOffset(
         )
       }
 
-      if (valueIndex < nextValues.length - 1 && nextValues[valueIndex + 1] !== originValue) {
+      if (
+        valueIndex < nextValues.length - 1 &&
+        nextValues[valueIndex + 1] !== originValue
+      ) {
         nextValues[valueIndex] = Math.min(
           nextValues[valueIndex],
           nextValues[valueIndex + 1] - pushNum,
         )
       }
-    }
-    else if (typeof pushable.value === 'number' || pushable.value === null) {
+    } else if (typeof pushable.value === 'number' || pushable.value === null) {
       for (let i = valueIndex + 1; i < nextValues.length; i += 1) {
-        if (isHandleDisabled(i))
-          break
+        if (isHandleDisabled(i)) break
         let changed = true
         while (needPush(nextValues[i] - nextValues[i - 1]) && changed) {
-          ({ value: nextValues[i], changed } = offsetChangedValue(nextValues, 1, i))
+          ;({ value: nextValues[i], changed } = offsetChangedValue(
+            nextValues,
+            1,
+            i,
+          ))
         }
         const [, itemMaxBound] = getDisabledBoundaryValues(
           nextValues,
@@ -303,11 +329,14 @@ export default function useOffset(
       }
 
       for (let i = valueIndex; i > 0; i -= 1) {
-        if (isHandleDisabled(i - 1))
-          break
+        if (isHandleDisabled(i - 1)) break
         let changed = true
         while (needPush(nextValues[i] - nextValues[i - 1]) && changed) {
-          ({ value: nextValues[i - 1], changed } = offsetChangedValue(nextValues, -1, i - 1))
+          ;({ value: nextValues[i - 1], changed } = offsetChangedValue(
+            nextValues,
+            -1,
+            i - 1,
+          ))
         }
         const [itemMinBound] = getDisabledBoundaryValues(
           nextValues,
@@ -321,11 +350,14 @@ export default function useOffset(
       }
 
       for (let i = nextValues.length - 1; i > 0; i -= 1) {
-        if (isHandleDisabled(i) || isHandleDisabled(i - 1))
-          continue
+        if (isHandleDisabled(i) || isHandleDisabled(i - 1)) continue
         let changed = true
         while (needPush(nextValues[i] - nextValues[i - 1]) && changed) {
-          ({ value: nextValues[i - 1], changed } = offsetChangedValue(nextValues, -1, i - 1))
+          ;({ value: nextValues[i - 1], changed } = offsetChangedValue(
+            nextValues,
+            -1,
+            i - 1,
+          ))
         }
         const [itemMinBound] = getDisabledBoundaryValues(
           nextValues,
@@ -339,11 +371,14 @@ export default function useOffset(
       }
 
       for (let i = 0; i < nextValues.length - 1; i += 1) {
-        if (isHandleDisabled(i) || isHandleDisabled(i + 1))
-          continue
+        if (isHandleDisabled(i) || isHandleDisabled(i + 1)) continue
         let changed = true
         while (needPush(nextValues[i + 1] - nextValues[i]) && changed) {
-          ({ value: nextValues[i + 1], changed } = offsetChangedValue(nextValues, 1, i + 1))
+          ;({ value: nextValues[i + 1], changed } = offsetChangedValue(
+            nextValues,
+            1,
+            i + 1,
+          ))
         }
         const [, itemMaxBound] = getDisabledBoundaryValues(
           nextValues,

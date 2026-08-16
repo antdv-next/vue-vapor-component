@@ -1,15 +1,19 @@
-import type { CSSProperties, VNode } from 'vue'
 import type { Key as VCKey, VueNode } from '@v-c/util/dist/type'
 import type { ScrollTo as VirtualListScrollTo } from '@vapor-component/virtual-list'
+import type { CSSProperties, VNode } from 'vue'
+
 import type { AllowDropOptions } from './util'
 
 export type Key = VCKey
 
-type VirtualListScrollConfig = Exclude<NonNullable<Parameters<VirtualListScrollTo>[0]>, number>
+type VirtualListScrollConfig = Exclude<
+  NonNullable<Parameters<VirtualListScrollTo>[0]>,
+  number
+>
 type ScrollTarget = Extract<VirtualListScrollConfig, { key: Key }>
-type TreeScrollConfig
-  = | (Exclude<VirtualListScrollConfig, ScrollTarget> & { autoExpand?: never })
-    | (ScrollTarget & { autoExpand?: boolean })
+type TreeScrollConfig =
+  | (Exclude<VirtualListScrollConfig, ScrollTarget> & { autoExpand?: never })
+  | (ScrollTarget & { autoExpand?: boolean })
 
 export type ScrollTo = (scroll?: number | TreeScrollConfig | null) => void
 
@@ -67,9 +71,12 @@ export interface BasicDataNode {
   [key: string]: any
 }
 
-export type FieldDataNode<T, ChildFieldName extends string = 'children'> = BasicDataNode
-  & T
-  & Partial<Record<ChildFieldName, FieldDataNode<T, ChildFieldName>[]>>
+export type FieldDataNode<
+  T,
+  ChildFieldName extends string = 'children',
+> = BasicDataNode &
+  T &
+  Partial<Record<ChildFieldName, FieldDataNode<T, ChildFieldName>[]>>
 
 export type DataNode = FieldDataNode<{
   key: Key
@@ -89,8 +96,8 @@ export type EventDataNode<TreeDataType> = {
   dragOverGapBottom: boolean
   pos: string
   active: boolean
-} & TreeDataType
-& BasicDataNode
+} & TreeDataType &
+  BasicDataNode
 
 export type NodeElement = VNode & {
   type: any & {
@@ -107,8 +114,9 @@ export interface Entity {
   children?: Entity[]
 }
 
-export interface DataEntity<TreeDataType extends BasicDataNode = any>
-  extends Omit<Entity, 'node' | 'parent' | 'children'> {
+export interface DataEntity<
+  TreeDataType extends BasicDataNode = any,
+> extends Omit<Entity, 'node' | 'parent' | 'children'> {
   node: TreeDataType
   nodes: TreeDataType[]
   parent?: DataEntity<TreeDataType>
@@ -116,7 +124,10 @@ export interface DataEntity<TreeDataType extends BasicDataNode = any>
   level: number
 }
 
-export type KeyEntities<DateType extends BasicDataNode = any> = Record<string, DataEntity<DateType>>
+export type KeyEntities<DateType extends BasicDataNode = any> = Record<
+  string,
+  DataEntity<DateType>
+>
 
 export interface FlattenNode<TreeDataType extends BasicDataNode = DataNode> {
   parent: FlattenNode<TreeDataType> | null
@@ -141,23 +152,28 @@ export interface FieldNames {
   children?: string
 }
 
-export type NodeMouseEventHandler<TreeDataType extends BasicDataNode = DataNode> = (
-  e: MouseEvent,
-  node: EventDataNode<TreeDataType>,
-) => void
+export type NodeMouseEventHandler<
+  TreeDataType extends BasicDataNode = DataNode,
+> = (e: MouseEvent, node: EventDataNode<TreeDataType>) => void
 
-export type NodeDragEventHandler<TreeDataType extends BasicDataNode = DataNode> = (
+export type NodeDragEventHandler<
+  TreeDataType extends BasicDataNode = DataNode,
+> = (
   e: DragEvent,
   nodeProps: TreeNodeProps<TreeDataType>,
   outsideTree?: boolean,
 ) => void
 
-export interface NodeMouseEventParams<TreeDataType extends BasicDataNode = DataNode> {
+export interface NodeMouseEventParams<
+  TreeDataType extends BasicDataNode = DataNode,
+> {
   event: MouseEvent
   node: EventDataNode<TreeDataType>
 }
 
-export interface NodeDragEventParams<TreeDataType extends BasicDataNode = DataNode> {
+export interface NodeDragEventParams<
+  TreeDataType extends BasicDataNode = DataNode,
+> {
   event: DragEvent
   node: EventDataNode<TreeDataType>
 }
@@ -190,7 +206,7 @@ export interface CheckInfo<TreeDataType extends BasicDataNode = DataNode> {
   checked: boolean
   nativeEvent: MouseEvent
   checkedNodes: TreeDataType[]
-  checkedNodesPositions?: { node: TreeDataType, pos: string }[]
+  checkedNodesPositions?: { node: TreeDataType; pos: string }[]
   halfCheckedKeys?: Key[]
 }
 
@@ -221,60 +237,14 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
   defaultExpandedKeys?: Key[]
   expandedKeys?: Key[]
   defaultCheckedKeys?: Key[]
-  checkedKeys?: Key[] | { checked: Key[], halfChecked: Key[] }
+  checkedKeys?: Key[] | { checked: Key[]; halfChecked: Key[] }
   defaultSelectedKeys?: Key[]
   selectedKeys?: Key[]
   allowDrop?: (options: AllowDropOptions<TreeDataType>) => boolean
   titleRender?: (node: TreeDataType) => any
   dropIndicatorRender?: (props: DropIndicatorRenderProps) => any
-  onMouseDown?: (e: MouseEvent) => void
-  onFocus?: (e: FocusEvent) => void
-  onBlur?: (e: FocusEvent) => void
-  onKeyDown?: (e: KeyboardEvent) => void
-  onContextMenu?: (e: MouseEvent) => void
-  onClick?: NodeMouseEventHandler<TreeDataType>
-  onDoubleClick?: NodeMouseEventHandler<TreeDataType>
-  onScroll?: (e: Event) => void
-  onExpand?: (expandedKeys: Key[], info: {
-    node: EventDataNode<TreeDataType>
-    expanded: boolean
-    nativeEvent: MouseEvent
-  }) => void
-  onCheck?: (checked: { checked: Key[], halfChecked: Key[] } | Key[], info: CheckInfo<TreeDataType>) => void
-  onSelect?: (
-    selectedKeys: Key[],
-    info: {
-      event: 'select'
-      selected: boolean
-      node: EventDataNode<TreeDataType>
-      selectedNodes: TreeDataType[]
-      nativeEvent: MouseEvent
-    },
-  ) => void
-  onLoad?: (
-    loadKeys: Key[],
-    info: {
-      event: 'load'
-      node: EventDataNode<TreeDataType>
-    },
-  ) => void
   loadData?: (treeNode: EventDataNode<TreeDataType>) => Promise<void>
   loadedKeys?: Key[]
-  onMouseEnter?: (info: NodeMouseEventParams<TreeDataType>) => void
-  onMouseLeave?: (info: NodeMouseEventParams<TreeDataType>) => void
-  onRightClick?: (info: { event: MouseEvent, node: EventDataNode<TreeDataType> }) => void
-  onDragStart?: (info: NodeDragEventParams<TreeDataType>) => void
-  onDragEnter?: (info: NodeDragEventParams<TreeDataType> & { expandedKeys: Key[] }) => void
-  onDragOver?: (info: NodeDragEventParams<TreeDataType>) => void
-  onDragLeave?: (info: NodeDragEventParams<TreeDataType>) => void
-  onDragEnd?: (info: NodeDragEventParams<TreeDataType>) => void
-  onDrop?: (info: NodeDragEventParams<TreeDataType> & {
-    dragNode: EventDataNode<TreeDataType>
-    dragNodesKeys: Key[]
-    dropPosition: number
-    dropToGap: boolean
-  }) => void
-  onActiveChange?: (key: Key | null) => void
   filterTreeNode?: (treeNode: EventDataNode<TreeDataType>) => boolean
   switcherIcon?: IconType
 
@@ -295,7 +265,9 @@ export interface TreeRef {
   onKeyDown: (event: KeyboardEvent) => void
 }
 
-export interface TreeContextProps<TreeDataType extends BasicDataNode = DataNode> {
+export interface TreeContextProps<
+  TreeDataType extends BasicDataNode = DataNode,
+> {
   styles?: TreeStyles
   classNames?: TreeClassNames
   prefixCls: string
@@ -325,7 +297,11 @@ export interface TreeContextProps<TreeDataType extends BasicDataNode = DataNode>
   onNodeDoubleClick: NodeMouseEventHandler<TreeDataType>
   onNodeExpand: NodeMouseEventHandler<TreeDataType>
   onNodeSelect: NodeMouseEventHandler<TreeDataType>
-  onNodeCheck: (e: MouseEvent, treeNode: EventDataNode<TreeDataType>, checked: boolean) => void
+  onNodeCheck: (
+    e: MouseEvent,
+    treeNode: EventDataNode<TreeDataType>,
+    checked: boolean,
+  ) => void
   onNodeLoad: (treeNode: EventDataNode<TreeDataType>) => void
   onNodeMouseEnter: NodeMouseEventHandler<TreeDataType>
   onNodeMouseLeave: NodeMouseEventHandler<TreeDataType>

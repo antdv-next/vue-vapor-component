@@ -1,5 +1,7 @@
 import type { Ref } from 'vue'
+
 import { shallowRef, watch } from 'vue'
+
 import { findListDiffIndex } from '../utils/algorithmUtil'
 
 export default function useDiffItem<T>(
@@ -12,8 +14,12 @@ export default function useDiffItem<T>(
 
   watch(
     data,
-    (newData) => {
-      const diff = findListDiffIndex(prevData.value || [], data.value || [], getKey)
+    newData => {
+      const diff = findListDiffIndex(
+        prevData.value || [],
+        data.value || [],
+        getKey,
+      )
       if (diff?.index !== undefined) {
         onDiff?.(diff.index)
         diffItem.value = newData[diff.index]

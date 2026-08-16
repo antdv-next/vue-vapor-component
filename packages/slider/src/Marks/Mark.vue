@@ -1,21 +1,28 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
+
   import { clsx } from '@v-c/util'
   import { computed } from 'vue'
+
   import { useInjectSlider } from '../SliderContextKey'
   import { getDirectionStyle } from '../util'
 
   defineOptions({ name: 'SliderMark' })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    value: number
-    style?: CSSProperties
-    onClick?: (value: number) => void
-  }>(), {
-    prefixCls: 'vc-slider-mark',
-    value: 0,
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      value: number
+      style?: CSSProperties
+    }>(),
+    {
+      prefixCls: 'vc-slider-mark',
+      value: 0,
+    },
+  )
+  const emit = defineEmits<{
+    click: [value: number]
+  }>()
 
   const sliderContext = useInjectSlider()
 
@@ -23,7 +30,11 @@
 
   const active = computed(() => {
     const ctx = sliderContext.value
-    return ctx.included && ctx.includedStart <= props.value && props.value <= ctx.includedEnd
+    return (
+      ctx.included &&
+      ctx.includedStart <= props.value &&
+      props.value <= ctx.includedEnd
+    )
   })
 
   const positionStyle = computed(() => {
@@ -45,7 +56,7 @@
   }
 
   function handleClick() {
-    props.onClick?.(props.value)
+    emit('click', props.value)
   }
 </script>
 

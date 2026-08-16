@@ -12,8 +12,10 @@
 
   defineOptions({ name: 'MutateObserver' })
   const props = defineProps<{
-    onMutate: OnMutateFn
     options?: MutationObserverInit
+  }>()
+  const emit = defineEmits<{
+    mutate: [mutations: MutationRecord[], observer: MutationObserver]
   }>()
 
   const internalOptions = toRef(props, 'options')
@@ -24,7 +26,7 @@
 
   const target = shallowRef<Element | Text | null>(null)
 
-  const callback: OnMutateFn = (...args) => props.onMutate?.(...args)
+  const callback: OnMutateFn = (...args) => emit('mutate', ...args)
 
   const getDom = (el: any) => {
     const dom =

@@ -1,54 +1,54 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Tree from '@vapor-component/tree'
+  import Tree from '@vapor-component/tree'
+  import { ref } from 'vue'
 
-import '@/styles/tree.less'
+  import '@/styles/tree.less'
 
-const treeData = ref([
-  {
-    key: '0-0',
-    title: 'parent 1',
-    children: [
-      {
-        key: '0-0-0',
-        title: 'parent 1-1',
-        children: [
-          { key: '0-0-0-0', title: 'parent 1-1-0' },
-          { key: '0-0-0-1', title: 'parent 1-1-1' },
-        ],
-      },
-      {
-        key: '0-0-1',
-        title: 'parent 1-2',
-        children: [
-          { key: '0-0-1-0', title: 'parent 1-2-0' },
-          { key: '0-0-1-1', title: 'parent 1-2-1' },
-          { key: '0-0-1-2', title: 'parent 1-2-2' },
-        ],
-      },
-    ],
-  },
-  {
-    key: '0-1',
-    title: 'parent 2',
-    children: [
-      { key: '0-1-0', title: 'parent 2-0' },
-      { key: '0-1-1', title: 'parent 2-1' },
-    ],
-  },
-])
+  const treeData = ref([
+    {
+      key: '0-0',
+      title: 'parent 1',
+      children: [
+        {
+          key: '0-0-0',
+          title: 'parent 1-1',
+          children: [
+            { key: '0-0-0-0', title: 'parent 1-1-0' },
+            { key: '0-0-0-1', title: 'parent 1-1-1' },
+          ],
+        },
+        {
+          key: '0-0-1',
+          title: 'parent 1-2',
+          children: [
+            { key: '0-0-1-0', title: 'parent 1-2-0' },
+            { key: '0-0-1-1', title: 'parent 1-2-1' },
+            { key: '0-0-1-2', title: 'parent 1-2-2' },
+          ],
+        },
+      ],
+    },
+    {
+      key: '0-1',
+      title: 'parent 2',
+      children: [
+        { key: '0-1-0', title: 'parent 2-0' },
+        { key: '0-1-1', title: 'parent 2-1' },
+      ],
+    },
+  ])
 
-const onExpand = (expandedKeys: any[]) => {
-  console.log('onExpand', expandedKeys)
-}
+  const onExpand = (expandedKeys: any[]) => {
+    console.log('onExpand', expandedKeys)
+  }
 
-const onSelect = (selectedKeys: any[], info: any) => {
-  console.log('onSelect', selectedKeys, info)
-}
+  const onSelect = (selectedKeys: any[], info: any) => {
+    console.log('onSelect', selectedKeys, info)
+  }
 
-const onCheck = (checkedKeys: any, info: any) => {
-  console.log('onCheck', checkedKeys, info)
-}
+  const onCheck = (checkedKeys: any, info: any) => {
+    console.log('onCheck', checkedKeys, info)
+  }
 </script>
 
 <template>

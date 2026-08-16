@@ -1,98 +1,99 @@
 <script setup vapor lang="ts">
-import type { ListRef } from '@vapor-component/virtual-list'
-import { ref } from 'vue'
-import VirtualList from '@vapor-component/virtual-list'
+  import type { ListRef } from '@vapor-component/virtual-list'
 
-interface Item {
-  id: number
-}
+  import VirtualList from '@vapor-component/virtual-list'
+  import { ref } from 'vue'
 
-const data: Item[] = []
-for (let i = 0; i < 100000; i += 1) {
-  data.push({ id: i })
-}
+  interface Item {
+    id: number
+  }
 
-const listRef = ref<ListRef>()
+  const data: Item[] = []
+  for (let i = 0; i < 100000; i += 1) {
+    data.push({ id: i })
+  }
 
-function scrollToShowBar() {
-  listRef.value?.scrollTo(null)
-}
+  const listRef = ref<ListRef>()
 
-function scrollTo100px() {
-  listRef.value?.scrollTo(500)
-}
+  function scrollToShowBar() {
+    listRef.value?.scrollTo(null)
+  }
 
-function scrollToLarge() {
-  listRef.value?.scrollTo({
-    index: 99999999,
-    align: 'top',
-  })
-}
+  function scrollTo100px() {
+    listRef.value?.scrollTo(500)
+  }
 
-function scrollTo50Top() {
-  listRef.value?.scrollTo({
-    index: 50,
-    align: 'top',
-  })
-}
+  function scrollToLarge() {
+    listRef.value?.scrollTo({
+      index: 99999999,
+      align: 'top',
+    })
+  }
 
-function scrollTo50Bottom() {
-  listRef.value?.scrollTo({
-    index: 50,
-    align: 'bottom',
-  })
-}
+  function scrollTo50Top() {
+    listRef.value?.scrollTo({
+      index: 50,
+      align: 'top',
+    })
+  }
 
-function scrollTo50Auto() {
-  listRef.value?.scrollTo({
-    index: 50,
-    align: 'auto',
-  })
-}
+  function scrollTo50Bottom() {
+    listRef.value?.scrollTo({
+      index: 50,
+      align: 'bottom',
+    })
+  }
 
-function scrollTo50TopOffset() {
-  listRef.value?.scrollTo({
-    index: 50,
-    align: 'top',
-    offset: 15,
-  })
-}
+  function scrollTo50Auto() {
+    listRef.value?.scrollTo({
+      index: 50,
+      align: 'auto',
+    })
+  }
 
-function scrollTo50BottomOffset() {
-  listRef.value?.scrollTo({
-    index: 50,
-    align: 'bottom',
-    offset: 15,
-  })
-}
+  function scrollTo50TopOffset() {
+    listRef.value?.scrollTo({
+      index: 50,
+      align: 'top',
+      offset: 15,
+    })
+  }
 
-function scrollToKey50() {
-  listRef.value?.scrollTo({
-    key: 50,
-    align: 'auto',
-  })
-}
+  function scrollTo50BottomOffset() {
+    listRef.value?.scrollTo({
+      index: 50,
+      align: 'bottom',
+      offset: 15,
+    })
+  }
 
-function scrollToLast() {
-  listRef.value?.scrollTo({
-    index: data.length - 1,
-    align: 'top',
-  })
-}
+  function scrollToKey50() {
+    listRef.value?.scrollTo({
+      key: 50,
+      align: 'auto',
+    })
+  }
 
-function scrollToFirst() {
-  listRef.value?.scrollTo({
-    index: 0,
-    align: 'bottom',
-  })
-}
+  function scrollToLast() {
+    listRef.value?.scrollTo({
+      index: data.length - 1,
+      align: 'top',
+    })
+  }
 
-const visible = ref(true)
+  function scrollToFirst() {
+    listRef.value?.scrollTo({
+      index: 0,
+      align: 'bottom',
+    })
+  }
 
-function onScroll(e: Event) {
-  const target = e.currentTarget as HTMLElement
-  console.log('scroll:', target.scrollTop)
-}
+  const visible = ref(true)
+
+  function onScroll(e: Event) {
+    const target = e.currentTarget as HTMLElement
+    console.log('scroll:', target.scrollTop)
+  }
 </script>
 
 <template>
@@ -117,7 +118,7 @@ function onScroll(e: Event) {
       <button type="button" style="margin: 4px" @click="scrollTo50Auto">
         Scroll To 50 (auto)
       </button>
-      <br>
+      <br />
       <button type="button" style="margin: 4px" @click="scrollTo50TopOffset">
         Scroll To 50 (top) + 15 offset
       </button>
@@ -169,8 +170,8 @@ function onScroll(e: Event) {
 </template>
 
 <style scoped>
-button {
-  padding: 4px 8px;
-  cursor: pointer;
-}
+  button {
+    padding: 4px 8px;
+    cursor: pointer;
+  }
 </style>

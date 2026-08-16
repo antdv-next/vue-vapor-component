@@ -8,6 +8,17 @@
   defineOptions({ name: 'ImagePreviewFooter' })
 
   const props = defineProps<FooterProps>()
+  const emit = defineEmits<{
+    close: []
+    active: [offset: number]
+    'flip-y': []
+    'flip-x': []
+    'rotate-left': []
+    'rotate-right': []
+    'zoom-out': []
+    'zoom-in': []
+    reset: []
+  }>()
   const footerCls = computed(() =>
     clsx(`${props.prefixCls}-footer`, props.classNames?.footer),
   )
@@ -19,22 +30,22 @@
   )
 
   function handleClose() {
-    props.onClose?.()
+    emit('close')
   }
 
   // Payload bound to the `actions` slot so callers can render a fully custom
   // toolbar while still driving the built-in transform/navigation handlers.
   const renderResult = computed(() => ({
     actions: {
-      onActive: props.onActive,
-      onFlipY: props.onFlipY,
-      onFlipX: props.onFlipX,
-      onRotateLeft: props.onRotateLeft,
-      onRotateRight: props.onRotateRight,
-      onZoomOut: props.onZoomOut,
-      onZoomIn: props.onZoomIn,
-      onReset: props.onReset,
-      onClose: props.onClose,
+      onActive: (offset: number) => emit('active', offset),
+      onFlipY: () => emit('flip-y'),
+      onFlipX: () => emit('flip-x'),
+      onRotateLeft: () => emit('rotate-left'),
+      onRotateRight: () => emit('rotate-right'),
+      onZoomOut: () => emit('zoom-out'),
+      onZoomIn: () => emit('zoom-in'),
+      onReset: () => emit('reset'),
+      onClose: () => emit('close'),
     } satisfies Actions,
     transform: props.transform,
     current: props.current,

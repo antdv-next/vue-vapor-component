@@ -1,4 +1,5 @@
 import type { MaybeRef } from 'vue'
+import type { Component, Ref } from 'vue'
 
 import type {
   Key,
@@ -6,13 +7,7 @@ import type {
   NotificationListConfig,
 } from '../interface'
 
-import type { Component, Ref } from 'vue'
-import {
-  computed,
-  shallowRef,
-  unref,
-  watch,
-} from 'vue'
+import { computed, shallowRef, unref, watch } from 'vue'
 
 import ContextHolder from '../ContextHolder.vue'
 
@@ -59,7 +54,11 @@ export interface NotificationReturn {
   api: NotificationAPI
   ContextHolder: Component
   configRef: Ref<NotificationConfig>
-  onReady: (ref: { open: (config: NotificationListConfig) => void; close: (key: Key) => void; destroy: () => void }) => void
+  onReady: (ref: {
+    open: (config: NotificationListConfig) => void
+    close: (key: Key) => void
+    destroy: () => void
+  }) => void
 }
 
 export default function useNotification(
@@ -68,12 +67,7 @@ export default function useNotification(
   const configRef = computed(() => unref(rootConfig) || {})
 
   const shareConfig = computed(() => {
-    const {
-      closable,
-      duration,
-      showProgress,
-      placement,
-    } = configRef.value
+    const { closable, duration, showProgress, placement } = configRef.value
     return { closable, duration, showProgress, placement }
   })
 
@@ -126,7 +120,11 @@ export default function useNotification(
     }
   }
 
-  const onReady = (ref: { open: (config: NotificationListConfig) => void; close: (key: Key) => void; destroy: () => void }) => {
+  const onReady = (ref: {
+    open: (config: NotificationListConfig) => void
+    close: (key: Key) => void
+    destroy: () => void
+  }) => {
     notificationRef.value = ref
     dispatchTasks()
   }

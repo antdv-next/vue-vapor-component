@@ -50,7 +50,6 @@ export interface BaseInputProps extends CommonInputProps {
   triggerFocus?: () => void
   readOnly?: boolean
   handleReset?: MouseEventHandler
-  onClear?: () => void
   hidden?: boolean
   dataAttrs?: {
     affixWrapper?: DataAttr
@@ -119,7 +118,6 @@ export interface InputProps extends Omit<
     | {
         formatter: ShowCountFormatter
       }
-  onPressEnter?: KeyboardEventHandler
   autoComplete?: string
   htmlSize?: number
   placeholder?: string
@@ -132,22 +130,9 @@ export interface InputProps extends Omit<
     count?: CSSProperties
   }
   count?: CountConfig
-  onClear?: () => void
   maxLength?: number
   readOnly?: boolean
   hidden?: boolean
-  onChange?: ChangeEventHandler
-  onFocus?: FocusEventHandler
-  onBlur?: FocusEventHandler
-  onKeyDown?: KeyboardEventHandler
-  onKeyUp?: KeyboardEventHandler
-  onCompositionStart?: CompositionEventHandler
-  onCompositionEnd?: CompositionEventHandler
-  /**
-   * Whether to trigger onChange during IME composition.
-   * When false (default), onChange only fires after compositionEnd with the final value.
-   * When true, onChange fires on every keystroke including intermediate IME values.
-   */
   changeOnComposing?: boolean
   components?: BaseInputProps['components']
   dataAttrs?: BaseInputProps['dataAttrs']

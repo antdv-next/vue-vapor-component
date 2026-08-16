@@ -12,10 +12,7 @@ export interface SwitchProps {
   disabled?: boolean
   checkedChildren?: VNodeChild | (() => VNodeChild)
   unCheckedChildren?: VNodeChild | (() => VNodeChild)
-  onChange?: SwitchChangeEventHandler
   'onUpdate:checked'?: (value: boolean) => void
-  onKeyDown?: KeyboardEventHandler
-  onClick?: SwitchClickEventHandler
   tabIndex?: number
   checked?: boolean
   defaultChecked?: boolean

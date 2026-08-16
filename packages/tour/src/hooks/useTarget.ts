@@ -1,8 +1,11 @@
 import type { Ref } from 'vue'
+
 import type { TourStepInfo } from '../interface'
+
 import canUseDom from '@v-c/util/dist/Dom/canUseDom'
 import { resolveToElement } from '@v-c/util/dist/vnode'
 import { computed, nextTick, onMounted, shallowRef, watch } from 'vue'
+
 import { isInViewPort } from '../util'
 
 export interface Gap {
@@ -33,9 +36,10 @@ export default function useTarget(
   const targetElement = shallowRef<HTMLElement | null>(null)
 
   const syncTargetElement = () => {
-    const nextElement = typeof target.value === 'function'
-      ? (target.value as () => HTMLElement | null | undefined)()
-      : target.value
+    const nextElement =
+      typeof target.value === 'function'
+        ? (target.value as () => HTMLElement | null | undefined)()
+        : target.value
     targetElement.value = resolveToElement(nextElement || null)
   }
 
@@ -53,15 +57,23 @@ export default function useTarget(
   const updatePos = () => {
     syncTargetElement()
     if (targetElement.value) {
-      if (!inlineMode?.value && !isInViewPort(targetElement.value) && open.value) {
-        targetElement.value?.scrollIntoView(scrollIntoViewOptions!.value as ScrollIntoViewOptions)
+      if (
+        !inlineMode?.value &&
+        !isInViewPort(targetElement.value) &&
+        open.value
+      ) {
+        targetElement.value?.scrollIntoView(
+          scrollIntoViewOptions!.value as ScrollIntoViewOptions,
+        )
       }
 
-      const { left, top, width, height } = targetElement.value.getBoundingClientRect()
+      const { left, top, width, height } =
+        targetElement.value.getBoundingClientRect()
       const nextPosInfo: PosInfo = { left, top, width, height, radius: 0 }
 
       if (inlineMode?.value) {
-        const parentRect = placeholderRef?.value?.parentElement?.getBoundingClientRect?.()
+        const parentRect =
+          placeholderRef?.value?.parentElement?.getBoundingClientRect?.()
         if (parentRect) {
           nextPosInfo.left -= parentRect.left
           nextPosInfo.top -= parentRect.top
@@ -83,7 +95,9 @@ export default function useTarget(
   })
 
   const getGapOffset = (index: number) =>
-    (Array.isArray(gap?.value?.offset) ? gap?.value?.offset[index] : gap?.value?.offset) ?? 6
+    (Array.isArray(gap?.value?.offset)
+      ? gap?.value?.offset[index]
+      : gap?.value?.offset) ?? 6
 
   watch(
     [targetElement, open],

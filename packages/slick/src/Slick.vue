@@ -1,6 +1,8 @@
 <script setup vapor lang="ts">
   import type { InnerSliderRef, SlickProps, SlickRef } from './interface'
+
   import { computed, onBeforeUnmount, onMounted, shallowRef } from 'vue'
+
   import defaultProps from './defaultProps'
   import InnerSlider from './InnerSlider.vue'
   import { canUseDOM, filterSettings } from './utils/innerSliderUtils'
@@ -10,9 +12,12 @@
   const props = defineProps<SlickProps>()
   const breakpoint = shallowRef<number | null>(null)
   const innerSliderRef = shallowRef<InnerSliderRef | null>(null)
-  const responsiveMediaHandlers: Array<{ mql: MediaQueryList, listener: (e: any) => void }> = []
+  const responsiveMediaHandlers: Array<{
+    mql: MediaQueryList
+    listener: (e: any) => void
+  }> = []
 
-  function toMediaQuery(query: { minWidth?: number, maxWidth?: number }) {
+  function toMediaQuery(query: { minWidth?: number; maxWidth?: number }) {
     const parts: string[] = []
     if (typeof query.minWidth === 'number') {
       parts.push(`(min-width: ${query.minWidth}px)`)
@@ -26,7 +31,9 @@
   function media(query: string, handler: () => void) {
     if (!canUseDOM()) return
     const mql = window.matchMedia(query)
-    const listener = (e: any) => { if (e.matches) handler() }
+    const listener = (e: any) => {
+      if (e.matches) handler()
+    }
     if (mql.addEventListener) mql.addEventListener('change', listener)
     else mql.addListener(listener)
     responsiveMediaHandlers.push({ mql, listener })
@@ -47,17 +54,24 @@
             maxWidth: value,
           })
         }
-        canUseDOM() && media(bQuery, () => { breakpoint.value = value })
+        canUseDOM() &&
+          media(bQuery, () => {
+            breakpoint.value = value
+          })
       })
 
       const query = toMediaQuery({ minWidth: breakpoints.slice(-1)[0] })
-      canUseDOM() && media(query, () => { breakpoint.value = null })
+      canUseDOM() &&
+        media(query, () => {
+          breakpoint.value = null
+        })
     }
   })
 
   onBeforeUnmount(() => {
-    responsiveMediaHandlers.forEach((obj) => {
-      if (obj.mql.removeEventListener) obj.mql.removeEventListener('change', obj.listener)
+    responsiveMediaHandlers.forEach(obj => {
+      if (obj.mql.removeEventListener)
+        obj.mql.removeEventListener('change', obj.listener)
       else obj.mql.removeListener(obj.listener)
     })
   })
@@ -85,10 +99,13 @@
   const mergedSettings = computed<Record<string, any> | 'unslick'>(() => {
     let settings: any
     if (breakpoint.value && props.responsive) {
-      const newProps = props.responsive.filter(r => r.breakpoint === breakpoint.value)
-      settings = newProps[0].settings === 'unslick'
-        ? 'unslick'
-        : { ...defaultProps, ...newProps[0].settings }
+      const newProps = props.responsive.filter(
+        r => r.breakpoint === breakpoint.value,
+      )
+      settings =
+        newProps[0].settings === 'unslick'
+          ? 'unslick'
+          : { ...defaultProps, ...newProps[0].settings }
     } else {
       settings = { ...defaultProps }
     }
@@ -117,14 +134,14 @@
 
 <template>
   <template v-if="isUnslick">
-    <div :class="`regular slider ${props.className || ''}`">
+    <div :class="`regular slider ${className || ''}`">
       <slot />
     </div>
   </template>
   <template v-else>
     <InnerSlider
       ref="innerSliderRef"
-      :style="props.style"
+      :style="style"
       v-bind="filterSettings(mergedSettings as any) as any"
     >
       <slot />

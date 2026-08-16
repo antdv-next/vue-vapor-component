@@ -13,10 +13,15 @@
   type ContentProps = {
     motionName?: string
     ariaId: string
-    onVisibleChanged: (visible: boolean) => void
   } & PanelProps
   defineOptions({ name: 'Index' })
   const props = defineProps<ContentProps>()
+  const emit = defineEmits<{
+    close: [e?: any]
+    'visible-changed': [visible: boolean]
+    'mouse-down': [e: MouseEvent]
+    'mouse-up': [e: MouseEvent]
+  }>()
   const dialogRef = shallowRef<HTMLDivElement>()
 
   const transformOrigin = shallowRef('')
@@ -46,17 +51,27 @@
   <Transition
     v-bind="transitionProps"
     @beforeEnter="onPrepare"
-    @afterEnter="() => onVisibleChanged?.(true)"
+    @afterEnter="
+      () => {
+        emit('visible-changed', true)
+      }
+    "
     @afterLeave="
       () => {
-        onVisibleChanged?.(false)
+        emit('visible-changed', false)
       }
     "
   >
     <template v-if="visible || !destroyOnHidden || forceRender">
       <Panel
         v-show="visible"
-        v-bind="props"
+        v-bind="{
+          ...props,
+          onClose: undefined,
+          onMouseDown: undefined,
+          onMouseUp: undefined,
+          holderRef: undefined,
+        }"
         :title="title"
         :ariaId="ariaId"
         :prefixCls="prefixCls"
@@ -67,6 +82,9 @@
             dialogRef.value = el
           }
         "
+        @close="e => emit('close', e)"
+        @mouse-down="(e: MouseEvent) => emit('mouse-down', e)"
+        @mouse-up="(e: MouseEvent) => emit('mouse-up', e)"
       >
         <template v-for="slotName in panelSlots" #[slotName]>
           <slot :name="slotName" />

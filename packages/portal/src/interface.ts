@@ -23,7 +23,6 @@ export interface PortalProps {
   autoDestroy?: boolean
   /** Lock screen scroll when open */
   autoLock?: boolean
-  onEsc?: EscCallback
 
   /** @private debug name. Do not use in prod */
   debug?: string

@@ -8,6 +8,10 @@
   import { computed, onBeforeUnmount, shallowRef, Transition, watch } from 'vue'
   defineOptions({ name: 'MotionThumb' })
   const props = defineProps<MotionThumbInterface>()
+  const emit = defineEmits<{
+    'motion-start': []
+    'motion-end': []
+  }>()
 
   type ThumbReact = {
     left: number
@@ -104,9 +108,9 @@
         nextStyle.value = calcNextStyle
         motionKey.value += 1
         if (prev && next) {
-          props.onMotionStart?.()
+          emit('motion-start')
         } else {
-          props?.onMotionEnd?.()
+          emit('motion-end')
         }
       }
     },
@@ -185,7 +189,7 @@
     clearAsync()
     prevStyle.value = null
     nextStyle.value = null
-    props?.onMotionEnd?.()
+    emit('motion-end')
   }
   onBeforeUnmount(() => {
     clearAsync()

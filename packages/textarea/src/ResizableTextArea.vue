@@ -26,6 +26,10 @@
   const props = withDefaults(defineProps<TextAreaProps>(), {
     prefixCls: 'vc-textarea',
   })
+  const emit = defineEmits<{
+    resize: [size: { width: number; height: number }]
+    change: [e: any]
+  }>()
   const attrs = useAttrs()
 
   const RESIZE_START = 0 as const
@@ -51,7 +55,7 @@
     if (props.value === undefined) {
       internalValue.value = e.target.value
     }
-    props?.onChange?.(e)
+    emit('change', e)
   }
 
   // ================================ Ref =================================
@@ -136,7 +140,7 @@
 
   const onInternalResize = (size: { width: number; height: number }) => {
     if (resizeState.value === RESIZE_STABLE) {
-      props?.onResize?.(size)
+      emit('resize', size)
       if (props.autoSize) {
         cleanRaf()
         resizeRafRef.value = raf(() => {
@@ -150,9 +154,7 @@
   })
 
   useResizeObserver(
-    computed(() => {
-      return !!(props.autoSize || props.onResize)
-    }),
+    computed(() => !!props.autoSize),
     textareaRef,
     onInternalResize,
   )
@@ -160,14 +162,28 @@
 
   const mergedStyle = computed<CSSProperties>(() => {
     const mergedAutoSizeStyle = needAutoSize.value ? autoSizeStyle.value : null
-    return {
-      ...(attrs.style as CSSProperties),
-      ...mergedAutoSizeStyle,
-      ...(resizeState.value === RESIZE_START ||
-      resizeState.value === RESIZE_MEASURING
-        ? { overflowY: 'hidden', overflowX: 'hidden' }
-        : {}),
+    const parentStyle = attrs.style as CSSProperties | undefined
+    const result: CSSProperties = {}
+    if (
+      parentStyle &&
+      typeof parentStyle === 'object' &&
+      !Array.isArray(parentStyle)
+    ) {
+      for (const key in parentStyle) {
+        result[key] = parentStyle[key]
+      }
     }
+    if (mergedAutoSizeStyle) {
+      Object.assign(result, mergedAutoSizeStyle)
+    }
+    if (
+      resizeState.value === RESIZE_START ||
+      resizeState.value === RESIZE_MEASURING
+    ) {
+      result.overflowY = 'hidden'
+      result.overflowX = 'hidden'
+    }
+    return result
   })
   const textareaClass = computed(() => {
     const { prefixCls, disabled } = props
@@ -182,7 +198,7 @@
       isReadonly['readonly'] = restAttrs?.readonly ?? props.readOnly
     }
     return {
-      ...omit(restAttrs, ['readonly']),
+      ...omit(restAttrs, ['readonly', 'style']),
       ...omit(props, [
         'suffix',
         'classNames',
@@ -194,11 +210,16 @@
         'disabled',
         'hidden',
         'readOnly',
-        'onClear',
         'maxLength',
-        'onResize',
-        'onChange',
         'prefix',
+        'value',
+        'defaultValue',
+        'count',
+        'classes',
+        'components',
+        'dataAttrs',
+        'handleReset',
+        'changeOnComposing',
       ]),
       ...isReadonly,
     }

@@ -47,6 +47,11 @@
 
   const attrs = useAttrs()
   const slots = useSlots()
+  const emit = defineEmits<{
+    close: []
+    change: [current: number, prev: number]
+    transform: [info: { transform: TransformType; action: TransformAction }]
+  }>()
   const groupContext = usePreviewGroupContext()
 
   const showLeftOrRightSwitches = computed(
@@ -74,7 +79,7 @@
       imgEl as any,
       computed(() => props.minScale),
       computed(() => props.maxScale),
-      info => props.onTransform?.(info),
+      info => emit('transform', info),
     )
 
   const { isMoving, onMouseDown, onWheel } = useMouseEvent(
@@ -161,7 +166,7 @@
     if (nextCurrent >= 0 && nextCurrent <= props.count - 1) {
       enableTransition.value = false
       resetTransform(offset < 0 ? 'prev' : 'next')
-      props.onChange?.(nextCurrent, props.current)
+      emit('change', nextCurrent, props.current)
     }
   }
 
@@ -317,15 +322,15 @@
   const shouldShowContent = computed(() => portalRender.value && props.open)
 
   const onMaskClick = () => {
-    if (props.maskClosable) props.onClose?.()
+    if (props.maskClosable) emit('close')
   }
 
   const handleCloseBtnClick = () => {
-    props.onClose?.()
+    emit('close')
   }
 
   const handlePortalEsc = ({ top }: { top: boolean }) => {
-    if (top) props.onClose?.()
+    if (top) emit('close')
   }
 </script>
 
@@ -392,7 +397,7 @@
           :current="current"
           :count="count"
           :icons="icons"
-          :onActive="onActive"
+          @active="onActive"
         >
           <template #prevIcon>
             <slot name="prevIcon"></slot>
@@ -419,15 +424,15 @@
           :scale="transform.scale"
           :minScale="minScale"
           :maxScale="maxScale"
-          :onActive="onActive"
-          :onFlipY="onFlipY"
-          :onFlipX="onFlipX"
-          :onRotateLeft="onRotateLeft"
-          :onRotateRight="onRotateRight"
-          :onZoomOut="onZoomOut"
-          :onZoomIn="onZoomIn"
-          :onClose="handleCloseBtnClick"
-          :onReset="onReset"
+          @active="onActive"
+          @flip-y="onFlipY"
+          @flip-x="onFlipX"
+          @rotate-left="onRotateLeft"
+          @rotate-right="onRotateRight"
+          @zoom-out="onZoomOut"
+          @zoom-in="onZoomIn"
+          @reset="onReset"
+          @close="handleCloseBtnClick"
         >
           <template #actionsRender="actionsProps">
             <slot name="actionsRender" v-bind="actionsProps" />

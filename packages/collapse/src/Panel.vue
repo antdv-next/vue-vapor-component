@@ -17,6 +17,9 @@
   const props = withDefaults(defineProps<CollapsePanelProps>(), {
     showArrow: true,
   })
+  const emit = defineEmits<{
+    'item-click': [key: Key]
+  }>()
 
   const ctx = useCollapseContext()
   const attrs = useAttrs()
@@ -64,7 +67,7 @@
     if (mergedCollapsible.value === 'disabled') return
     const key = props.panelKey as Key
     ctx?.onItemClick(key)
-    props.onItemClick?.(key)
+    emit('item-click', key)
   }
 
   // Interaction props shared by whichever element is the trigger.

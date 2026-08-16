@@ -9,6 +9,9 @@
   defineOptions({ name: 'BaseInput', inheritAttrs: false })
 
   const props = defineProps<BaseInputProps>()
+  const emit = defineEmits<{
+    clear: [e: MouseEvent]
+  }>()
   const slots = useSlots()
 
   const containerRef = shallowRef<HTMLElement | null>(null)
@@ -36,7 +39,7 @@
 
   function handleClearClick(event: MouseEvent) {
     props?.handleReset?.(event as any)
-    props?.onClear?.()
+    emit('clear', event)
   }
 
   function onClearMouseDown(e: MouseEvent) {

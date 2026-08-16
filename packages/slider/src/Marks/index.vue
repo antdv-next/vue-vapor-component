@@ -1,18 +1,25 @@
 <script setup vapor lang="ts">
   import type { InternalMarkObj } from '../interface'
+
   import { computed } from 'vue'
+
   import Mark from './Mark.vue'
 
   defineOptions({ name: 'SliderMarks' })
 
-  const props = withDefaults(defineProps<{
-    prefixCls: string
-    marks?: InternalMarkObj[]
-    onClick?: (value: number) => void
-  }>(), {
-    prefixCls: 'vc-slider',
-    marks: () => [],
-  })
+  const props = withDefaults(
+    defineProps<{
+      prefixCls: string
+      marks?: InternalMarkObj[]
+    }>(),
+    {
+      prefixCls: 'vc-slider',
+      marks: () => [],
+    },
+  )
+  const emit = defineEmits<{
+    click: [value: number]
+  }>()
 
   const markPrefixCls = computed(() => `${props.prefixCls}-mark`)
 
@@ -26,7 +33,7 @@
         :prefix-cls="markPrefixCls"
         :value="mark.value"
         :style="mark.style"
-        :on-click="onClick"
+        @click="(v: number) => emit('click', v)"
       >
         <slot name="mark" :point="mark.value" :label="mark.label">
           {{ mark.label }}

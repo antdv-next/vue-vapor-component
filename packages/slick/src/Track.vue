@@ -1,39 +1,39 @@
 <script setup vapor lang="ts">
+  import type { TrackProps } from './interface'
+
   import { clsx } from '@v-c/util'
   import { getStylePxValue } from '@v-c/util/dist/props-util'
   import { shallowRef, watchEffect } from 'vue'
-  import type { TrackProps } from './interface'
 
   defineOptions({ name: 'Track' })
 
-  const props = withDefaults(
-    defineProps<TrackProps>(),
-    {
-      currentSlide: 0,
-      targetSlide: 0,
-      slideCount: 0,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      slideHeight: null,
-      listHeight: null,
-      fade: false,
-      cssEase: 'ease',
-      speed: 500,
-      infinite: true,
-      centerMode: false,
-      lazyLoadedList: () => [],
-      rtl: false,
-      vertical: false,
-      variableWidth: false,
-      unslick: false,
-      centerPadding: '50px',
-      trackStyle: () => ({}),
-      useCSS: true,
-      onMouseEnter: () => {},
-      onMouseOver: () => {},
-      onMouseLeave: () => {},
-    },
-  )
+  const props = withDefaults(defineProps<TrackProps>(), {
+    currentSlide: 0,
+    targetSlide: 0,
+    slideCount: 0,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    slideHeight: null,
+    listHeight: null,
+    fade: false,
+    cssEase: 'ease',
+    speed: 500,
+    infinite: true,
+    centerMode: false,
+    lazyLoadedList: () => [],
+    rtl: false,
+    vertical: false,
+    variableWidth: false,
+    unslick: false,
+    centerPadding: '50px',
+    trackStyle: () => ({}),
+    useCSS: true,
+  })
+  const emit = defineEmits<{
+    'mouse-enter': [e: MouseEvent]
+    'mouse-over': [e: MouseEvent]
+    'mouse-leave': [e: MouseEvent]
+  }>()
 
   const trackEl = shallowRef<HTMLDivElement | null>(null)
 
@@ -55,15 +55,15 @@
       const centerOffset = Math.floor(props.slidesToShow / 2)
       slickCenter = (idx - props.currentSlide) % props.slideCount === 0
       if (
-        idx > props.currentSlide - centerOffset - 1
-        && idx <= props.currentSlide + centerOffset
+        idx > props.currentSlide - centerOffset - 1 &&
+        idx <= props.currentSlide + centerOffset
       ) {
         slickActive = true
       }
     } else {
       slickActive =
-        props.currentSlide <= idx
-        && idx < props.currentSlide + props.slidesToShow
+        props.currentSlide <= idx &&
+        idx < props.currentSlide + props.slidesToShow
     }
 
     let focusedSlide = props.targetSlide
@@ -92,9 +92,13 @@
     if (props.fade) {
       style.position = 'relative'
       if (props.vertical && props.slideHeight) {
-        style.top = getStylePxValue(-index * parseInt(String(props.slideHeight), 10))
+        style.top = getStylePxValue(
+          -index * parseInt(String(props.slideHeight), 10),
+        )
       } else if (props.slideWidth) {
-        style.left = getStylePxValue(-index * parseInt(String(props.slideWidth), 10))
+        style.left = getStylePxValue(
+          -index * parseInt(String(props.slideWidth), 10),
+        )
       }
       style.opacity = props.currentSlide === index ? 1 : 0
       style.zIndex = props.currentSlide === index ? 999 : 998
@@ -154,9 +158,9 @@
     ref="trackEl"
     class="slick-track"
     :style="trackStyle"
-    @mouseenter="onMouseEnter"
-    @mouseover="onMouseOver"
-    @mouseleave="onMouseLeave"
+    @mouseenter="(e: MouseEvent) => emit('mouse-enter', e)"
+    @mouseover="(e: MouseEvent) => emit('mouse-over', e)"
+    @mouseleave="(e: MouseEvent) => emit('mouse-leave', e)"
   >
     <slot />
   </div>

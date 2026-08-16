@@ -15,7 +15,16 @@
   const props = withDefaults(defineProps<TextAreaProps>(), {
     prefixCls: 'vc-textarea',
   })
-  const emit = defineEmits()
+  const emit = defineEmits<{
+    resize: [size: { width: number; height: number }]
+    change: [e: any]
+    focus: [e: any]
+    blur: [e: any]
+    keydown: [e: KeyboardEvent]
+    'press-enter': [e: KeyboardEvent]
+    compositionstart: [e: any]
+    compositionend: [e: any]
+  }>()
   const attrs = useAttrs()
 
   const { count, showCount } = toPropsRefs(props, 'count', 'showCount')
@@ -96,13 +105,10 @@
 
   // ============================== Change ==============================
   const triggerChange = (e: any, currentValue: string) => {
-    // Skip during IME composition to avoid emitting intermediate values
     if (compositionRef.value && !props.changeOnComposing) {
       return
     }
 
-    // Dedup: Firefox fires input event(s) AFTER compositionend with the same value.
-    // Keep blocking until a genuinely different value arrives.
     if (compositionEndValueRef.value !== null) {
       if (currentValue === compositionEndValueRef.value) {
         return
@@ -121,9 +127,6 @@
         max: countConfig.value.max,
       })
 
-      // When we already reached max and new input is truncated to the same value,
-      // `value` may not change so Vue won't re-render. Force the native textarea
-      // value back to the truncated text to drop the extra characters (non-IME).
       const textarea = getTextArea()
 
       if (currentValue !== cutValue) {
@@ -139,13 +142,7 @@
     }
 
     value.value = cutValue
-
-    resolveOnChange(
-      e.currentTarget,
-      e,
-      props.onChange as unknown as any,
-      cutValue,
-    )
+    resolveOnChange(e.currentTarget, e, () => emit('change', e), cutValue)
   }
 
   // =========================== Value Update ===========================
@@ -178,20 +175,19 @@
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    const { onPressEnter, onKeydown } = props
-    if (e.key === KeyCodeStr.Enter && onPressEnter && !e.isComposing) {
-      onPressEnter(e)
+    if (e.key === KeyCodeStr.Enter && !e.isComposing) {
+      emit('press-enter', e)
     }
-    onKeydown?.(e)
+    emit('keydown', e)
   }
   const handleFocus = (e: any) => {
     focused.value = true
-    props?.onFocus?.(e)
+    emit('focus', e)
   }
 
   const handleBlur = (e: any) => {
     focused.value = false
-    props?.onBlur?.(e)
+    emit('blur', e)
   }
 
   // ============================== Reset ===============================
@@ -199,11 +195,13 @@
     compositionEndValueRef.value = null
     value.value = ''
     focus()
-    resolveOnChange(getTextArea()!, e, props.onChange as unknown as any)
+    resolveOnChange(getTextArea()!, e, () => emit('change', e))
   }
 
-  const handleResize: TextAreaProps['onResize'] = size => {
-    props?.onResize?.(size)
+  const handleResize: {
+    (size: { width: number; height: number }): void
+  } = size => {
+    emit('resize', size)
     if (getTextArea()?.style.height) {
       textareaResized.value = true
     }
@@ -245,14 +243,8 @@
         'disabled',
         'hidden',
         'readOnly',
-        'onClear',
         'maxLength',
         'onResize',
-        'onChange',
-        'onKeydown',
-        'onPressEnter',
-        'onFocus',
-        'onBlur',
         'changeOnComposing',
       ]),
     }
@@ -289,10 +281,10 @@
     }"
     :components="components"
     :hidden="hidden"
-    :onClear="onClear"
-    :class="[props.class, isOutOfRange && `${prefixCls}-out-of-range`]"
+    @clear="handleReset"
+    :class="[attrs.class, isOutOfRange && `${prefixCls}-out-of-range`]"
     :style="{
-      ...style,
+      ...attrs.style,
       ...(textareaResized && !isPureTextArea ? { height: 'auto' } : {}),
     }"
   >
@@ -328,7 +320,7 @@
       :prefixCls="prefixCls"
       :class="clsx(classNames?.textarea)"
       :style="{
-        resize: style?.resize,
+        resize: attrs.style?.resize,
         ...styles?.textarea,
       }"
       :autoSize="autoSize"

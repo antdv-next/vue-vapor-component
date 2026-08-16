@@ -1,4 +1,5 @@
 import { getStylePxValue } from '@v-c/util/dist/props-util'
+
 import defaultProps from '../defaultProps'
 
 interface TouchObject {
@@ -76,15 +77,15 @@ export function lazyEndIndex(spec: SlickSpec) {
 }
 export function lazySlidesOnLeft(spec: SlickSpec) {
   return spec.centerMode
-    ? Math.floor(spec.slidesToShow / 2)
-    + (parseInt(spec.centerPadding) > 0 ? 1 : 0)
+    ? Math.floor(spec.slidesToShow / 2) +
+        (parseInt(spec.centerPadding) > 0 ? 1 : 0)
     : 0
 }
 export function lazySlidesOnRight(spec: SlickSpec) {
   return spec.centerMode
-    ? Math.floor((spec.slidesToShow - 1) / 2)
-    + 1
-    + (parseInt(spec.centerPadding) > 0 ? 1 : 0)
+    ? Math.floor((spec.slidesToShow - 1) / 2) +
+        1 +
+        (parseInt(spec.centerPadding) > 0 ? 1 : 0)
     : spec.slidesToShow
 }
 
@@ -107,8 +108,8 @@ export function getSwipeDirection(
     swipeAngle = 360 - Math.abs(swipeAngle)
   }
   if (
-    (swipeAngle <= 45 && swipeAngle >= 0)
-    || (swipeAngle <= 360 && swipeAngle >= 315)
+    (swipeAngle <= 45 && swipeAngle >= 0) ||
+    (swipeAngle <= 360 && swipeAngle >= 315)
   ) {
     return 'left'
   }
@@ -118,8 +119,7 @@ export function getSwipeDirection(
   if (verticalSwiping === true) {
     if (swipeAngle >= 35 && swipeAngle <= 135) {
       return 'up'
-    }
-    else {
+    } else {
       return 'down'
     }
   }
@@ -133,10 +133,9 @@ export function canGoNext(spec: SlickSpec) {
   if (!spec.infinite) {
     if (spec.centerMode && spec.currentSlide >= spec.slideCount - 1) {
       canGo = false
-    }
-    else if (
-      spec.slideCount <= spec.slidesToShow
-      || spec.currentSlide >= spec.slideCount - spec.slidesToShow
+    } else if (
+      spec.slideCount <= spec.slidesToShow ||
+      spec.currentSlide >= spec.slideCount - spec.slidesToShow
     ) {
       canGo = false
     }
@@ -161,24 +160,25 @@ export function initializedState(spec: SlickSpec) {
   const trackWidth = Math.ceil(getWidth(trackNode))
   let slideWidth = 0
   if (!spec.vertical) {
-    let centerPaddingAdj = spec.centerMode ? parseInt(spec.centerPadding) * 2 : 0
+    let centerPaddingAdj = spec.centerMode
+      ? parseInt(spec.centerPadding) * 2
+      : 0
     if (
-      typeof spec.centerPadding === 'string'
-      && spec.centerPadding.slice(-1) === '%'
+      typeof spec.centerPadding === 'string' &&
+      spec.centerPadding.slice(-1) === '%'
     ) {
       centerPaddingAdj *= listWidth / 100
     }
     slideWidth = Math.ceil((listWidth - centerPaddingAdj) / spec.slidesToShow)
-  }
-  else {
+  } else {
     slideWidth = listWidth
   }
   const slideHeight = listNode
     ? getHeight(listNode.querySelector('[data-index="0"]'))
     : 0
   const listHeight = slideHeight * spec.slidesToShow
-  let currentSlide
-    = spec.currentSlide === undefined ? spec.initialSlide : spec.currentSlide
+  let currentSlide =
+    spec.currentSlide === undefined ? spec.initialSlide : spec.currentSlide
   if (spec.rtl && spec.currentSlide === undefined) {
     currentSlide = slideCount - 1 - spec.initialSlide
   }
@@ -224,8 +224,7 @@ export function slideHandler(spec: SlickSpec) {
     useCSS,
   } = spec
   let { lazyLoadedList } = spec
-  if (waitForAnimate && animating)
-    return {}
+  if (waitForAnimate && animating) return {}
   let animationSlide = index
   let finalSlide = 0
   let animationLeft = 0
@@ -234,12 +233,10 @@ export function slideHandler(spec: SlickSpec) {
   let nextState: Record<string, any> = {}
   const targetSlide = infinite ? index : clamp(index, 0, slideCount - 1)
   if (fade) {
-    if (!infinite && (index < 0 || index >= slideCount))
-      return {}
+    if (!infinite && (index < 0 || index >= slideCount)) return {}
     if (index < 0) {
       animationSlide = index + slideCount
-    }
-    else if (index >= slideCount) {
+    } else if (index >= slideCount) {
       animationSlide = index - slideCount
     }
     if (lazyLoad && !lazyLoadedList.includes(animationSlide)) {
@@ -252,29 +249,22 @@ export function slideHandler(spec: SlickSpec) {
       targetSlide: animationSlide,
     }
     nextState = { animating: false, targetSlide: animationSlide }
-  }
-  else {
+  } else {
     finalSlide = animationSlide
     if (animationSlide < 0) {
       finalSlide = animationSlide + slideCount
-      if (!infinite)
-        finalSlide = 0
+      if (!infinite) finalSlide = 0
       else if (slideCount % slidesToScroll !== 0)
         finalSlide = slideCount - (slideCount % slidesToScroll)
-    }
-    else if (!canGoNext(spec) && animationSlide > currentSlide) {
+    } else if (!canGoNext(spec) && animationSlide > currentSlide) {
       animationSlide = finalSlide = currentSlide
-    }
-    else if (centerMode && animationSlide >= slideCount) {
+    } else if (centerMode && animationSlide >= slideCount) {
       animationSlide = infinite ? slideCount : slideCount - 1
       finalSlide = infinite ? 0 : slideCount - 1
-    }
-    else if (animationSlide >= slideCount) {
+    } else if (animationSlide >= slideCount) {
       finalSlide = animationSlide - slideCount
-      if (!infinite)
-        finalSlide = slideCount - slidesToShow
-      else if (slideCount % slidesToScroll !== 0)
-        finalSlide = 0
+      if (!infinite) finalSlide = slideCount - slidesToShow
+      else if (slideCount % slidesToScroll !== 0) finalSlide = 0
     }
 
     if (!infinite && animationSlide + slidesToShow >= slideCount) {
@@ -284,8 +274,7 @@ export function slideHandler(spec: SlickSpec) {
     animationLeft = getTrackLeft({ ...spec, slideIndex: animationSlide })
     finalLeft = getTrackLeft({ ...spec, slideIndex: finalSlide })
     if (!infinite) {
-      if (animationLeft === finalLeft)
-        animationSlide = finalSlide
+      if (animationLeft === finalLeft) animationSlide = finalSlide
       animationLeft = finalLeft
     }
     if (lazyLoad) {
@@ -300,8 +289,7 @@ export function slideHandler(spec: SlickSpec) {
         lazyLoadedList,
         targetSlide,
       }
-    }
-    else {
+    } else {
       state = {
         animating: true,
         currentSlide: finalSlide,
@@ -339,8 +327,8 @@ export function changeSlide(spec: SlickSpec, options: any) {
   unevenOffset = slideCount % slidesToScroll !== 0
   indexOffset = unevenOffset ? 0 : (slideCount - currentSlide) % slidesToScroll
   if (options.message === 'previous') {
-    slideOffset
-      = indexOffset === 0 ? slidesToScroll : slidesToShow - indexOffset
+    slideOffset =
+      indexOffset === 0 ? slidesToScroll : slidesToShow - indexOffset
     targetSlide = currentSlide - slideOffset
     if (lazyLoad && !infinite) {
       previousInt = currentSlide - slideOffset
@@ -349,58 +337,52 @@ export function changeSlide(spec: SlickSpec, options: any) {
     if (!infinite) {
       targetSlide = previousTargetSlide - slidesToScroll
     }
-  }
-  else if (options.message === 'next') {
+  } else if (options.message === 'next') {
     slideOffset = indexOffset === 0 ? slidesToScroll : indexOffset
     targetSlide = currentSlide + slideOffset
     if (lazyLoad && !infinite) {
-      targetSlide
-        = ((currentSlide + slidesToScroll) % slideCount) + indexOffset
+      targetSlide = ((currentSlide + slidesToScroll) % slideCount) + indexOffset
     }
     if (!infinite) {
       targetSlide = previousTargetSlide + slidesToScroll
     }
-  }
-  else if (options.message === 'dots') {
+  } else if (options.message === 'dots') {
     // Click on dots
     targetSlide = options.index * options.slidesToScroll
-  }
-  else if (options.message === 'children') {
+  } else if (options.message === 'children') {
     // Click on the slides
     targetSlide = options.index
     if (infinite) {
       const direction = siblingDirection({ ...spec, targetSlide })
       if (targetSlide > options.currentSlide && direction === 'left') {
         targetSlide = targetSlide - slideCount
-      }
-      else if (targetSlide < options.currentSlide && direction === 'right') {
+      } else if (targetSlide < options.currentSlide && direction === 'right') {
         targetSlide = targetSlide + slideCount
       }
     }
-  }
-  else if (options.message === 'index') {
+  } else if (options.message === 'index') {
     targetSlide = Number(options.index)
   }
   return targetSlide
 }
-export function keyHandler(e: KeyboardEvent, accessibility?: boolean, rtl?: boolean) {
-  if ((e as any).target.tagName.match('TEXTAREA|INPUT|SELECT') || !accessibility)
+export function keyHandler(
+  e: KeyboardEvent,
+  accessibility?: boolean,
+  rtl?: boolean,
+) {
+  if (
+    (e as any).target.tagName.match('TEXTAREA|INPUT|SELECT') ||
+    !accessibility
+  )
     return ''
-  if (e.keyCode === 37)
-    return rtl ? 'next' : 'previous'
-  if (e.keyCode === 39)
-    return rtl ? 'previous' : 'next'
+  if (e.keyCode === 37) return rtl ? 'next' : 'previous'
+  if (e.keyCode === 39) return rtl ? 'previous' : 'next'
   return ''
 }
 
-export function swipeStart(
-  e: any,
-  swipe?: boolean,
-  draggable?: boolean,
-) {
+export function swipeStart(e: any, swipe?: boolean, draggable?: boolean) {
   e.target.tagName === 'IMG' && safePreventDefault(e)
-  if (!swipe || (!draggable && e.type.includes('mouse')))
-    return ''
+  if (!swipe || (!draggable && e.type.includes('mouse'))) return ''
   return {
     dragging: true,
     touchObject: {
@@ -434,12 +416,9 @@ export function swipeMove(e: any, spec: SlickSpec) {
     listHeight,
     listWidth,
   } = spec
-  if (scrolling)
-    return
-  if (animating)
-    return safePreventDefault(e)
-  if (vertical && swipeToSlide && verticalSwiping)
-    safePreventDefault(e)
+  if (scrolling) return
+  if (animating) return safePreventDefault(e)
+  if (vertical && swipeToSlide && verticalSwiping) safePreventDefault(e)
   let swipeLeft = 0
   let state: Record<string, any> = {}
   const curLeft = getTrackLeft(spec)
@@ -454,9 +433,9 @@ export function swipeMove(e: any, spec: SlickSpec) {
   if (!verticalSwiping && !swiping && verticalSwipeLength > 10) {
     return { scrolling: true }
   }
-  if (verticalSwiping)
-    touchObject.swipeLength = verticalSwipeLength
-  let positionOffset = (!rtl ? 1 : -1) * (touchObject.curX > touchObject.startX ? 1 : -1)
+  if (verticalSwiping) touchObject.swipeLength = verticalSwipeLength
+  let positionOffset =
+    (!rtl ? 1 : -1) * (touchObject.curX > touchObject.startX ? 1 : -1)
   if (verticalSwiping)
     positionOffset = touchObject.curY > touchObject.startY ? 1 : -1
 
@@ -465,16 +444,19 @@ export function swipeMove(e: any, spec: SlickSpec) {
   let touchSwipeLength = touchObject.swipeLength
   if (!infinite) {
     if (
-      (currentSlide === 0
-        && (swipeDirection === 'right' || swipeDirection === 'down'))
-      || (currentSlide + 1 >= dotCount
-        && (swipeDirection === 'left' || swipeDirection === 'up'))
-      || (!canGoNext(spec)
-        && (swipeDirection === 'left' || swipeDirection === 'up'))
+      (currentSlide === 0 &&
+        (swipeDirection === 'right' || swipeDirection === 'down')) ||
+      (currentSlide + 1 >= dotCount &&
+        (swipeDirection === 'left' || swipeDirection === 'up')) ||
+      (!canGoNext(spec) &&
+        (swipeDirection === 'left' || swipeDirection === 'up'))
     ) {
       touchSwipeLength = touchObject.swipeLength * edgeFriction
       if (edgeDragged === false && onEdge) {
         onEdge(swipeDirection)
+        state.edgeDragged = true
+      } else if (edgeDragged === false && spec.emit) {
+        spec.emit('edge', swipeDirection)
         state.edgeDragged = true
       }
     }
@@ -486,14 +468,12 @@ export function swipeMove(e: any, spec: SlickSpec) {
   if (!vertical) {
     if (!rtl) {
       swipeLeft = curLeft + touchSwipeLength * positionOffset
-    }
-    else {
+    } else {
       swipeLeft = curLeft - touchSwipeLength * positionOffset
     }
-  }
-  else {
-    swipeLeft
-      = curLeft + touchSwipeLength * (listHeight / listWidth) * positionOffset
+  } else {
+    swipeLeft =
+      curLeft + touchSwipeLength * (listHeight / listWidth) * positionOffset
   }
   if (verticalSwiping) {
     swipeLeft = curLeft + touchSwipeLength * positionOffset
@@ -505,8 +485,8 @@ export function swipeMove(e: any, spec: SlickSpec) {
     trackStyle: getTrackCSS({ ...spec, left: swipeLeft }),
   }
   if (
-    Math.abs(touchObject.curX - touchObject.startX)
-    < Math.abs(touchObject.curY - touchObject.startY) * 0.8
+    Math.abs(touchObject.curX - touchObject.startX) <
+    Math.abs(touchObject.curY - touchObject.startY) * 0.8
   ) {
     return state
   }
@@ -533,8 +513,7 @@ export function swipeEnd(e: MouseEvent | TouchEvent, spec: SlickSpec) {
     infinite,
   } = spec
   if (!dragging) {
-    if (swipe)
-      safePreventDefault(e)
+    if (swipe) safePreventDefault(e)
     return {}
   }
   const minSwipe = verticalSwiping
@@ -561,6 +540,8 @@ export function swipeEnd(e: MouseEvent | TouchEvent, spec: SlickSpec) {
     safePreventDefault(e)
     if (onSwipe) {
       onSwipe(swipeDirection)
+    } else if (spec.emit) {
+      spec.emit('swipe', swipeDirection)
     }
     let slideCount = 0
     let newSlide = 0
@@ -582,8 +563,7 @@ export function swipeEnd(e: MouseEvent | TouchEvent, spec: SlickSpec) {
         slideCount = activeSlide
     }
     state.triggerSlideHandler = slideCount
-  }
-  else {
+  } else {
     // Adjust the track back to it's original position.
     const currentLeft = getTrackLeft(spec)
     state.trackStyle = getTrackAnimateCSS({ ...spec, left: currentLeft })
@@ -607,8 +587,7 @@ export function checkNavigable(spec: SlickSpec, index: number) {
   let prevNavigable = 0
   if (index > navigables[navigables.length - 1]) {
     index = navigables[navigables.length - 1]
-  }
-  else {
+  } else {
     for (const n in navigables) {
       if (index < navigables[n]) {
         index = prevNavigable
@@ -626,21 +605,20 @@ export function getSlideCount(spec: SlickSpec) {
   if (spec.swipeToSlide) {
     let swipedSlide: any = null
     const slickList = spec.listRef
-    const slides
-      = (slickList.querySelectorAll
-        && slickList.querySelectorAll('.slick-slide'))
-      || []
+    const slides =
+      (slickList.querySelectorAll &&
+        slickList.querySelectorAll('.slick-slide')) ||
+      []
     Array.from(slides).every((slide: any) => {
       if (!spec.vertical) {
         if (
-          slide.offsetLeft - centerOffset + getWidth(slide) / 2
-          > spec.swipeLeft * -1
+          slide.offsetLeft - centerOffset + getWidth(slide) / 2 >
+          spec.swipeLeft * -1
         ) {
           swipedSlide = slide
           return false
         }
-      }
-      else {
+      } else {
         if (slide.offsetTop + getHeight(slide) / 2 > spec.swipeLeft * -1) {
           swipedSlide = slide
           return false
@@ -653,21 +631,23 @@ export function getSlideCount(spec: SlickSpec) {
     if (!swipedSlide) {
       return 0
     }
-    const currentIndex
-      = spec.rtl === true
+    const currentIndex =
+      spec.rtl === true
         ? spec.slideCount - spec.currentSlide
         : spec.currentSlide
-    const slidesTraversed
-      = Math.abs(swipedSlide.dataset.index - currentIndex) || 1
+    const slidesTraversed =
+      Math.abs(swipedSlide.dataset.index - currentIndex) || 1
     return slidesTraversed
-  }
-  else {
+  } else {
     return spec.slidesToScroll
   }
 }
 
 export function checkSpecKeys(spec: SlickSpec, keysArray: string[]) {
-  return keysArray.reduce((value, key) => value && Object.prototype.hasOwnProperty.call(spec, key), true)
+  return keysArray.reduce(
+    (value, key) => value && Object.prototype.hasOwnProperty.call(spec, key),
+    true,
+  )
     ? null
     : console.error('Keys Missing:', spec)
 }
@@ -684,8 +664,7 @@ export function getTrackCSS(spec: SlickSpec) {
   let trackHeight = 0
   if (!spec.vertical) {
     trackWidth = getTotalSlides(spec) * spec.slideWidth
-  }
-  else {
+  } else {
     const trackChildren = spec.unslick
       ? spec.slideCount
       : spec.slideCount + 2 * spec.slidesToShow
@@ -712,21 +691,16 @@ export function getTrackCSS(spec: SlickSpec) {
       transform,
       msTransform,
     }
-  }
-  else {
+  } else {
     if (spec.vertical) {
       style.top = getStylePxValue(spec.left)
-    }
-    else {
+    } else {
       style.left = getStylePxValue(spec.left)
     }
   }
-  if (spec.fade)
-    style = { opacity: 1 }
-  if (trackWidth)
-    style.width = getStylePxValue(trackWidth)
-  if (trackHeight)
-    style.height = getStylePxValue(trackHeight)
+  if (spec.fade) style = { opacity: 1 }
+  if (trackWidth) style.width = getStylePxValue(trackWidth)
+  if (trackHeight) style.height = getStylePxValue(trackHeight)
 
   return style
 }
@@ -743,15 +717,12 @@ export function getTrackAnimateCSS(spec: SlickSpec) {
   const style = getTrackCSS(spec)
   // useCSS is true by default so it can be undefined
   if (spec.useTransform) {
-    style.WebkitTransition
-      = `-webkit-transform ${spec.speed}ms ${spec.cssEase}`
+    style.WebkitTransition = `-webkit-transform ${spec.speed}ms ${spec.cssEase}`
     style.transition = `transform ${spec.speed}ms ${spec.cssEase}`
-  }
-  else {
+  } else {
     if (spec.vertical) {
       style.transition = `top ${spec.speed}ms ${spec.cssEase}`
-    }
-    else {
+    } else {
       style.transition = `left ${spec.speed}ms ${spec.cssEase}`
     }
   }
@@ -805,8 +776,8 @@ export function getTrackLeft(spec: SlickSpec) {
   if (infinite) {
     slidesToOffset = -getPreClones(spec)
     if (
-      slideCount % slidesToScroll !== 0
-      && slideIndex + slidesToScroll > slideCount
+      slideCount % slidesToScroll !== 0 &&
+      slideIndex + slidesToScroll > slideCount
     ) {
       slidesToOffset = -(slideIndex > slideCount
         ? slidesToShow - (slideIndex - slideCount)
@@ -815,11 +786,10 @@ export function getTrackLeft(spec: SlickSpec) {
     if (centerMode) {
       slidesToOffset += parseInt(String(slidesToShow / 2))
     }
-  }
-  else {
+  } else {
     if (
-      slideCount % slidesToScroll !== 0
-      && slideIndex + slidesToScroll > slideCount
+      slideCount % slidesToScroll !== 0 &&
+      slideIndex + slidesToScroll > slideCount
     ) {
       slidesToOffset = slidesToShow - (slideCount % slidesToScroll)
     }
@@ -832,8 +802,7 @@ export function getTrackLeft(spec: SlickSpec) {
 
   if (!vertical) {
     targetLeft = slideIndex * slideWidth * -1 + slideOffset
-  }
-  else {
+  } else {
     targetLeft = slideIndex * slideHeight * -1 + verticalOffset
   }
 
@@ -844,16 +813,14 @@ export function getTrackLeft(spec: SlickSpec) {
     targetSlide = trackElem && trackElem.childNodes[targetSlideIndex]
     targetLeft = targetSlide ? targetSlide.offsetLeft * -1 : 0
     if (centerMode === true) {
-      targetSlideIndex = infinite
-        ? slideIndex + getPreClones(spec)
-        : slideIndex
+      targetSlideIndex = infinite ? slideIndex + getPreClones(spec) : slideIndex
       targetSlide = trackElem && trackElem.children[targetSlideIndex]
       targetLeft = 0
       for (let slide = 0; slide < targetSlideIndex; slide++) {
-        targetLeft
-          -= trackElem
-            && trackElem.children[slide]
-            && trackElem.children[slide].offsetWidth
+        targetLeft -=
+          trackElem &&
+          trackElem.children[slide] &&
+          trackElem.children[slide].offsetWidth
       }
       targetLeft -= parseInt(spec.centerPadding)
       targetLeft += targetSlide && (listWidth - targetSlide.offsetWidth) / 2
@@ -895,8 +862,7 @@ export function siblingDirection(spec: SlickSpec) {
       return 'left'
     }
     return 'right'
-  }
-  else {
+  } else {
     if (spec.targetSlide < spec.currentSlide - slidesOnLeft(spec as any)) {
       return 'right'
     }
@@ -917,10 +883,8 @@ export function slidesOnRight({
 }) {
   if (centerMode) {
     let right = (slidesToShow - 1) / 2 + 1
-    if (parseInt(centerPadding || '0') > 0)
-      right += 1
-    if (rtl && slidesToShow % 2 === 0)
-      right += 1
+    if (parseInt(centerPadding || '0') > 0) right += 1
+    if (rtl && slidesToShow % 2 === 0) right += 1
     return right
   }
   if (rtl) {
@@ -942,10 +906,8 @@ export function slidesOnLeft({
 }) {
   if (centerMode) {
     let left = (slidesToShow - 1) / 2 + 1
-    if (parseInt(centerPadding || '0') > 0)
-      left += 1
-    if (!rtl && slidesToShow % 2 === 0)
-      left += 1
+    if (parseInt(centerPadding || '0') > 0) left += 1
+    if (!rtl && slidesToShow % 2 === 0) left += 1
     return left
   }
   if (rtl) {
@@ -956,9 +918,9 @@ export function slidesOnLeft({
 
 export function canUseDOM() {
   return !!(
-    typeof window !== 'undefined'
-    && window.document
-    && window.document.createElement
+    typeof window !== 'undefined' &&
+    window.document &&
+    window.document.createElement
   )
 }
 

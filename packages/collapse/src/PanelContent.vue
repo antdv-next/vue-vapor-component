@@ -2,12 +2,12 @@
   import type { CollapsePanelProps } from './interface'
 
   import { clsx } from '@v-c/util'
-  import { computed, shallowRef, watch } from 'vue'
+  import { computed, shallowRef, watch, useAttrs } from 'vue'
 
   defineOptions({ name: 'PanelContent', inheritAttrs: false })
 
   const props = defineProps<CollapsePanelProps>()
-
+  const attrs = useAttrs()
   // Lazy render: only mount once it becomes active (or forced).
   const rendered = shallowRef(props.isActive || props.forceRender)
   watch(
@@ -26,7 +26,7 @@
         [`${props.prefixCls}-panel-active`]: props.isActive,
         [`${props.prefixCls}-panel-inactive`]: !props.isActive,
       },
-      props.class,
+      attrs.class,
     ),
   )
   const bodyCls = computed(() =>

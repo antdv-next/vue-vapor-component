@@ -1,10 +1,16 @@
 <script setup vapor lang="ts">
   import type { TriggerRef } from '@vapor-component/trigger'
   import type { CSSProperties } from 'vue'
-  import type { TourProps, TourStepInfo, SemanticName, ClosableConfig } from './interface'
 
-  import Trigger from '@vapor-component/trigger'
+  import type {
+    TourProps,
+    TourStepInfo,
+    SemanticName,
+    ClosableConfig,
+  } from './interface'
+
   import { clsx } from '@v-c/util'
+  import Trigger from '@vapor-component/trigger'
   import {
     computed,
     nextTick,
@@ -36,6 +42,12 @@
   const attrs = useAttrs()
   const slots = useSlots()
 
+  const emit = defineEmits<{
+    change: [current: number]
+    close: [current: number]
+    finish: []
+  }>()
+
   const triggerRef = shallowRef<TriggerRef>()
   const placeholderRef = useTemplateRef<HTMLDivElement>('placeholder')
 
@@ -55,7 +67,7 @@
   }
   watch(
     () => props.current,
-    (val) => {
+    val => {
       if (typeof val === 'number') {
         mergedCurrent.value = val
       }
@@ -73,7 +85,7 @@
   }
   watch(
     () => props.open,
-    (val) => {
+    val => {
       if (typeof val !== 'undefined') {
         internalOpen.value = val
       }
@@ -89,23 +101,20 @@
 
   const hasOpened = shallowRef(mergedOpen.value)
   const openRef = shallowRef(mergedOpen.value)
-  watch(
-    [mergedOpen],
-    async () => {
-      await nextTick()
-      if (mergedOpen.value) {
-        if (!openRef.value) {
-          setMergedCurrent(0)
-        }
-        hasOpened.value = true
+  watch([mergedOpen], async () => {
+    await nextTick()
+    if (mergedOpen.value) {
+      if (!openRef.value) {
+        setMergedCurrent(0)
       }
-      openRef.value = mergedOpen.value
-    },
-  )
+      hasOpened.value = true
+    }
+    openRef.value = mergedOpen.value
+  })
 
   // ======================== Step Info ========================
-  const stepInfo = computed<TourStepInfo>(() =>
-    (steps.value[mergedCurrent.value] || {}) as TourStepInfo,
+  const stepInfo = computed<TourStepInfo>(
+    () => (steps.value[mergedCurrent.value] || {}) as TourStepInfo,
   )
   const stepStyle = computed(() => stepInfo.value.style)
   const stepClassName = computed(() => stepInfo.value.className)
@@ -126,11 +135,13 @@
   // Use `||` for the root-level mask prop to treat coerced false as "not set".
   const mergedMask = computed(() => {
     const stepMask = stepInfo.value.mask
-    const mask = stepMask !== undefined ? stepMask : (props.mask || true)
+    const mask = stepMask !== undefined ? stepMask : props.mask || true
     return mergedOpen.value && mask
   })
   const mergedShowMask = computed(() =>
-    typeof mergedMask.value === 'boolean' ? mergedMask.value : !!mergedMask.value,
+    typeof mergedMask.value === 'boolean'
+      ? mergedMask.value
+      : !!mergedMask.value,
   )
   const mergedMaskStyle = computed<CSSProperties | undefined>(() =>
     typeof mergedMask.value === 'object' ? mergedMask.value.style : undefined,
@@ -138,7 +149,9 @@
   const mergedMaskFill = computed(() =>
     typeof mergedMask.value === 'object' ? mergedMask.value.color : undefined,
   )
-  const mergedMaskComponentStyles = computed<Partial<Record<SemanticName, CSSProperties>>>(() => ({
+  const mergedMaskComponentStyles = computed<
+    Partial<Record<SemanticName, CSSProperties>>
+  >(() => ({
     ...(props.styles || {}),
     mask: {
       ...(props.styles?.mask || {}),
@@ -151,10 +164,11 @@
     block: 'center',
     inline: 'center',
   }
-  const mergedScrollIntoViewOptions = computed(() =>
-    stepInfo.value.scrollIntoViewOptions
-      ?? props.scrollIntoViewOptions
-      ?? defaultScrollIntoViewOptions,
+  const mergedScrollIntoViewOptions = computed(
+    () =>
+      stepInfo.value.scrollIntoViewOptions ??
+      props.scrollIntoViewOptions ??
+      defaultScrollIntoViewOptions,
   )
 
   // ======================== Target ========================
@@ -169,7 +183,11 @@
   )
 
   const mergedPlacement = computed(() =>
-    getPlacement(targetElement.value, props.placement, stepInfo.value.placement),
+    getPlacement(
+      targetElement.value,
+      props.placement,
+      stepInfo.value.placement,
+    ),
   )
 
   // ======================== Arrow ========================
@@ -184,7 +202,9 @@
   })
 
   const arrowPointAtCenter = computed(() =>
-    typeof mergedArrow.value === 'object' ? mergedArrow.value.pointAtCenter : false,
+    typeof mergedArrow.value === 'object'
+      ? mergedArrow.value.pointAtCenter
+      : false,
   )
 
   watch(
@@ -199,17 +219,17 @@
   // ======================== Change ========================
   const onInternalChange = (nextCurrent: number) => {
     setMergedCurrent(nextCurrent)
-    props.onChange?.(nextCurrent)
+    emit('change', nextCurrent)
   }
 
   const handleClose = () => {
     setInternalOpen(false)
-    props.onClose?.(mergedCurrent.value)
+    emit('close', mergedCurrent.value)
   }
 
   const onFinish = () => {
     handleClose()
-    props.onFinish?.()
+    emit('finish')
   }
 
   // ======================== Placements ========================
@@ -226,7 +246,12 @@
   // ======================== Keyboard ========================
   const mergedKeyboard = computed(() => props.keyboard ?? true)
 
-  const handleEscClose = ({ event }: { top: boolean; event: KeyboardEvent }) => {
+  const handleEscClose = ({
+    event,
+  }: {
+    top: boolean
+    event: KeyboardEvent
+  }) => {
     if (mergedKeyboard.value && tourClosable.value !== null) {
       event.preventDefault()
       handleClose()
@@ -237,18 +262,28 @@
     const target = e.target as HTMLElement
     if (!target) return false
     const tagName = target.tagName.toLowerCase()
-    return tagName === 'input' || tagName === 'textarea' || target.isContentEditable
+    return (
+      tagName === 'input' || tagName === 'textarea' || target.isContentEditable
+    )
   }
 
   const keyboardHandler = (e: KeyboardEvent) => {
     if (isEditableTarget(e)) return
 
-    if (mergedKeyboard.value && e.key === 'ArrowLeft' && mergedCurrent.value > 0) {
+    if (
+      mergedKeyboard.value &&
+      e.key === 'ArrowLeft' &&
+      mergedCurrent.value > 0
+    ) {
       e.preventDefault()
       onInternalChange(mergedCurrent.value - 1)
     }
 
-    if (mergedKeyboard.value && e.key === 'ArrowRight' && mergedCurrent.value < steps.value.length - 1) {
+    if (
+      mergedKeyboard.value &&
+      e.key === 'ArrowRight' &&
+      mergedCurrent.value < steps.value.length - 1
+    ) {
       e.preventDefault()
       onInternalChange(mergedCurrent.value + 1)
     }
@@ -256,7 +291,7 @@
 
   watch(
     mergedOpen,
-    (open) => {
+    open => {
       if (typeof window === 'undefined') return
       if (open) {
         window.addEventListener('keydown', keyboardHandler)
@@ -331,7 +366,7 @@
       :animated="animated"
       :root-class-name="rootClassName"
       :disabled-interaction="disabledInteraction"
-      :on-esc="handleEscClose"
+      @esc="handleEscClose"
     />
 
     <Trigger
@@ -347,7 +382,7 @@
       :auto-destroy="true"
       :z-index="zIndex"
       :arrow="!!mergedArrow"
-      :on-popup-align="onPopupAlign"
+      @popup-align="onPopupAlign"
     >
       <template #default="{ trigger: triggerProps, setRef }">
         <div
@@ -364,11 +399,11 @@
           :arrow="mergedArrow"
           :prefix-cls="prefixCls"
           :total="stepCount"
-          :on-prev="() => onInternalChange(mergedCurrent - 1)"
-          :on-next="() => onInternalChange(mergedCurrent + 1)"
-          :on-close="handleClose"
+          @prev="() => onInternalChange(mergedCurrent - 1)"
+          @next="() => onInternalChange(mergedCurrent + 1)"
+          @close="handleClose"
           :current="mergedCurrent"
-          :on-finish="onFinish"
+          @finish="onFinish"
           :closable="tourClosable"
           :title="stepInfo.title"
           :description="stepInfo.description"

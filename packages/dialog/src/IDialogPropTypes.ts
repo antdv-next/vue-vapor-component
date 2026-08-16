@@ -29,9 +29,6 @@ export interface IDialogPropTypes {
   rootStyle?: CSSProperties
   mask?: boolean
   children?: VueNode
-  afterClose?: () => any
-  afterOpenChange?: (open: boolean) => void
-  onClose?: (e: any) => any
   closable?: boolean | (ClosableType & Record<string, any>)
   maskClosable?: boolean
   visible?: boolean
@@ -71,4 +68,8 @@ export interface IDialogPropTypes {
 
   // Refs
   panelRef?: any
+
+  // Lifecycle callbacks
+  afterClose?: () => void
+  afterOpenChange?: (visible: boolean) => void
 }

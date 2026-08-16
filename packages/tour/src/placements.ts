@@ -1,19 +1,19 @@
 import type { BuildInPlacements } from '@vapor-component/trigger'
 
-export type PlacementType
-  = | 'left'
-    | 'leftTop'
-    | 'leftBottom'
-    | 'right'
-    | 'rightTop'
-    | 'rightBottom'
-    | 'top'
-    | 'topLeft'
-    | 'topRight'
-    | 'bottom'
-    | 'bottomLeft'
-    | 'bottomRight'
-    | 'center'
+export type PlacementType =
+  | 'left'
+  | 'leftTop'
+  | 'leftBottom'
+  | 'right'
+  | 'rightTop'
+  | 'rightBottom'
+  | 'top'
+  | 'topLeft'
+  | 'topRight'
+  | 'bottom'
+  | 'bottomLeft'
+  | 'bottomRight'
+  | 'center'
 
 const targetOffset = [0, 0]
 
@@ -70,8 +70,12 @@ const basePlacements: BuildInPlacements = {
 
 export function getPlacements(arrowPointAtCenter = false) {
   const placements: BuildInPlacements = {}
-  Object.keys(basePlacements).forEach((key) => {
-    placements[key] = { ...basePlacements[key], autoArrow: arrowPointAtCenter, targetOffset }
+  Object.keys(basePlacements).forEach(key => {
+    placements[key] = {
+      ...basePlacements[key],
+      autoArrow: arrowPointAtCenter,
+      targetOffset,
+    }
   })
   return placements
 }

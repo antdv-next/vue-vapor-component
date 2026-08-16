@@ -7,7 +7,7 @@ export interface StepHandlerProps {
   disabled?: boolean
   className?: string
   style?: any
-  onStep: (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') => void
+  step: (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') => void
 }
 
 export type { ValueType, DecimalClass }
@@ -23,7 +23,6 @@ type SemanticName =
 export interface InputNumberProps<T extends ValueType = ValueType> {
   mode?: 'input' | 'spinner'
   prefixCls?: string
-  class?: any
   className?: string
   style?: any
   classNames?: Partial<Record<SemanticName, string>>
@@ -49,33 +48,8 @@ export interface InputNumberProps<T extends ValueType = ValueType> {
   ) => string
   precision?: number
   decimalSeparator?: string
-  onInput?: (text: string) => void
-  onChange?: (value: T | null) => void
-  onPressEnter?: (e: KeyboardEvent) => void
-  onStep?: (
-    value: T,
-    info: {
-      offset: ValueType
-      type: 'up' | 'down'
-      emitter: 'handler' | 'keyboard' | 'wheel'
-    },
-  ) => void
   changeOnBlur?: boolean
   tabIndex?: number
-  onMouseDown?: (event: MouseEvent) => void
-  onClick?: (event: MouseEvent) => void
-  onMouseUp?: (event: MouseEvent) => void
-  onMouseLeave?: (event: MouseEvent) => void
-  onMouseMove?: (event: MouseEvent) => void
-  onMouseEnter?: (event: MouseEvent) => void
-  onMouseOut?: (event: MouseEvent) => void
-  onFocus?: (event: FocusEvent) => void
-  onBlur?: (event: FocusEvent) => void
-  onKeyDown?: (event: KeyboardEvent) => void
-  onKeyUp?: (event: KeyboardEvent) => void
-  onCompositionStart?: (event: CompositionEvent) => void
-  onCompositionEnd?: (event: CompositionEvent) => void
-  onBeforeInput?: (event: InputEvent) => void
   stringMode?: boolean
   placeholder?: string
 }

@@ -27,12 +27,6 @@ export interface SlickProps {
   initialSlide?: number
   lazyLoad?: LazyLoadType
   nextArrow?: VNodeChild
-  onEdge?: ((direction: string) => void) | null
-  onInit?: (() => void) | null
-  onLazyLoad?: ((slidesToLoad: number[]) => void) | null
-  onLazyLoadError?: (() => void) | null
-  onReInit?: (() => void) | null
-  onSwipe?: ((direction: string) => void) | null
   pauseOnDotsHover?: boolean
   pauseOnFocus?: boolean
   pauseOnHover?: boolean
@@ -62,8 +56,7 @@ export interface SlickProps {
 }
 
 /** Internal props for InnerSlider — extends SlickProps with pre-rendered slides */
-export interface InnerSliderProps extends SlickProps {
-}
+export interface InnerSliderProps extends SlickProps {}
 
 export type SlickSettings = Omit<SlickProps, 'responsive'>
 
@@ -151,8 +144,5 @@ export interface TrackProps {
   centerPadding?: string
   trackStyle?: CSSProperties
   useCSS?: boolean
-  onMouseEnter?: (e: MouseEvent) => void
-  onMouseOver?: (e: MouseEvent) => void
-  onMouseLeave?: (e: MouseEvent) => void
   nodeRef?: Ref<HTMLDivElement | null>
 }

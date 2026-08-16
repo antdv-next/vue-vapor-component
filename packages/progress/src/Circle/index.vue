@@ -195,15 +195,15 @@
     {{ indeterminateResult.animationKeyframes }}
   </style>
   <svg
-    :class="[`${prefixCls}-circle`, classNames?.root, props.className]"
+    :class="[`${prefixCls}-circle`, classNames?.root, className]"
     :viewBox="`0 0 ${VIEW_BOX_SIZE} ${VIEW_BOX_SIZE}`"
     :style="{
       width: '100%',
       height: '100%',
-      ...props.styles?.root,
+      ...styles?.root,
       ...attrStyle,
     }"
-    :id="props.id"
+    :id="id"
     role="presentation"
     v-bind="svgRestAttrs"
   >
@@ -217,7 +217,7 @@
         :stroke="railColor"
         :stroke-linecap="mergedStrokeLinecap"
         :stroke-width="railWidth || strokeWidth"
-        :style="{ ...circleStyle, ...props.styles?.rail }"
+        :style="{ ...circleStyle, ...styles?.rail }"
       />
     </template>
 
@@ -234,7 +234,7 @@
           :style="[
             data.circleStyleForStack,
             indeterminateResult.indeterminateStyleProps,
-            props.styles?.track,
+            styles?.track,
           ]"
           :strokeLinecap="mergedStrokeLinecap"
           :strokeWidth="strokeWidth"
@@ -255,7 +255,7 @@
           :stroke="data.stroke"
           :stroke-width="strokeWidth"
           opacity="1"
-          :style="{ ...data.circleStyleForStack, ...props.styles?.track }"
+          :style="{ ...data.circleStyleForStack, ...styles?.track }"
         />
       </template>
     </template>

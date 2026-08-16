@@ -1,13 +1,14 @@
-import { h } from 'vue'
 import type { VNodeChild } from 'vue'
+
 import type { SlickProps } from './interface'
+
+import { h } from 'vue'
 
 const defaultProps: SlickProps = {
   accessibility: true,
   adaptiveHeight: false,
   afterChange: null,
-  appendDots: (dots: VNodeChild[]) =>
-    h('ul', { style: 'display:block' }, dots),
+  appendDots: (dots: VNodeChild[]) => h('ul', { style: 'display:block' }, dots),
   arrows: true,
   autoplay: false,
   autoplaySpeed: 3000,
@@ -28,10 +29,6 @@ const defaultProps: SlickProps = {
   initialSlide: 0,
   lazyLoad: null,
   nextArrow: null,
-  onEdge: null,
-  onInit: null,
-  onLazyLoadError: null,
-  onReInit: null,
   pauseOnDotsHover: false,
   pauseOnFocus: false,
   pauseOnHover: true,

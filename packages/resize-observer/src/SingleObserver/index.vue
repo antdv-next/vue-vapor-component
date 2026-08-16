@@ -40,7 +40,7 @@
   useResizeObserver(
     enabled,
     wrapperRef,
-    (...args) => props.onResize?.(...args),
+    (...args) => emit('resize', ...args),
     (size, element) => {
       onCollectionResize?.(size, element, props.data)
     },

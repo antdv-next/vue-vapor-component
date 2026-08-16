@@ -1,6 +1,7 @@
-import type { TriggerProps } from '@vapor-component/trigger'
 import type { VueNode } from '@v-c/util/dist/type'
+import type { TriggerProps } from '@vapor-component/trigger'
 import type { AriaAttributes, CSSProperties, Ref } from 'vue'
+
 import type { Gap } from './hooks/useTarget'
 import type { PlacementType } from './placements'
 
@@ -21,7 +22,11 @@ export type HTMLAriaDataAttributes = AriaAttributes & {
 
 export interface TourStepInfo {
   arrow?: boolean | { pointAtCenter: boolean }
-  target?: Ref<HTMLElement | null | undefined> | HTMLElement | null | (() => HTMLElement | null | undefined)
+  target?:
+    | Ref<HTMLElement | null | undefined>
+    | HTMLElement
+    | null
+    | (() => HTMLElement | null | undefined)
   title: VueNode
   description?: VueNode
   placement?: PlacementType
@@ -30,9 +35,9 @@ export interface TourStepInfo {
   mask?:
     | boolean
     | {
-      style?: CSSProperties
-      color?: string
-    }
+        style?: CSSProperties
+        color?: string
+      }
   scrollIntoViewOptions?: boolean | ScrollIntoViewOptions
   closeIcon?: VueNode
   closable?: boolean | ({ closeIcon?: VueNode } & HTMLAriaDataAttributes)
@@ -42,10 +47,6 @@ export interface TourStepProps extends TourStepInfo {
   prefixCls?: string
   total?: number
   current?: number
-  onClose?: () => void
-  onFinish?: () => void
-  onPrev?: () => void
-  onNext?: () => void
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>
 }
@@ -69,7 +70,7 @@ export type ClosableConfig = {
   closeIcon?: VueNode
 } & HTMLAriaDataAttributes
 
-export interface TourProps extends /* @vue-ignore */ Pick<TriggerProps, 'onPopupAlign'> {
+export interface TourProps {
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>
   className?: string
@@ -79,17 +80,14 @@ export interface TourProps extends /* @vue-ignore */ Pick<TriggerProps, 'onPopup
   defaultOpen?: boolean
   defaultCurrent?: number
   current?: number
-  onChange?: (current: number) => void
-  onClose?: (current: number) => void
-  onFinish?: () => void
   closeIcon?: TourStepProps['closeIcon']
   closable?: TourStepProps['closable']
   mask?:
     | boolean
     | {
-      style?: CSSProperties
-      color?: string
-    }
+        style?: CSSProperties
+        color?: string
+      }
   arrow?: boolean | { pointAtCenter: boolean }
   rootClassName?: string
   placement?: PlacementType
@@ -102,8 +100,8 @@ export interface TourProps extends /* @vue-ignore */ Pick<TriggerProps, 'onPopup
   builtinPlacements?:
     | TriggerProps['builtinPlacements']
     | ((config?: {
-      arrowPointAtCenter?: boolean
-    }) => TriggerProps['builtinPlacements'])
+        arrowPointAtCenter?: boolean
+      }) => TriggerProps['builtinPlacements'])
   disabledInteraction?: boolean
   keyboard?: boolean
 }

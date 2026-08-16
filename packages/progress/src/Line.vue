@@ -117,7 +117,7 @@
     {{ indeterminateResult.animationKeyframes }}
   </style>
   <svg
-    :class="{ [`${prefixCls}-line`]: true, [props.className as string]: true }"
+    :class="{ [`${prefixCls}-line`]: true, [className as string]: true }"
     preserveAspectRatio="none"
     :viewBox="viewBoxString"
     :style="{ width: '100%', height: '100%', ...attrStyle }"

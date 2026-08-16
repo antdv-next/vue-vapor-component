@@ -51,6 +51,12 @@
 
   const attrs = useAttrs()
 
+  const emit = defineEmits<{
+    'open-change': [visible: boolean]
+    'popup-visible-change': [visible: boolean]
+    'popup-align': [element: HTMLElement, align: unknown]
+  }>()
+
   // ======================== State ========================
   const mergedAutoDestroy = computed(() => props.autoDestroy ?? false)
   const openUncontrolled = computed(() => props.popupVisible === undefined)
@@ -195,8 +201,8 @@
   const internalTriggerOpen = (nextOpen: boolean) => {
     if (mergedOpen.value !== nextOpen) {
       internalOpen.value = nextOpen
-      props.onOpenChange?.(nextOpen)
-      props.onPopupVisibleChange?.(nextOpen)
+      emit('open-change', nextOpen)
+      emit('popup-visible-change', nextOpen)
     }
   }
 
@@ -279,7 +285,9 @@
     computed(() => props.popupPlacement) as any,
     computed(() => props.builtinPlacements) as any,
     computed(() => props.popupAlign) as any,
-    props.onPopupAlign,
+    (e: HTMLElement, a) => {
+      emit('popup-align', e, a)
+    },
     isMobile,
   )
 
@@ -597,7 +605,7 @@
     :style="{ zIndex: zIndex + 1 }"
   />
   <TriggerContextProvider
-    v-if="rendered && (!uniqueContext || !props.unique)"
+    v-if="rendered && (!uniqueContext || !unique)"
     :register-sub-popup="context.registerSubPopup"
   >
     <Popup
@@ -607,15 +615,7 @@
       :class="clsx(popupClassName, !isMobile && alignedClassName)"
       :style="popupStyle"
       :target="targetEle"
-      :on-mouse-enter="onPopupMouseEnter"
-      :on-mouse-leave="onPopupMouseLeave"
-      :on-pointer-enter="onPopupMouseEnter"
-      :on-click="onPopupClick"
-      :on-esc="onEsc"
-      :on-pointer-down-capture="onPopupPointerDown"
       :motion="popupMotion"
-      :on-visible-changed="onVisibleChanged"
-      :on-prepare="onPrepare"
       :force-render="forceRender"
       :auto-destroy="mergedAutoDestroy"
       :get-container="getPopupContainer"
@@ -631,11 +631,19 @@
       :offset-y="offsetY"
       :offset-r="offsetR"
       :offset-b="offsetB"
-      :on-align="triggerAlign"
       :stretch="stretch"
       :target-width="targetWidth / scaleX"
       :target-height="targetHeight / scaleY"
       :mobile="mobile"
+      @mouse-enter="onPopupMouseEnter"
+      @mouse-leave="onPopupMouseLeave"
+      @pointer-enter="onPopupMouseEnter"
+      @click="onPopupClick"
+      @esc="onEsc"
+      @pointer-down-capture="onPopupPointerDown"
+      @visible-changed="onVisibleChanged"
+      @prepare="onPrepare"
+      @align="triggerAlign"
     >
       <template #popup>
         <slot name="popup">{{ popup }}</slot>

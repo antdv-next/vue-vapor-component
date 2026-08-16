@@ -58,7 +58,6 @@ export interface ListyProps {
   direction?: 'ltr' | 'rtl'
   classNames?: ListyClassNames
   styles?: ListyStyles
-  onScroll?: (e: Event) => void
 }
 
 export interface ListComponentProps {
@@ -72,5 +71,4 @@ export interface ListComponentProps {
   direction?: 'ltr' | 'rtl'
   classNames?: ListyClassNames
   styles?: ListyStyles
-  onScroll?: (e: Event) => void
 }

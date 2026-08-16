@@ -2,11 +2,11 @@ import type { CSSProperties } from 'vue'
 
 import type { TransformType } from '../hooks/useImageTransform'
 import type { ImgInfo } from '../imageTypes'
-import type { Actions, PreviewProps } from './types'
+import type { PreviewProps } from './types'
 
 export type FooterSemanticName = 'footer' | 'actions'
 
-export interface FooterProps extends Actions {
+export interface FooterProps {
   prefixCls: string
   showProgress: boolean
   showClose: boolean

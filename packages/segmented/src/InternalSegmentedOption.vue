@@ -11,13 +11,12 @@
   } from './interface'
 
   import { clsx } from '@v-c/util'
+  import { useAttrs } from 'vue'
   defineOptions({ name: 'InternalSegmentedOption' })
   const props = defineProps<{
     prefixCls: string
     classNames?: Partial<Record<SemanticName, string>>
     styles?: Partial<Record<SemanticName, CSSProperties>>
-    class?: Partial<Record<SemanticName, string>>
-    style?: Partial<Record<SemanticName, CSSProperties>>
     data: SegmentedLabeledOption
     disabled?: boolean
     checked: boolean
@@ -25,16 +24,17 @@
     title?: string
     value: SegmentedRawOption
     name?: string
-    onFocus: (e: FocusEvent) => void
-    onBlur: (e: FocusEvent) => void
-    onKeyDown: (e: KeyboardEvent) => void
-    onKeyUp: (e: KeyboardEvent) => void
-    onMouseDown: () => void
     itemRender?: ItemRender
   }>()
   const emit = defineEmits<{
     change: [e: ChangeEvent, value: SegmentedRawOption]
+    focus: [e: FocusEvent]
+    blur: [e: FocusEvent]
+    keydown: [e: KeyboardEvent]
+    keyup: [e: KeyboardEvent]
+    mousedown: []
   }>()
+  const attrs = useAttrs()
   const handleChange = (event: Event) => {
     if (props.disabled) {
       return
@@ -47,12 +47,12 @@
   <slot name="itemRender">
     <label
       :class="
-        clsx(props.class, {
+        clsx(attrs.class, {
           [`${prefixCls}-item-disabled`]: disabled,
         })
       "
-      :style="props.style"
-      @mousedown="onMouseDown"
+      :style="attrs.style"
+      @mousedown="() => emit('mousedown')"
     >
       <input
         :name="name"
@@ -61,10 +61,10 @@
         :disabled="disabled"
         :checked="checked"
         @change="handleChange"
-        @focus="onFocus"
-        @blur="onBlur"
-        @keydown="onKeyDown"
-        @keyup="onKeyUp"
+        @focus="e => emit('focus', e)"
+        @blur="e => emit('blur', e)"
+        @keydown="e => emit('keydown', e)"
+        @keyup="e => emit('keyup', e)"
       />
       <div
         :class="clsx(`${prefixCls}-item-label`, classNames?.label)"

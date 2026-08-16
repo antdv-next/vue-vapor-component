@@ -24,7 +24,6 @@ export interface OverflowProps<ItemType = any> {
   component?: any
   itemComponent?: any
   /** @private This API may be refactor since not well design */
-  onVisibleChange?: (visibleCount: number) => void
   /** When set to `full`, ssr will render full items by default and remove at client side */
   ssr?: 'full'
 }

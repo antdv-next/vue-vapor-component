@@ -17,6 +17,9 @@
   const props = withDefaults(defineProps<CollapseProps>(), {
     prefixCls: 'vc-collapse',
   })
+  const emit = defineEmits<{
+    change: [key: Key[]]
+  }>()
 
   const attrs = useAttrs()
   const refWrapper = ref<HTMLDivElement>()
@@ -35,7 +38,7 @@
     [],
     {
       value: toRef(props, 'activeKey') as Ref<Key | Key[]>,
-      onChange: v => props.onChange?.(v as Key[]),
+      onChange: v => emit('change', v as Key[]),
       defaultValue: props.defaultActiveKey,
       postState: getActiveKeysArray,
     },
@@ -113,7 +116,12 @@
     :role="accordion ? 'tablist' : undefined"
     v-bind="pickedAttrs"
   >
-    <Panel v-for="p in panels" :key="p.panelKey" v-bind="p.bind" />
+    <Panel
+      v-for="p in panels"
+      :key="p.panelKey"
+      v-bind="p.bind"
+      @item-click="onItemClick"
+    />
     <slot></slot>
   </div>
 </template>

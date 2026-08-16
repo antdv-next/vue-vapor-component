@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import { onUnmounted, ref, watch } from 'vue'
 
 const SMOOTH_PTG = 14 / 15
@@ -33,31 +34,35 @@ export default function useMobileTouchMove(
       const isHorizontal = Math.abs(offsetX) > Math.abs(offsetY)
       if (isHorizontal) {
         touchXRef.value = currentX
-      }
-      else {
+      } else {
         touchYRef.value = currentY
       }
 
-      const scrollHandled = callback(isHorizontal, isHorizontal ? offsetX : offsetY, false, e)
+      const scrollHandled = callback(
+        isHorizontal,
+        isHorizontal ? offsetX : offsetY,
+        false,
+        e,
+      )
       if (scrollHandled) {
         e.preventDefault()
       }
 
-      if (intervalId)
-        clearInterval(intervalId)
+      if (intervalId) clearInterval(intervalId)
 
       if (scrollHandled) {
         intervalId = setInterval(() => {
           if (isHorizontal) {
             offsetX *= SMOOTH_PTG
-          }
-          else {
+          } else {
             offsetY *= SMOOTH_PTG
           }
           const offset = Math.floor(isHorizontal ? offsetX : offsetY)
-          if (!callback(isHorizontal, offset, true) || Math.abs(offset) <= 0.1) {
-            if (intervalId)
-              clearInterval(intervalId)
+          if (
+            !callback(isHorizontal, offset, true) ||
+            Math.abs(offset) <= 0.1
+          ) {
+            if (intervalId) clearInterval(intervalId)
           }
         }, 16)
       }
@@ -79,7 +84,9 @@ export default function useMobileTouchMove(
 
       elementRef = e.target as HTMLElement
       elementRef.addEventListener('touchmove', onTouchMove, { passive: false })
-      elementRef.addEventListener('touchend', onTouchEnd, { passive: true } as any)
+      elementRef.addEventListener('touchend', onTouchEnd, {
+        passive: true,
+      } as any)
     }
   }
 
@@ -114,13 +121,14 @@ export default function useMobileTouchMove(
     ([enabled, ele], _prev, onCleanup) => {
       if (enabled && ele) {
         touchStartElement = ele
-        ele.addEventListener('touchstart', onTouchStart, { passive: true } as any)
+        ele.addEventListener('touchstart', onTouchStart, {
+          passive: true,
+        } as any)
 
         onCleanup(() => {
           teardown()
         })
-      }
-      else {
+      } else {
         teardown()
       }
     },

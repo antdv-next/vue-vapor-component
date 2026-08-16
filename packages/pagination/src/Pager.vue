@@ -1,23 +1,23 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
 
-  import type { ItemRender } from './interface'
-
   import { clsx } from '@v-c/util'
-  import { computed } from 'vue'
+  import { computed, useAttrs } from 'vue'
 
-  defineOptions({ name: 'PaginationPager' })
+  defineOptions({ name: 'PaginationPager', inheritAttrs: false })
 
   const props = defineProps<{
     rootPrefixCls: string
     page: number
     active?: boolean
-    class?: string | object | string[]
-    style?: CSSProperties
     showTitle: boolean
     itemRender?: ItemRender
-    onClick?: (page: number) => void
   }>()
+  const emit = defineEmits<{
+    click: [page: number]
+  }>()
+
+  const attrs = useAttrs()
 
   const prefixCls = computed(() => `${props.rootPrefixCls}-item`)
 
@@ -29,12 +29,12 @@
         [`${prefixCls.value}-active`]: props.active,
         [`${prefixCls.value}-disabled`]: !props.page,
       },
-      props.class,
+      (attrs as any).class,
     ),
   )
 
   function handleClick() {
-    props.onClick?.(props.page)
+    emit('click', props.page)
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -51,9 +51,9 @@
 
 <template>
   <li
-    :title="props.showTitle ? String(props.page) : undefined"
+    :title="showTitle ? String(page) : undefined"
     :class="itemCls"
-    :style="props.style"
+    :style="(attrs as any).style"
     @click="handleClick"
     @keydown="handleKeydown"
     tabindex="0"
@@ -62,7 +62,7 @@
       name="itemRender"
       v-bind="{ page, type: 'page', defaultNode: itemNode }"
     >
-      <a rel="nofollow">{{ props.page }}</a>
+      <a rel="nofollow">{{ page }}</a>
     </slot>
   </li>
 </template>

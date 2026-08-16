@@ -75,49 +75,49 @@ import App from './App.vue'
 - 🪒 进行中
 - ❌ 不实现
 
-| 组件            | 状态 | 验证 | 备注                        |
-| --------------- | ---- | ---- | --------------------------- |
-| async-validator | ❌   | 🚀   | ⭐️                          |
-| cascader        | ⭕   |      |                             |
-| checkbox        | ✅   |      |                             |
-| collapse        | ✅   |      |                             |
-| color-picker    | ⭕   |      |                             |
-| dialog          | ✅   |      |                             |
-| drawer          | ✅   |      |                             |
-| dropdown        | ⭕   |      |                             |
-| fast-color      | ❌   | 🚀   | ⭐️                          |
-| field-form      | ⭕   |      |                             |
-| image           | ✅   |      |                             |
-| input           | ✅   |      |                             |
-| input-number    | ✅   |      |                             |
-| listy           | ✅   |      |                             |
-| mentions        | ⭕   |      |                             |
-| menu            | ⭕   |      |                             |
-| mini-decimal    | ❌   | 🚀   | ⭐️                          |
-| mutate-observer | ✅   |      |                             |
+| 组件            | 状态 | 验证 | 备注                            |
+| --------------- | ---- | ---- | ------------------------------- |
+| async-validator | ❌   | 🚀   | ⭐️                              |
+| cascader        | ⭕   |      |                                 |
+| checkbox        | ✅   |      |                                 |
+| collapse        | ✅   |      |                                 |
+| color-picker    | ⭕   |      |                                 |
+| dialog          | ✅   |      |                                 |
+| drawer          | ✅   |      |                                 |
+| dropdown        | ⭕   |      |                                 |
+| fast-color      | ❌   | 🚀   | ⭐️                              |
+| field-form      | ⭕   |      |                                 |
+| image           | ✅   |      |                                 |
+| input           | ✅   |      |                                 |
+| input-number    | ✅   |      |                                 |
+| listy           | ✅   |      |                                 |
+| mentions        | ⭕   |      |                                 |
+| menu            | ⭕   |      |                                 |
+| mini-decimal    | ❌   | 🚀   | ⭐️                              |
+| mutate-observer | ✅   |      |                                 |
 | notification    | ✅   |      | 受限SFC，多了configRef与onReady |
-| overflow        | ✅   |      |                             |
-| pagination      | ✅   |      |                             |
-| picker          | ⭕   |      |                             |
-| portal          | ✅   |      |                             |
-| progress        | ✅   |      |                             |
-| qrcode          | ✅   |      |                             |
-| rate            | ✅   |      |                             |
-| resize-observer | ✅   |      |                             |
-| segmented       | ✅   |      |                             |
-| select          | ⭕   |      |                             |
-| slick           | ✅   |      |                             |
-| slider          | ✅   |      |                             |
-| steps           | ✅   |      |                             |
-| switch          | ✅   |      |                             |
-| table           | ⭕   |      |                             |
-| tabs            | ⭕   |      |                             |
-| textarea        | ✅   |      |                             |
-| tooltip         | ✅   |      |                             |
-| tour            | ✅   |      |                             |
-| tree            | ⭕   |      |                             |
-| tree-select     | ⭕   |      |                             |
-| trigger         | ✅   |      |                             |
-| upload          | ✅   |      |                             |
-| util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor |
-| virtual-list    | ✅   |      |                             |
+| overflow        | ✅   |      |                                 |
+| pagination      | ✅   |      |                                 |
+| picker          | ⭕   |      |                                 |
+| portal          | ✅   |      |                                 |
+| progress        | ✅   |      |                                 |
+| qrcode          | ✅   |      |                                 |
+| rate            | ✅   |      |                                 |
+| resize-observer | ✅   |      |                                 |
+| segmented       | ✅   |      |                                 |
+| select          | ⭕   |      |                                 |
+| slick           | ✅   |      |                                 |
+| slider          | ✅   |      |                                 |
+| steps           | ✅   |      |                                 |
+| switch          | ✅   |      |                                 |
+| table           | ⭕   |      |                                 |
+| tabs            | ⭕   |      |                                 |
+| textarea        | ✅   |      |                                 |
+| tooltip         | ✅   |      |                                 |
+| tour            | ✅   |      |                                 |
+| tree            | ⭕   |      |                                 |
+| tree-select     | ⭕   |      |                                 |
+| trigger         | ✅   |      |                                 |
+| upload          | ✅   |      |                                 |
+| util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor     |
+| virtual-list    | ✅   |      |                                 |

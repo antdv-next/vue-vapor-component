@@ -1,4 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue'
+
 import type {
   BasicDataNode,
   DataEntity,
@@ -6,7 +7,9 @@ import type {
   FieldNames,
   Key,
 } from '../interface'
+
 import { computed, toValue } from 'vue'
+
 import getEntity from '../utils/keyUtil'
 import { convertDataToEntities } from '../utils/treeUtil'
 
@@ -14,20 +17,27 @@ export interface UseTreeConfig {
   fieldNames?: MaybeRefOrGetter<FieldNames | undefined>
 }
 
-export interface TreeInstance<TreeDataType extends DataNode | BasicDataNode = DataNode> {
+export interface TreeInstance<
+  TreeDataType extends DataNode | BasicDataNode = DataNode,
+> {
   getPath: (key: Key) => DataEntity<TreeDataType>[]
 }
 
-export default function useTree<TreeDataType extends DataNode | BasicDataNode = DataNode>(
+export default function useTree<
+  TreeDataType extends DataNode | BasicDataNode = DataNode,
+>(
   treeData: MaybeRefOrGetter<TreeDataType[]>,
   config: UseTreeConfig = {},
 ): TreeInstance<TreeDataType> {
   const { fieldNames } = config
 
   const keyEntities = computed(() => {
-    const { keyEntities } = convertDataToEntities(toValue(treeData) as unknown as DataNode[], {
-      fieldNames: toValue(fieldNames),
-    })
+    const { keyEntities } = convertDataToEntities(
+      toValue(treeData) as unknown as DataNode[],
+      {
+        fieldNames: toValue(fieldNames),
+      },
+    )
     return keyEntities as Record<string, DataEntity<TreeDataType>>
   })
 

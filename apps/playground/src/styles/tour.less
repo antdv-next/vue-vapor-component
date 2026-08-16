@@ -6,7 +6,7 @@
   display: block;
   visibility: visible;
   font-size: 12px;
-  line-height:1.5;
+  line-height: 1.5;
   opacity: 0.9;
   min-width: 520px;
   min-height: 200px;
@@ -14,16 +14,24 @@
     display: none;
   }
 
-  &-placement-top, &-placement-topLeft, &-placement-topRight {
+  &-placement-top,
+  &-placement-topLeft,
+  &-placement-topRight {
     padding: 5px 0 5px 0;
   }
-  &-placement-right, &-placement-rightTop, &-placement-rightBottom {
+  &-placement-right,
+  &-placement-rightTop,
+  &-placement-rightBottom {
     padding: 0 5px 0 5px;
   }
-  &-placement-bottom, &-placement-bottomLeft, &-placement-bottomRight {
+  &-placement-bottom,
+  &-placement-bottomLeft,
+  &-placement-bottomRight {
     padding: 5px 0 5px 0;
   }
-  &-placement-left, &-placement-leftTop, &-placement-leftBottom {
+  &-placement-left,
+  &-placement-leftTop,
+  &-placement-leftBottom {
     padding: 0 5px 0 5px;
   }
 }
@@ -32,7 +40,7 @@
 .@{tour-prefix-cls}-section {
   text-align: left;
   text-decoration: none;
-  border-radius: 6px;;
+  border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.17);
   position: relative;
   background-color: #ffffff;
@@ -97,7 +105,7 @@
   &-placement-left &-arrow,
   &-placement-leftTop &-arrow,
   &-placement-leftBottom &-arrow {
-    right:0;
+    right: 0;
     margin-top: -5px;
     border-width: 5px 0 5px 5px;
     border-left-color: #fff;
@@ -137,7 +145,6 @@
     right: 15%;
   }
 
-
   &-wrap {
     position: fixed;
     overflow: auto;
@@ -170,7 +177,7 @@
     color: #000;
     text-shadow: 0 1px 0 #fff;
     filter: alpha(opacity=20);
-    opacity: .2;
+    opacity: 0.2;
     text-decoration: none;
 
     &:hover {
@@ -199,28 +206,30 @@
     padding: 10px 16px;
     display: flex;
     background: 0 0;
-    border-top: 1px solid rgba(0,0,0,.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 0 0 2px 2px;
   }
 
-  &-sliders{
-    width:70%;
+  &-sliders {
+    width: 70%;
     display: inline-block;
-    span{
+    span {
       width: 8px;
       height: 8px;
       display: inline-block;
       border-radius: 50%;
       background: #000;
-      margin-right:4px;
+      margin-right: 4px;
       opacity: 0.75;
-      &.active{
+      &.active {
         background: #007aff;
       }
     }
   }
 
-  &-prev-btn,&-next-btn,&-finish-btn{
+  &-prev-btn,
+  &-next-btn,
+  &-finish-btn {
     display: inline-block;
     margin-left: 8px;
   }
@@ -231,7 +240,6 @@
     background: #1890ff;
     box-shadow: 0 2px #0000000b;
   }
-
 }
 
 .@{tour-prefix-cls}-mask {

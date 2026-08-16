@@ -1,166 +1,174 @@
 <script setup vapor lang="ts">
-import type { CSSProperties } from 'vue'
-import type { FlattenNode, Key } from './interface'
-import type { ListRef as VcListRef } from '@vapor-component/virtual-list'
-import VcVirtualList from '@vapor-component/virtual-list'
-import useId from '@v-c/util/dist/hooks/useId'
-import { computed, shallowRef, ref, watch } from 'vue'
-import TreeNode from './TreeNode.vue'
-import { getKey, getTreeNodeProps } from './utils/treeUtil'
-import { findExpandedKeys } from './utils/diffUtil'
+  import type { ListRef as VcListRef } from '@vapor-component/virtual-list'
+  import type { CSSProperties } from 'vue'
 
-defineOptions({ name: 'TreeNodeList', inheritAttrs: false })
+  import type { FlattenNode, Key } from './interface'
 
-const props = defineProps<{
-  prefixCls: string
-  style?: CSSProperties
-  data?: FlattenNode[]
-  focusable?: boolean
-  tabIndex?: number
-  selectable?: boolean
-  checkable?: boolean
-  disabled?: boolean
+  import useId from '@v-c/util/dist/hooks/useId'
+  import VcVirtualList from '@vapor-component/virtual-list'
+  import { computed, shallowRef, ref, watch } from 'vue'
 
-  expandedKeys: Key[]
-  selectedKeys: Key[]
-  checkedKeys: Key[]
-  loadedKeys: Key[]
-  loadingKeys: Key[]
-  halfCheckedKeys: Key[]
-  keyEntities: Record<string, any>
+  import TreeNode from './TreeNode.vue'
+  import { findExpandedKeys } from './utils/diffUtil'
+  import { getKey, getTreeNodeProps } from './utils/treeUtil'
 
-  dragging?: boolean
-  dragOverNodeKey: Key | null
-  dropPosition: number | null
+  defineOptions({ name: 'TreeNodeList', inheritAttrs: false })
 
-  height?: number
-  itemHeight?: number
-  virtual?: boolean
-  scrollWidth?: number
+  const props = defineProps<{
+    prefixCls: string
+    style?: CSSProperties
+    data?: FlattenNode[]
+    focusable?: boolean
+    tabIndex?: number
+    selectable?: boolean
+    checkable?: boolean
+    disabled?: boolean
 
-  activeItem?: FlattenNode | null
+    expandedKeys: Key[]
+    selectedKeys: Key[]
+    checkedKeys: Key[]
+    loadedKeys: Key[]
+    loadingKeys: Key[]
+    halfCheckedKeys: Key[]
+    keyEntities: Record<string, any>
 
-  onKeyDown?: (e: KeyboardEvent) => void
-  onFocus?: (e: FocusEvent) => void
-  onBlur?: (e: FocusEvent) => void
-  onMouseDown?: (e: MouseEvent) => void
-  onActiveChange?: (key: Key | null) => void
-  onListChangeStart?: () => void
-  onListChangeEnd?: () => void
-  onContextmenu?: (e: MouseEvent) => void
-  onScroll?: (e: Event) => void
-}>()
+    dragging?: boolean
+    dragOverNodeKey: Key | null
+    dropPosition: number | null
 
-const treeId = useId()
-const listRef = ref<VcListRef>()
-const indentMeasurerRef = ref<HTMLDivElement>()
+    height?: number
+    itemHeight?: number
+    virtual?: boolean
+    scrollWidth?: number
 
-const treeNodeRequiredProps = computed(() => ({
-  expandedKeys: props.expandedKeys || [],
-  selectedKeys: props.selectedKeys || [],
-  loadedKeys: props.loadedKeys || [],
-  loadingKeys: props.loadingKeys || [],
-  checkedKeys: props.checkedKeys || [],
-  halfCheckedKeys: props.halfCheckedKeys || [],
-  dragOverNodeKey: props.dragOverNodeKey,
-  dropPosition: props.dropPosition,
-  keyEntities: props.keyEntities,
-}))
+    activeItem?: FlattenNode | null
+  }>()
 
-const prevExpandedKeys = shallowRef<Key[]>(props.expandedKeys || [])
-const prevData = shallowRef<FlattenNode[]>(props.data || [])
-const transitionData = shallowRef<FlattenNode[]>(props.data || [])
-const transitionRange = shallowRef<FlattenNode[]>([])
-const motionType = ref<'show' | 'hide' | null>(null)
-const dataRef = shallowRef<FlattenNode[]>(props.data || [])
+  const emit = defineEmits<{
+    keydown: [e: KeyboardEvent]
+    focus: [e: FocusEvent]
+    blur: [e: FocusEvent]
+    mousedown: [e: MouseEvent]
+    'active-change': [key: Key | null]
+    'list-change-start': []
+    'list-change-end': []
+    contextmenu: [e: MouseEvent]
+    scroll: [e: Event]
+  }>()
 
-watch(
-  () => props.data,
-  (newData) => {
-    dataRef.value = (newData || []) as any
-  },
-  { immediate: true },
-)
+  const treeId = useId()
+  const listRef = ref<VcListRef>()
+  const indentMeasurerRef = ref<HTMLDivElement>()
 
-function onMotionEnd() {
-  const latestData = dataRef.value
-  prevData.value = latestData
-  transitionData.value = latestData
-  transitionRange.value = []
-  motionType.value = null
-  props.onListChangeEnd?.()
-}
+  const treeNodeRequiredProps = computed(() => ({
+    expandedKeys: props.expandedKeys || [],
+    selectedKeys: props.selectedKeys || [],
+    loadedKeys: props.loadedKeys || [],
+    loadingKeys: props.loadingKeys || [],
+    checkedKeys: props.checkedKeys || [],
+    halfCheckedKeys: props.halfCheckedKeys || [],
+    dragOverNodeKey: props.dragOverNodeKey,
+    dropPosition: props.dropPosition,
+    keyEntities: props.keyEntities,
+  }))
 
-watch(
-  () => props.dragging,
-  (dragging) => {
-    if (!dragging) {
-      onMotionEnd()
-    }
-  },
-  { immediate: true },
-)
+  const prevExpandedKeys = shallowRef<Key[]>(props.expandedKeys || [])
+  const prevData = shallowRef<FlattenNode[]>(props.data || [])
+  const transitionData = shallowRef<FlattenNode[]>(props.data || [])
+  const transitionRange = shallowRef<FlattenNode[]>([])
+  const motionType = ref<'show' | 'hide' | null>(null)
+  const dataRef = shallowRef<FlattenNode[]>(props.data || [])
 
-watch(
-  [() => props.expandedKeys, () => props.data],
-  () => {
-    const newData = props.data || []
-    const newExpandedKeys = props.expandedKeys || []
-    const diffExpanded = findExpandedKeys(prevExpandedKeys.value, newExpandedKeys)
+  watch(
+    () => props.data,
+    newData => {
+      dataRef.value = (newData || []) as any
+    },
+    { immediate: true },
+  )
 
-    if (diffExpanded.key !== null) {
-      // No CSSTransition in vapor port — placeholder would never be cleaned up.
-      // Skip transition setup entirely; just update to the final data state.
-      prevData.value = newData
-      transitionData.value = newData
-      transitionRange.value = []
-      motionType.value = null
-    }
-    else if (prevData.value !== newData) {
-      prevData.value = newData
-      transitionData.value = newData
-    }
-    prevExpandedKeys.value = newExpandedKeys
-  },
-  { immediate: true, flush: 'post' },
-)
+  function onMotionEnd() {
+    const latestData = dataRef.value
+    prevData.value = latestData
+    transitionData.value = latestData
+    transitionRange.value = []
+    motionType.value = null
+    emit('list-change-end')
+  }
 
-const mergedData = computed(() => transitionData.value)
+  watch(
+    () => props.dragging,
+    dragging => {
+      if (!dragging) {
+        onMotionEnd()
+      }
+    },
+    { immediate: true },
+  )
 
-const indentMeasurerCls = computed(() => `${props.prefixCls}-treenode`)
-const indentCls = computed(() => `${props.prefixCls}-indent`)
-const indentUnitCls = computed(() => `${props.prefixCls}-indent-unit`)
-const listPrefixCls = computed(() => `${props.prefixCls}-list`)
+  watch(
+    [() => props.expandedKeys, () => props.data],
+    () => {
+      const newData = props.data || []
+      const newExpandedKeys = props.expandedKeys || []
+      const diffExpanded = findExpandedKeys(
+        prevExpandedKeys.value,
+        newExpandedKeys,
+      )
 
-const focusableComputed = computed(() => props.focusable !== false && !props.disabled)
+      if (diffExpanded.key !== null) {
+        // No CSSTransition in vapor port — placeholder would never be cleaned up.
+        // Skip transition setup entirely; just update to the final data state.
+        prevData.value = newData
+        transitionData.value = newData
+        transitionRange.value = []
+        motionType.value = null
+      } else if (prevData.value !== newData) {
+        prevData.value = newData
+        transitionData.value = newData
+      }
+      prevExpandedKeys.value = newExpandedKeys
+    },
+    { immediate: true, flush: 'post' },
+  )
 
-defineExpose({
-  scrollTo: (scroll?: any) => {
-    listRef.value?.scrollTo(scroll)
-  },
-  getIndentWidth: () => indentMeasurerRef.value?.offsetWidth || 0,
-})
+  const mergedData = computed(() => transitionData.value)
+
+  const indentMeasurerCls = computed(() => `${props.prefixCls}-treenode`)
+  const indentCls = computed(() => `${props.prefixCls}-indent`)
+  const indentUnitCls = computed(() => `${props.prefixCls}-indent-unit`)
+  const listPrefixCls = computed(() => `${props.prefixCls}-list`)
+
+  const focusableComputed = computed(
+    () => props.focusable !== false && !props.disabled,
+  )
+
+  defineExpose({
+    scrollTo: (scroll?: any) => {
+      listRef.value?.scrollTo(scroll)
+    },
+    getIndentWidth: () => indentMeasurerRef.value?.offsetWidth || 0,
+  })
 </script>
 
 <template>
   <div
     :class="indentMeasurerCls"
     aria-hidden="true"
-    :style="{
-      position: 'absolute',
-      pointerEvents: 'none',
-      visibility: 'hidden',
-      height: 0,
-      overflow: 'hidden',
-      border: 0,
-      padding: 0,
-    } as CSSProperties"
+    :style="
+      {
+        position: 'absolute',
+        pointerEvents: 'none',
+        visibility: 'hidden',
+        height: 0,
+        overflow: 'hidden',
+        border: 0,
+        padding: 0,
+      } as CSSProperties
+    "
   >
     <div :class="indentCls">
-      <div
-        ref="indentMeasurerRef"
-        :class="indentUnitCls"
-      />
+      <div ref="indentMeasurerRef" :class="indentUnitCls" />
     </div>
   </div>
 
@@ -168,33 +176,40 @@ defineExpose({
     ref="listRef"
     :data="mergedData"
     item-key="key"
-    :height="props.height"
+    :height="height"
     :full-height="false"
-    :virtual="props.virtual"
-    :item-height="props.itemHeight"
-    :scroll-width="props.scrollWidth"
+    :virtual="virtual"
+    :item-height="itemHeight"
+    :scroll-width="scrollWidth"
     :prefix-cls="listPrefixCls"
     role="tree"
-    :style="props.style"
-    :tabindex="focusableComputed ? props.tabIndex : undefined"
-    @contextmenu="props.onContextmenu"
-    @scroll="props.onScroll"
-    @keydown="props.onKeyDown"
-    @focus="props.onFocus"
-    @blur="props.onBlur"
-    @mousedown="props.onMouseDown"
+    :style="style"
+    :tabindex="focusableComputed ? tabIndex : undefined"
+    @contextmenu="e => emit('contextmenu', e)"
+    @scroll="e => emit('scroll', e)"
+    @keydown="e => emit('keydown', e)"
+    @focus="e => emit('focus', e)"
+    @blur="e => emit('blur', e)"
+    @mousedown="e => emit('mousedown', e)"
   >
     <template #default="{ item: treeNode }: { item: FlattenNode }">
       <TreeNode
-        v-bind="getTreeNodeProps(getKey(treeNode.key, treeNode.pos), treeNodeRequiredProps)"
+        v-bind="
+          getTreeNodeProps(
+            getKey(treeNode.key, treeNode.pos),
+            treeNodeRequiredProps,
+          )
+        "
         :title="treeNode.title"
         :pos="treeNode.pos"
         :data="treeNode.data"
         :is-start="treeNode.isStart"
         :is-end="treeNode.isEnd"
-        :active="!!props.activeItem && getKey(treeNode.key, treeNode.pos) === props.activeItem.key"
+        :active="
+          !!activeItem && getKey(treeNode.key, treeNode.pos) === activeItem.key
+        "
         :tree-id="treeId"
-        @mousemove="props.onActiveChange?.(null)"
+        @mousemove="() => emit('active-change', null)"
       />
     </template>
   </VcVirtualList>

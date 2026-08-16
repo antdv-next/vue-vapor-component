@@ -1,8 +1,11 @@
 import type { Key } from '@v-c/util/dist/type'
 import type { Ref } from 'vue'
+
 import type { GetKey } from '../interface'
+
 import { getDOM } from '@v-c/util/dist/Dom/findDOMNode'
 import { markRaw, onUnmounted, ref } from 'vue'
+
 import CacheMap from '../utils/CacheMap'
 
 function parseNumber(value: string) {
@@ -60,8 +63,7 @@ export default function useHeights<T>(
 
     if (sync) {
       doCollect()
-    }
-    else {
+    } else {
       promiseIdRef.value += 1
       const id = promiseIdRef.value
       Promise.resolve().then(() => {
@@ -83,16 +85,14 @@ export default function useHeights<T>(
     if (instance) {
       instanceRef.value.set(key, instance)
       collectHeight()
-    }
-    else {
+    } else {
       instanceRef.value.delete(key)
     }
 
     if (!origin !== !instance) {
       if (instance) {
         onItemAdd?.(item)
-      }
-      else {
+      } else {
         onItemRemove?.(item)
       }
     }
@@ -102,5 +102,11 @@ export default function useHeights<T>(
     cancelRaf()
   })
 
-  return [setInstanceRef, collectHeight, heightsRef, updatedMark, instanceRef] as const
+  return [
+    setInstanceRef,
+    collectHeight,
+    heightsRef,
+    updatedMark,
+    instanceRef,
+  ] as const
 }

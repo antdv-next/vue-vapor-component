@@ -23,7 +23,9 @@ describe('slider render', () => {
       },
     })
 
-    expect(wrapper.find('.vc-slider').classes()).toContain('vc-slider-horizontal')
+    expect(wrapper.find('.vc-slider').classes()).toContain(
+      'vc-slider-horizontal',
+    )
   })
 
   it('renders vertical class', () => {
@@ -35,7 +37,9 @@ describe('slider render', () => {
     })
 
     expect(wrapper.find('.vc-slider').classes()).toContain('vc-slider-vertical')
-    expect(wrapper.find('.vc-slider').classes()).not.toContain('vc-slider-horizontal')
+    expect(wrapper.find('.vc-slider').classes()).not.toContain(
+      'vc-slider-horizontal',
+    )
   })
 
   it('renders range slider with two handles', () => {
