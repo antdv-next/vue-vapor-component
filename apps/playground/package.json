@@ -19,6 +19,7 @@
     "@vapor-component/color-picker": "workspace:*",
     "@vapor-component/dialog": "workspace:*",
     "@vapor-component/drawer": "workspace:*",
+    "@vapor-component/dropdown": "workspace:*",
     "@vapor-component/image": "workspace:*",
     "@vapor-component/input": "workspace:*",
     "@vapor-component/input-number": "workspace:*",

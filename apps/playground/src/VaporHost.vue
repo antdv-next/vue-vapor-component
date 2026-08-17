@@ -5,6 +5,7 @@
   import ColorPickerBasic from './demos/vapor/color-picker/basic.vue'
   import DialogBasic from './demos/vapor/dialog/basic.vue'
   import DrawerBasic from './demos/vapor/drawer/basic.vue'
+  import DropdownBasic from './demos/vapor/dropdown/basic.vue'
   import ImageBasic from './demos/vapor/image/basic.vue'
   import InputNumberBasic from './demos/vapor/input-number/basic.vue'
   import InputBasic from './demos/vapor/input/basic.vue'
@@ -88,6 +89,9 @@
       />
       <DrawerBasic
         v-if="currentComponent === 'drawer' && currentCase === 'basic'"
+      />
+      <DropdownBasic
+        v-if="currentComponent === 'dropdown' && currentCase === 'basic'"
       />
       <OverflowBasic
         v-if="currentComponent === 'overflow' && currentCase === 'basic'"

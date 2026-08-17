@@ -123,6 +123,11 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
+    component: 'dropdown',
+    label: 'Dropdown',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
     component: 'tooltip',
     label: 'Tooltip',
     cases: [{ name: 'basic', label: 'Basic' }],
