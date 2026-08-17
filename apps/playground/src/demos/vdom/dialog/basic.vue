@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import Dialog from '@vapor-component/dialog'
+
   import { useDialog } from '@/composables/useDialog'
   import '@/styles/dialog.less'
 
@@ -14,7 +15,12 @@
       v-model:visible="visible"
       title="Dialog Title"
       :mask-closable="false"
-      @close="() => { console.log('Dialog closed'); visible = false }"
+      @close="
+        () => {
+          console.log('Dialog closed')
+          visible = false
+        }
+      "
     >
       <p>This is the content of the dialog.</p>
       <p>You can put any content here, such as forms, text, or images.</p>

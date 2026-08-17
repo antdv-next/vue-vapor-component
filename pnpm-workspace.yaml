@@ -7,6 +7,7 @@ packages:
   - apps/*
 
 catalog:
+  '@ant-design/fast-color': latest
   '@v-c/util': latest
   '@v-c/mini-decimal': latest
   '@vitejs/plugin-vue': latest

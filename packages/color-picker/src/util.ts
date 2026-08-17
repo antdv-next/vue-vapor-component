@@ -1,0 +1,96 @@
+import type {
+  ColorFormatType,
+  ColorGenInput,
+  ColorValueType,
+  HsbaColorType,
+  TransformOffset,
+} from './interface'
+
+import { Color } from './color'
+
+export const ColorPickerPrefixCls = 'vc-color-picker'
+
+export function generateColor(color: ColorGenInput): Color {
+  if (color instanceof Color) {
+    return color
+  }
+  return new Color(color)
+}
+
+export const defaultColor = generateColor('#1677ff')
+
+export function formatColorValue(
+  color: Color,
+  valueFormat?: ColorFormatType | ((value: Color) => string) | false,
+): ColorValueType {
+  if (!valueFormat) {
+    return color
+  }
+
+  if (typeof valueFormat === 'function') {
+    return valueFormat(color)
+  }
+
+  switch (valueFormat) {
+    case 'hex':
+      return color.toHexString()
+    case 'hsb':
+      return color.toHsbString()
+    case 'rgb':
+    default:
+      return color.toRgbString()
+  }
+}
+
+export function calculateColor(props: {
+  offset: TransformOffset
+  color?: Color
+  type?: HsbaColorType
+}): Color {
+  const { offset, color, type } = props
+  const hsb = color!.toHsb()
+
+  if (type) {
+    switch (type) {
+      case 'hue':
+        return generateColor({
+          ...hsb,
+          h: (offset.x / 100) * 360,
+        })
+      case 'alpha':
+        return generateColor({
+          ...hsb,
+          a: offset.x / 100,
+        })
+    }
+  }
+
+  return generateColor({
+    h: hsb.h,
+    s: offset.x / 100,
+    b: 1 - offset.y / 100,
+    a: hsb.a,
+  })
+}
+
+export function calcOffset(color: Color, type?: HsbaColorType) {
+  const hsb = color.toHsb()
+
+  switch (type) {
+    case 'hue':
+      return {
+        x: (hsb.h / 360) * 100,
+        y: 50,
+      }
+    case 'alpha':
+      return {
+        x: color.a * 100,
+        y: 50,
+      }
+    default:
+      return {
+        x: hsb.s * 100,
+        y: (1 - hsb.b) * 100,
+      }
+  }
+}

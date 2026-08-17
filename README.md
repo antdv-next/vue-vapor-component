@@ -73,19 +73,18 @@ import App from './App.vue'
 - ⭐️ 可复用vc的npm包，无需重复实现
 - ⭕ 未开始
 - 🪒 进行中
-- ❌ 不实现
 
 | 组件            | 状态 | 验证 | 备注                            |
 | --------------- | ---- | ---- | ------------------------------- |
-| async-validator | ❌   | 🚀   | ⭐️                              |
+| async-validator | ⭐️   | 🚀   |                                 |
 | cascader        | ⭕   |      |                                 |
 | checkbox        | ✅   |      |                                 |
 | collapse        | ✅   |      |                                 |
-| color-picker    | ⭕   |      |                                 |
+| color-picker    | ✅   |      |                                 |
 | dialog          | ✅   |      |                                 |
 | drawer          | ✅   |      |                                 |
 | dropdown        | ⭕   |      |                                 |
-| fast-color      | ❌   | 🚀   | ⭐️                              |
+| fast-color      | ⭐️   | 🚀   |                                 |
 | field-form      | ⭕   |      |                                 |
 | image           | ✅   |      |                                 |
 | input           | ✅   |      |                                 |
@@ -93,7 +92,7 @@ import App from './App.vue'
 | listy           | ✅   |      |                                 |
 | mentions        | ⭕   |      |                                 |
 | menu            | ⭕   |      |                                 |
-| mini-decimal    | ❌   | 🚀   | ⭐️                              |
+| mini-decimal    | ⭐️   | 🚀   |                                 |
 | mutate-observer | ✅   |      |                                 |
 | notification    | ✅   |      | 受限SFC，多了configRef与onReady |
 | overflow        | ✅   |      |                                 |
@@ -115,9 +114,9 @@ import App from './App.vue'
 | textarea        | ✅   |      |                                 |
 | tooltip         | ✅   |      |                                 |
 | tour            | ✅   |      |                                 |
-| tree            | ⭕   |      |                                 |
+| tree            | ✅   |      |                                 |
 | tree-select     | ⭕   |      |                                 |
 | trigger         | ✅   |      |                                 |
 | upload          | ✅   |      |                                 |
-| util            | ❌   | 🚀   | ⭐️部分涉及VDom的需兼容vapor     |
+| util            | ⭐️   | 🚀   | 部分涉及VDom的需兼容vapor       |
 | virtual-list    | ✅   |      |                                 |
