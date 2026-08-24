@@ -1,0 +1,47 @@
+import type { Ref } from 'vue'
+
+import type { DisplayValueType, Mode } from '../interface'
+
+import { computed } from 'vue'
+
+export interface AllowClearConfig {
+  allowClear: boolean
+  clearIcon: any
+  label: string
+}
+
+export function useAllowClear(
+  _prefixCls: Ref<string>,
+  displayValues: Ref<DisplayValueType[]>,
+  allowClear?: Ref<boolean | { clearIcon?: any; label?: string }>,
+  clearIcon?: Ref<any>,
+  disabled?: Ref<boolean>,
+  mergedSearchValue?: Ref<string | undefined>,
+  mode?: Ref<Mode | undefined>,
+) {
+  const allowClearConfig = computed<Partial<AllowClearConfig>>(() => {
+    if (typeof allowClear?.value === 'boolean') {
+      return { allowClear: allowClear.value }
+    }
+    if (allowClear?.value && typeof allowClear.value === 'object') {
+      return allowClear.value as Partial<AllowClearConfig>
+    }
+    return { allowClear: false }
+  })
+
+  return computed(() => {
+    const mergedAllowClear =
+      !disabled?.value &&
+      allowClearConfig.value?.allowClear !== false &&
+      (displayValues.value.length || mergedSearchValue?.value) &&
+      !(mode?.value === 'combobox' && mergedSearchValue?.value === '')
+
+    return {
+      allowClear: !!mergedAllowClear,
+      clearIcon: mergedAllowClear
+        ? allowClearConfig.value.clearIcon || clearIcon?.value || '×'
+        : null,
+      label: mergedAllowClear ? (allowClearConfig.value.label ?? 'Clear') : '',
+    } as AllowClearConfig
+  })
+}

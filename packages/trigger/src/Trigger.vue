@@ -444,6 +444,8 @@
     triggerOpen,
   )
 
+  const onPopupClick = () => {}
+
   // ======================== Hover / Focus ========================
   const hoverToShow = computed(() => showActions.value?.has('hover'))
   const hoverToHide = computed(() => hideActions.value?.has('hover'))

@@ -83,7 +83,7 @@ import App from './App.vue'
 | color-picker    | ✅   |      |                                 |
 | dialog          | ✅   |      |                                 |
 | drawer          | ✅   |      |                                 |
-| dropdown        | ⭕   |      |                                 |
+| dropdown        | ✅   |      |                                 |
 | fast-color      | ⭐️   | 🚀   |                                 |
 | field-form      | ⭕   |      |                                 |
 | image           | ✅   |      |                                 |
@@ -104,7 +104,7 @@ import App from './App.vue'
 | rate            | ✅   |      |                                 |
 | resize-observer | ✅   |      |                                 |
 | segmented       | ✅   |      |                                 |
-| select          | ⭕   |      |                                 |
+| select          | ✅   |      |                                 |
 | slick           | ✅   |      |                                 |
 | slider          | ✅   |      |                                 |
 | steps           | ✅   |      |                                 |

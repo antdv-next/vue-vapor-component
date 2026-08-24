@@ -187,7 +187,7 @@
             },
             offsetStyle,
             miscStyle,
-            { boxSizing: 'border-box', zIndex: zIndex },
+            { boxSizing: 'border-box', zIndex: zIndex, display: 'block' },
             attrs.style,
           ]"
           @mouseenter="e => emits('mouse-enter', e)"

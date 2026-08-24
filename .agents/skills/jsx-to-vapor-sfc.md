@@ -1287,6 +1287,154 @@ grep -rn ':on[A-Z]\|:on-[a-z]' packages/*/src/*.vue apps/playground/src/demos/
 3. interface.ts：删除 `onXxx?:` 字段
 4. index.ts：如果导出相关类型则更新
 
+### 19. `{ ...props }` 展开会丢失事件处理器（Vapor props proxy 不枚举 emit 绑定的 onXxx）
+
+在 Vapor 模式下，props proxy 的 `getOwnPropertyDescriptor` 对 emit 绑定的 `onXxx` 属性返回 `undefined`，导致 `{ ...props }` 展开时静默丢失所有事件处理器（如 `onFocus`、`onBlur`）。
+
+**错误写法**：
+
+```ts
+// ❌ vapor 下 onFocus/onBlur 等 emit 绑定的事件会被静默丢弃
+const forwardProps = computed(() => ({
+  ...props,
+  ...attrs,
+}))
+```
+
+**正确写法**：用 `Reflect.ownKeys` + 显式属性读取：
+
+```ts
+// ✅ Reflect.ownKeys 能拿到所有属性名，通过 get trap 显式读取值
+const forwardProps = computed(() => {
+  const result: Record<string, any> = {}
+  for (const key of Reflect.ownKeys(props) as string[]) {
+    if (!omitKeyList.includes(key)) {
+      result[key] = (props as any)[key]
+    }
+  }
+  return { ...result, ...attrs }
+})
+```
+
+**根因**：Vue Vapor 编译将 `defineEmits` 的事件处理器挂载到 props proxy 上时不走标准 enumerable 路径，`Object.keys` / `Object.getOwnPropertyDescriptors` / 展开运算符都无法拿到，但通过 `in` 运算符或 `Reflect.ownKeys` 可以。
+
+**适用场景**：任何需要将 props 转发给子组件的中间层组件（如 Select → BaseSelect、DialogWrap → Dialog）。
+
+### 20. Vapor 中 `v-bind` / `:ref` 不触发回调式 ref
+
+在 Vapor 模式下，`:ref="callbackFunction"` 和 `v-bind` 中的回调 ref 不会被自动调用。必须用 `shallowRef` + `watch` 手动触发。
+
+**错误写法**：
+
+```vue
+<script>
+const setRef = (el) => { /* ... */ }
+</script>
+<template>
+  <!-- ❌ vapor 下 callback ref 不会被调用 -->
+  <div :ref="setRef" />
+  <!-- 或 v-bind 传递 callback ref -->
+  <SelectInput v-bind="{ ref: setRef }" />
+</template>
+```
+
+**正确写法**：用 `shallowRef` + `watch` 手动调用：
+
+```vue
+<script setup vapor lang="ts">
+const rootRef = shallowRef<HTMLElement>()
+const { setRef } = defineProps<{ setRef?: (el: HTMLElement) => void }>()
+
+watch(
+  [rootRef, computed(() => setRef)],
+  ([el, cb]) => {
+    if (el && cb) cb(el)
+  },
+  { immediate: true },
+)
+</script>
+<template>
+  <div ref="rootRef" />
+</template>
+```
+
+**适用场景**：所有从父组件接收回调 ref 并需要转发到 DOM 元素的场景（Trigger 组件的 `setRef` 回调是典型用例）。
+
+### 21. Vapor 中 computed `:class` 绑定可能不响应式更新
+
+在 Vapor 模式下，依赖响应式状态的 computed class 绑定（如 focus/open 状态类）可能不会在状态变化时更新。需要用 `watch` + `classList.toggle` 作为兜底。
+
+**不够可靠的写法**：
+
+```vue
+<script setup vapor lang="ts">
+const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
+</script>
+<template>
+  <!-- ❌ focused/open 变化时类名可能不更新 -->
+  <div :class="nodeCls" />
+</template>
+```
+
+**正确写法**：`:class` 绑定 + `watch` 兜底双重保障：
+
+```vue
+<script setup vapor lang="ts">
+const rootRef = shallowRef<HTMLElement>()
+const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
+
+watch(
+  [rootRef, focused, open],
+  ([el, f, o]) => {
+    if (!el) return
+    el.classList.toggle(`${prefixCls.value}-focused`, f)
+    el.classList.toggle(`${prefixCls.value}-open`, o)
+  },
+  { immediate: true },
+)
+</script>
+<template>
+  <div ref="rootRef" :class="nodeCls" />
+</template>
+```
+
+**适用场景**：依赖响应式状态（focus/open/active 等）的动态 CSS 类名。`:class` 用于初始渲染，`watch` 确保后续更新。
+
+### 22. 转发 Trigger 组件的 triggerProps 时必须剥离 `onClick`
+
+当组件通过 mousedown 自行管理弹出层的打开/关闭逻辑，同时又从 Trigger/Popup 组件接收 `triggerProps` 时，必须从 `triggerProps` 中移除 `onClick`，否则会产生双击翻转（double-toggle）问题。
+
+**问题流程**：mousedown 触发打开 → click 事件随后触发 → Trigger 的 onClick 看到 open 已为 true → 立即关闭 → 表现为点一下就关上。
+
+**正确写法**：
+
+```ts
+const triggerMergedProps = computed(() => {
+  const tp = props.triggerProps || {}
+  // 移除 onClick 防止双击翻转
+  const { ref: _, onClick: __, ...rest } = tp
+  return rest
+})
+```
+
+**适用场景**：所有自己管理 mousedown 开关逻辑、又使用 Trigger/Popup 组件的场景（Select、Dropdown 等）。
+
+### 23. 弹窗组件的 SSR 安全打开状态
+
+受控/非受控的弹窗打开状态在 SSR 场景下需要额外处理，防止 hydration mismatch。在 `onMounted` 之前强制状态为关闭。
+
+```ts
+import { onMounted } from 'vue'
+
+const rendered = shallowRef(false)
+onMounted(() => { rendered.value = true })
+
+// ssrSafeOpen：SSR 阶段强制 false，客户端挂载后才使用真实状态
+const ssrSafeOpen = computed(() => (rendered.value ? stateOpen.value : false))
+```
+
+**适用场景**：所有有 `defaultOpen: true` 的弹窗组件。
+
 ---
 
 ## 十二、依赖关系速查
@@ -1311,9 +1459,9 @@ grep -rn ':on[A-Z]\|:on-[a-z]' packages/*/src/*.vue apps/playground/src/demos/
 | 依赖                               | 用途         | 谁依赖                             |
 | ---------------------------------- | ------------ | ---------------------------------- |
 | `@vapor-component/portal`          | DOM 传送门   | dialog, drawer, image, listy, tour |
-| `@vapor-component/trigger`         | 弹出层定位   | tooltip, tour                      |
+| `@vapor-component/trigger`         | 弹出层定位   | tooltip, tour, select              |
 | `@vapor-component/resize-observer` | 元素尺寸监听 | textarea, overflow                 |
-| `@vapor-component/virtual-list`    | 虚拟列表     | listy                              |
+| `@vapor-component/virtual-list`    | 虚拟列表     | listy, select                      |
 
 ### 简单组件无内部依赖
 
@@ -1371,6 +1519,7 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 | overflow        | 父子 + Context Provider   | useEffectState batcher；`attrs.style` 必须 `for...in` 拷贝（规则 17）                            |
 | tour            | Portal + Trigger 组合     | useTarget hook, 布尔 prop 强制转换坑                                                             |
 | listy           | Portal + VirtualList 组合 | slot 转发模式（`#default="slotProps"` 中转）、Portal `:open="true"` 必传、`onVisibleChange` 回调 |
+| select          | Trigger + VirtualList 组合 + 多层 context | `{...props}` 展开丢事件（规则 19）；回调 ref 不触发（规则 20）；computed class 不更新（规则 21）；triggerProps 剥离 onClick（规则 22）；SSR 安全打开状态（规则 23）；useOptions 双数据源；useOpen MessageChannel macroTask |
 
 ### 工程文件参考
 

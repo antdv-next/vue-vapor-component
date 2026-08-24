@@ -13,63 +13,8 @@ export interface DemoGroup {
 
 export const demoManifest: DemoGroup[] = [
   {
-    component: 'steps',
-    label: 'Steps',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
     component: 'checkbox',
     label: 'Checkbox',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'switch',
-    label: 'Switch',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'input',
-    label: 'Input',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'input-number',
-    label: 'InputNumber',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'textarea',
-    label: 'TextArea',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'rate',
-    label: 'Rate',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'segmented',
-    label: 'Segmented',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'progress',
-    label: 'Progress',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'pagination',
-    label: 'Pagination',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'qrcode',
-    label: 'QRCode',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'image',
-    label: 'Image',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
@@ -93,18 +38,28 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
-    component: 'overflow',
-    label: 'Overflow',
+    component: 'dropdown',
+    label: 'Dropdown',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
-    component: 'portal',
-    label: 'Portal',
+    component: 'image',
+    label: 'Image',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
-    component: 'resize-observer',
-    label: 'ResizeObserver',
+    component: 'input',
+    label: 'Input',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'input-number',
+    label: 'InputNumber',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'listy',
+    label: 'Listy',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
@@ -113,28 +68,53 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
-    component: 'upload',
-    label: 'Upload',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'trigger',
-    label: 'Trigger',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'dropdown',
-    label: 'Dropdown',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
-    component: 'tooltip',
-    label: 'Tooltip',
-    cases: [{ name: 'basic', label: 'Basic' }],
-  },
-  {
     component: 'notification',
     label: 'Notification',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'overflow',
+    label: 'Overflow',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'pagination',
+    label: 'Pagination',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'portal',
+    label: 'Portal',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'progress',
+    label: 'Progress',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'qrcode',
+    label: 'QRCode',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'rate',
+    label: 'Rate',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'resize-observer',
+    label: 'ResizeObserver',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'segmented',
+    label: 'Segmented',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'select',
+    label: 'Select',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
@@ -148,13 +128,28 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
+    component: 'steps',
+    label: 'Steps',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'switch',
+    label: 'Switch',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'textarea',
+    label: 'TextArea',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
     component: 'tour',
     label: 'Tour',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
-    component: 'virtual-list',
-    label: 'VirtualList',
+    component: 'trigger',
+    label: 'Trigger',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
@@ -163,8 +158,13 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
-    component: 'listy',
-    label: 'Listy',
+    component: 'upload',
+    label: 'Upload',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
+    component: 'virtual-list',
+    label: 'VirtualList',
     cases: [{ name: 'basic', label: 'Basic' }],
   },
 ]

@@ -34,6 +34,7 @@
     "@vapor-component/rate": "workspace:*",
     "@vapor-component/resize-observer": "workspace:*",
     "@vapor-component/segmented": "workspace:*",
+    "@vapor-component/select": "workspace:*",
     "@vapor-component/slick": "workspace:*",
     "@vapor-component/slider": "workspace:*",
     "@vapor-component/steps": "workspace:*",

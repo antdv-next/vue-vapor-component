@@ -20,6 +20,7 @@
   import RateBasic from './demos/vapor/rate/basic.vue'
   import ResizeObserverBasic from './demos/vapor/resize-observer/basic.vue'
   import SegmentedBasic from './demos/vapor/segmented/basic.vue'
+  import SelectBasic from './demos/vapor/select/basic.vue'
   import SlickBasic from './demos/vapor/slick/basic.vue'
   import SliderBasic from './demos/vapor/slider/basic.vue'
   import StepsBasic from './demos/vapor/steps/basic.vue'
@@ -65,6 +66,9 @@
       />
       <SegmentedBasic
         v-if="currentComponent === 'segmented' && currentCase === 'basic'"
+      />
+      <SelectBasic
+        v-if="currentComponent === 'select' && currentCase === 'basic'"
       />
       <ProgressBasic
         v-if="currentComponent === 'progress' && currentCase === 'basic'"

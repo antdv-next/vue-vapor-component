@@ -153,6 +153,9 @@ importers:
       '@vapor-component/segmented':
         specifier: workspace:*
         version: link:../../packages/segmented
+      '@vapor-component/select':
+        specifier: workspace:*
+        version: link:../../packages/select
       '@vapor-component/slick':
         specifier: workspace:*
         version: link:../../packages/slick
@@ -430,6 +433,24 @@ importers:
       '@v-c/util':
         specifier: 'catalog:'
         version: 1.1.0(vue@3.6.0-rc.3(typescript@5.9.3))
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-rc.3(typescript@5.9.3)
+
+  packages/select:
+    dependencies:
+      '@v-c/util':
+        specifier: 'catalog:'
+        version: 1.1.0(vue@3.6.0-rc.3(typescript@5.9.3))
+      '@vapor-component/overflow':
+        specifier: workspace:^
+        version: link:../overflow
+      '@vapor-component/trigger':
+        specifier: workspace:^
+        version: link:../trigger
+      '@vapor-component/virtual-list':
+        specifier: workspace:^
+        version: link:../virtual-list
       vue:
         specifier: 'catalog:'
         version: 3.6.0-rc.3(typescript@5.9.3)
