@@ -292,6 +292,7 @@
     mergedOpen,
     triggerOpen,
     computed(() => !!mergedComponents.value.root),
+    () => [triggerRef.value?.popupElement],
   )
 
   const internalMouseDownRef = shallowRef(false)
@@ -511,7 +512,9 @@
       />
     </template>
     <template #popup>
-      <OptionList ref="listRef" />
+      <slot name="optionList" ref="listRef">
+        <OptionList ref="listRef" />
+      </slot>
     </template>
   </Trigger>
 </template>

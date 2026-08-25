@@ -520,7 +520,7 @@
         v-else
         :class="switcherClass"
         :style="switcherStyle"
-        @click="onExpand"
+        @mousedown="onExpand"
       >
         {{ switcherIconDom }}
       </span>
@@ -529,7 +529,7 @@
     <template v-if="checkboxShow">
       <span
         :class="checkboxClass"
-        @click="onCheck"
+        @mousedown="onCheck"
         role="checkbox"
         :aria-checked="halfChecked ? 'mixed' : checked"
         :aria-disabled="isDisabled || disableCheckbox"
@@ -545,7 +545,7 @@
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
       @contextmenu="onContextMenu"
-      @click="onSelectorClick"
+      @mousedown="onSelectorClick"
       @dblclick="onSelectorDoubleClick"
     >
       <template v-if="showCustomIcon">

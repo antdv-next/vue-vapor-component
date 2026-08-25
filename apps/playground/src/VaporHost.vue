@@ -28,6 +28,7 @@
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
   import TooltipBasic from './demos/vapor/tooltip/basic.vue'
   import TourBasic from './demos/vapor/tour/basic.vue'
+  import TreeSelectBasic from './demos/vapor/tree-select/basic.vue'
   import TreeBasic from './demos/vapor/tree/basic.vue'
   import TriggerBasic from './demos/vapor/trigger/basic.vue'
   import UploadBasic from './demos/vapor/upload/basic.vue'
@@ -138,6 +139,9 @@
       />
       <TreeBasic
         v-if="currentComponent === 'tree' && currentCase === 'basic'"
+      />
+      <TreeSelectBasic
+        v-if="currentComponent === 'tree-select' && currentCase === 'basic'"
       />
     </template>
   </div>

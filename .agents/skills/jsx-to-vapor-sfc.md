@@ -257,7 +257,7 @@ const emit = defineEmits<{
 <Switch @change="handler" @update:checked="(v) => checked = v" />
 ```
 
-**❌ 不要在 props 中定义 onXxx**：源 JSX 项目通过 `onChange?: (e) => void` 定义在 props 中，父组件用 `:onChange="h"` 传递。Vapor SFC 必须改为 `defineEmits` + `emit('change', e)`，父组件用 `@change="h"`。这是正在进行的全面改造的核心规则（见规则 18）。
+**❌ 不要在 props 中定义 onXxx**：源 JSX 项目通过 `onChange?: (e) => void` 定义在 props 中，父组件用 `:onChange="h"` 传递。Vapor SFC 必须改为 `defineEmits` + `emit('change', e)`，父组件用 `@change="h"`。这是正在进行的全面改造的核心规则（见规则 17）。
 
 ---
 
@@ -417,8 +417,8 @@ const { prefixCls = 'vc-switch', checked = false } = defineProps<PropsType>()
 
 **⚠️ 重要**：
 
-- **`class` / `style` 永远不进 props**：这两个属性会被 Vue 自动 hoist 到 `attrs`（见规则 15），必须在 `inheritAttrs: false` + `useAttrs()` 模式下从 `attrs` 读取，不能声明为 props。`styles`、`rootStyle`、`className` 等命名不受影响。
-- **`onXxx` 事件回调不进 props**：用 `defineEmits` 声明（见规则 18），父组件用 `@xxx` 语法，不用 `:onXxx`。
+- **`class` / `style` 永远不进 props**：这两个属性会被 Vue 自动 hoist 到 `attrs`（见规则 14），必须在 `inheritAttrs: false` + `useAttrs()` 模式下从 `attrs` 读取，不能声明为 props。`styles`、`rootStyle`、`className` 等命名不受影响。
+- **`onXxx` 事件回调不进 props**：用 `defineEmits` 声明（见规则 17），父组件用 `@xxx` 语法，不用 `:onXxx`。
 
 ### 6.3 Emits 声明
 
@@ -863,7 +863,7 @@ const shouldResponsive = computed<boolean>(
 
 ### 7. 布尔 prop 的 `??` fallback 失效（vapor 强制转换）
 
-**问题**：当 prop 类型包含 `false` 分支时（如 `?: (() => HTMLElement) | false`），vapor 编译会把未传的 `undefined` 强制转为 `false`，导致 `??` 默认值回退失效：
+**问题**：当 prop 类型包含 `false` 分支时（如 `?: (() => HTMLElement) | false`），vapor 编译会把未传的 `undefined` 强制转为 `false`，导致 `??` 默认值回退失效。
 
 ```ts
 // ❌ 危险：undefined 被强制转为 false，false ?? default → false（fallback 被跳过）
@@ -885,48 +885,38 @@ getContainer?: () => HTMLElement
 mask?: { style: CSSProperties; color: string }
 ```
 
+**`Exclude<>` 也无效**：`Exclude<T, false>` 在编译期正确，但 Vue 运行时类型提取仍会识别出 `Boolean`。必须用显式联合类型替代：
+
+```ts
+// ❌ 运行时仍提取出 Boolean
+getContainer?: Exclude<PortalProps['getContainer'], false>
+
+// ✅ 显式定义不含 false 的类型
+getContainer?: string | ContainerType | (() => ContainerType)
+```
+
 **检测手段**：构建后检查 `dist/index.js` 中 prop 类型声明是否包含 `Boolean`：
 
 ```bash
 grep -n "getContainer.*type" packages/{name}/dist/index.js
-# ❌ { type: [Function, Boolean] } — 包含 Boolean，会强制转换
-# ✅ { type: Function } — 只有 Function，不会强制转换
+# ❌ { type: [Function, Boolean] } — 会强制转换
+# ✅ { type: Function } — 不会强制转换
 ```
 
 **常见受影响场景**：
 
 - `getContainer?: (() => HTMLElement) | false`（Portal 相关）
-- 任何 `boolean | { ... }` 联合类型（如 `mask`，其中 `false` 表示关闭、`object` 表示配置）
+- 任何 `boolean | { ... }` 联合类型（如 `mask`）
 - 需要 `??` 做默认值回退的所有布尔 prop
+- `Exclude<..., false>`（**编译期排除 ≠ 运行时排除**）
 
-参见[规则 13](#13-可选非布尔-prop如-iconfunction-也被-vapor-强制转为-false) — Vapor 强制转换不只影响布尔类型，可选的非布尔 prop（如 `switcherIcon?: IconType`）也会被强制转为 `false`。
+参见[规则 12](#12-可选非布尔-prop如-iconfunction-也被-vapor-强制转为-false) — Vapor 强制转换不只影响布尔类型。
 
-### 8. `Exclude<>` 工具类型在运行时类型提取中无效
+### 8. Portal 必须显式 `:open="true"`
 
-`Exclude<T, false>` 在 TypeScript 层面正确排除了 `false`，但 **Vue 运行时类型提取仍会识别出 `Boolean`**，导致与规则 7 相同的强制转换问题。
+`@vapor-component/portal` 的 `open` 默认为 `false`。不传 `:open="true"` 时 Portal 静默不渲染，无任何报错。详见[九、Portal 组件模式](#九portal-组件模式)。
 
-```ts
-// ❌ 编译期正确，但运行时仍提取出 Boolean → vapor 强制转换仍然生效
-getContainer?: Exclude<PortalProps['getContainer'], false>
-
-// ✅ 直接定义不含 false 的显式类型
-getContainer?: string | ContainerType | (() => ContainerType)
-```
-
-**原则**：涉及 Portal 等外部组件类型复用、且需要排除 `false` 的场景，**必须用显式联合类型替代 `Exclude<>`**。
-
-### 9. Portal 必须显式 `:open="true"`
-
-`@vapor-component/portal` 的 `open` 默认为 `false`。不传 `:open="true"` 时 Portal 静默不渲染，无任何报错。
-
-```vue
-<!-- ✅ 正确 -->
-<Portal :open="true" :get-container="() => container">...</Portal>
-```
-
-参见[九、Portal 组件模式](#九portal-组件模式)。
-
-### 10. 布尔 prop 必须显式传 `:attr="true"`（不要省略值）
+### 9. 布尔 prop 必须显式传 `:attr="true"`（不要省略值）
 
 在 vapor 模板中，不带值的裸属性（如 `<VcVirtualList virtual>`）实际解析为 `undefined`，而非 `true`，随后被 vapor 强制转换为 `false`，导致该 prop 被禁用。
 
@@ -942,7 +932,7 @@ getContainer?: string | ContainerType | (() => ContainerType)
 
 **常见受影响属性**：`virtual`、`sticky`、`fixed`、`open`、`full-height` 等布尔 prop。
 
-### 11. 模板中直接用变量名（不要加 `props.` 前缀）
+### 10. 模板中直接用变量名（不要加 `props.` 前缀）
 
 Vue 编译器会将 `<template>` 中出现的 `props.xxx` 自动展开为 `xxx`。在 `<template>` 中写 `props.xxx` 虽然能工作，但属于反模式，应统一省略 `props.` 前缀。
 
@@ -972,7 +962,7 @@ for f in packages/*/src/*.vue; do
 done
 ```
 
-### 12. `reactive()` + `watchEffect` 在 Vapor 中不可靠
+### 11. `reactive()` + `watchEffect` 在 Vapor 中不可靠
 
 在 Vapor 模式下，`reactive()` 创建时捕获的 `let` 变量和 prop 值，通过 `watchEffect` 重新赋值后**不会可靠地触发** `computed(() => reactiveObj)` 重新计算。子组件通过 inject 获取的 context 值会过时。
 
@@ -1013,7 +1003,7 @@ provideTreeContext(computed(() => treeCtx))
 // 无需 watchEffect — getter 保证每次访问都读到最新值
 ```
 
-### 13. 可选非布尔 prop（如 icon/function）也被 Vapor 强制转为 `false`
+### 12. 可选非布尔 prop（如 icon/function）也被 Vapor 强制转为 `false`
 
 规则 7 不仅影响布尔类型。当可选 prop 类型为 `IconType | undefined` 等非布尔联合时，如果未传递该 prop，Vapor 仍可能将其强制转换为 `false`（而非 `undefined`），导致 `??` 和 `||` 回退都失效。
 
@@ -1048,7 +1038,7 @@ return switcherIcon
 - `icon?: IconType`
 - 任何 `?: SomeType` 可选 prop（当 SomeType 不包含 `boolean` 时也可能受影响）
 
-### 14. 无 CSSTransition 时跳过过渡 placeholder 逻辑
+### 13. 无 CSSTransition 时跳过过渡 placeholder 逻辑
 
 源项目（Vue Components）的展开/折叠动画通常通过 `CSSTransition` 包装 placeholder 节点，在动画结束后触发 `onMotionEnd` 清理。Vapor 版本若没有对应的过渡组件，placeholder 会永久残留。
 
@@ -1077,7 +1067,7 @@ if (diffExpanded.key !== null) {
 
 **适用场景**：任何原本依赖 CSSTransition/CSSMotion 做过渡并需要清理中间状态的组件（Tree 展开/折叠、Collapse 面板切换等）。
 
-### 15. `class?:` 和 `style?:` 不能定义在 props 中（Vue 会 hoist 到 attrs）
+### 14. `class?:` 和 `style?:` 不能定义在 props 中（Vue 会 hoist 到 attrs）
 
 Vue 会自动将 `class` 和 `style` 属性从 `defineProps` 中 hoist 到 `attrs`。即使你在 props 类型中声明了 `class?:` 或 `style?:`，父组件传递的 `class="foo"` 或 `:style="..."` 也会进入 `attrs` 而非 `props`，导致 `props.class`/`props.style` 始终为 `undefined`（Vapor 中为 `false`）。
 
@@ -1112,7 +1102,7 @@ const props = defineProps<{
 - 只有精确名为 `class` 和 `style` 的 prop 才会被 hoist
 - 数据对象（如 `StepItem`、`SegmentedLabeledOption`）中的 `class?:`/`style?:` 不受影响，因为它们不是组件 props
 
-### 16. `v-bind="omit(props, ...)"` 在 Vapor 中不会响应式更新
+### 15. `v-bind="omit(props, ...)"` 在 Vapor 中不会响应式更新
 
 `omit`（`@v-c/util/dist/omit`）返回一个普通对象快照（plain object clone + delete）。在 Vapor 编译模式下，模板中的 `v-bind="omit(props, ['xxx'])"` 只会在组件初次编译时求值一次，之后 props 变化不会触发重新计算。
 
@@ -1160,7 +1150,7 @@ const safeProps = computed(() => omit(props, ['onClose']))
 grep -rn 'v-bind="omit(props' packages/*/src/*.vue
 ```
 
-### 17. `attrs.style` 必须用 `for...in` 手动拷贝，不能用 `...attrs.style` 展开
+### 16. `attrs.style` 必须用 `for...in` 手动拷贝，不能用 `...attrs.style` 展开
 
 Vapor 运行时的 `resolveDynamicProps` 会将多个来源的 `style` 合并为数组（`ret.style = normalizeStyle([ret.style, toMerge.style])`），最终 `patchStyle` 遍历 style 对象时通过 `setStyle(style, key, value)` 设置到 `CSSStyleDeclaration` 上。`CSSStyleDeclaration` 有 `[0]`、`[1]` 等索引属性，当 `style` 对象包含数字 key 或意外 key 时会触发 `TypeError: Failed to set an indexed property [0] on 'CSSStyleDeclaration'`。
 
@@ -1207,7 +1197,7 @@ const restAttrs = computed(() =>
 
 **受影响组件**：任何使用 `useAttrs()` + `inheritAttrs: false` + `v-bind="restAttrs"` + `:style="computed"` 模式的 Vapor 组件（textarea、overflow、portal 等）。
 
-### 18. `onXxx` prop 回调必须改为 `defineEmits` + `@xxx`
+### 17. `onXxx` prop 回调必须改为 `defineEmits` + `@xxx`
 
 Vapor SFC 中组件间事件通信的标准做法是 `defineEmits` + `emit('xxx', args)` + 父组件 `@xxx="handler"`。不能使用 `onXxx?: (args) => void` 定义在 props 中，父组件用 `:onXxx="handler"` 或 `:on-xxx="handler"` 传递。
 
@@ -1287,7 +1277,7 @@ grep -rn ':on[A-Z]\|:on-[a-z]' packages/*/src/*.vue apps/playground/src/demos/
 3. interface.ts：删除 `onXxx?:` 字段
 4. index.ts：如果导出相关类型则更新
 
-### 19. `{ ...props }` 展开会丢失事件处理器（Vapor props proxy 不枚举 emit 绑定的 onXxx）
+### 18. `{ ...props }` 展开会丢失事件处理器（Vapor props proxy 不枚举 emit 绑定的 onXxx）
 
 在 Vapor 模式下，props proxy 的 `getOwnPropertyDescriptor` 对 emit 绑定的 `onXxx` 属性返回 `undefined`，导致 `{ ...props }` 展开时静默丢失所有事件处理器（如 `onFocus`、`onBlur`）。
 
@@ -1320,7 +1310,7 @@ const forwardProps = computed(() => {
 
 **适用场景**：任何需要将 props 转发给子组件的中间层组件（如 Select → BaseSelect、DialogWrap → Dialog）。
 
-### 20. Vapor 中 `v-bind` / `:ref` 不触发回调式 ref
+### 19. Vapor 中 `v-bind` / `:ref` 不触发回调式 ref
 
 在 Vapor 模式下，`:ref="callbackFunction"` 和 `v-bind` 中的回调 ref 不会被自动调用。必须用 `shallowRef` + `watch` 手动触发。
 
@@ -1328,7 +1318,9 @@ const forwardProps = computed(() => {
 
 ```vue
 <script>
-const setRef = (el) => { /* ... */ }
+  const setRef = el => {
+    /* ... */
+  }
 </script>
 <template>
   <!-- ❌ vapor 下 callback ref 不会被调用 -->
@@ -1342,16 +1334,16 @@ const setRef = (el) => { /* ... */ }
 
 ```vue
 <script setup vapor lang="ts">
-const rootRef = shallowRef<HTMLElement>()
-const { setRef } = defineProps<{ setRef?: (el: HTMLElement) => void }>()
+  const rootRef = shallowRef<HTMLElement>()
+  const { setRef } = defineProps<{ setRef?: (el: HTMLElement) => void }>()
 
-watch(
-  [rootRef, computed(() => setRef)],
-  ([el, cb]) => {
-    if (el && cb) cb(el)
-  },
-  { immediate: true },
-)
+  watch(
+    [rootRef, computed(() => setRef)],
+    ([el, cb]) => {
+      if (el && cb) cb(el)
+    },
+    { immediate: true },
+  )
 </script>
 <template>
   <div ref="rootRef" />
@@ -1360,7 +1352,7 @@ watch(
 
 **适用场景**：所有从父组件接收回调 ref 并需要转发到 DOM 元素的场景（Trigger 组件的 `setRef` 回调是典型用例）。
 
-### 21. Vapor 中 computed `:class` 绑定可能不响应式更新
+### 20. Vapor 中 computed `:class` 绑定可能不响应式更新
 
 在 Vapor 模式下，依赖响应式状态的 computed class 绑定（如 focus/open 状态类）可能不会在状态变化时更新。需要用 `watch` + `classList.toggle` 作为兜底。
 
@@ -1368,7 +1360,7 @@ watch(
 
 ```vue
 <script setup vapor lang="ts">
-const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
+  const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
 </script>
 <template>
   <!-- ❌ focused/open 变化时类名可能不更新 -->
@@ -1380,18 +1372,18 @@ const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
 
 ```vue
 <script setup vapor lang="ts">
-const rootRef = shallowRef<HTMLElement>()
-const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
+  const rootRef = shallowRef<HTMLElement>()
+  const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
 
-watch(
-  [rootRef, focused, open],
-  ([el, f, o]) => {
-    if (!el) return
-    el.classList.toggle(`${prefixCls.value}-focused`, f)
-    el.classList.toggle(`${prefixCls.value}-open`, o)
-  },
-  { immediate: true },
-)
+  watch(
+    [rootRef, focused, open],
+    ([el, f, o]) => {
+      if (!el) return
+      el.classList.toggle(`${prefixCls.value}-focused`, f)
+      el.classList.toggle(`${prefixCls.value}-open`, o)
+    },
+    { immediate: true },
+  )
 </script>
 <template>
   <div ref="rootRef" :class="nodeCls" />
@@ -1400,7 +1392,7 @@ watch(
 
 **适用场景**：依赖响应式状态（focus/open/active 等）的动态 CSS 类名。`:class` 用于初始渲染，`watch` 确保后续更新。
 
-### 22. 转发 Trigger 组件的 triggerProps 时必须剥离 `onClick`
+### 21. 转发 Trigger 组件的 triggerProps 时必须剥离 `onClick`
 
 当组件通过 mousedown 自行管理弹出层的打开/关闭逻辑，同时又从 Trigger/Popup 组件接收 `triggerProps` 时，必须从 `triggerProps` 中移除 `onClick`，否则会产生双击翻转（double-toggle）问题。
 
@@ -1419,7 +1411,7 @@ const triggerMergedProps = computed(() => {
 
 **适用场景**：所有自己管理 mousedown 开关逻辑、又使用 Trigger/Popup 组件的场景（Select、Dropdown 等）。
 
-### 23. 弹窗组件的 SSR 安全打开状态
+### 22. 弹窗组件的 SSR 安全打开状态
 
 受控/非受控的弹窗打开状态在 SSR 场景下需要额外处理，防止 hydration mismatch。在 `onMounted` 之前强制状态为关闭。
 
@@ -1427,13 +1419,156 @@ const triggerMergedProps = computed(() => {
 import { onMounted } from 'vue'
 
 const rendered = shallowRef(false)
-onMounted(() => { rendered.value = true })
+onMounted(() => {
+  rendered.value = true
+})
 
 // ssrSafeOpen：SSR 阶段强制 false，客户端挂载后才使用真实状态
 const ssrSafeOpen = computed(() => (rendered.value ? stateOpen.value : false))
 ```
 
 **适用场景**：所有有 `defaultOpen: true` 的弹窗组件。
+
+### 23. `@vue-ignore` 使 SFC 编译器对 `Omit<ExternalType>` 继承的 prop 不可见
+
+当子组件 props 用 `Omit<ExternalProps, 'foo' | 'bar'>` 继承父组件类型时（如 `TreeSelectProps extends Omit<BaseSelectPublicShared, ...>`），Vapor SFC 编译器无法从外部类型中正确解析被排除的 prop，导致父组件以 fallthrough 形式传入的 prop 被视为"未声明"并触发 Vue warning。
+
+**修复**：在 `interface.ts` 中用 `/* @vue-ignore */` 注释让编译器忽略该继承的 props 接口。这些被忽略的 prop 通过 `forwardProps` + `v-bind="forwardProps"` 运行时透传（规则 18）。
+
+```ts
+// TreeSelect.ts — 继承 BaseSelectPublicShared 并排除内部管理的字段
+export interface TreeSelectProps<...>
+  extends /* @vue-ignore */ Omit<
+    BaseSelectPublicShared<...>,
+    'classNames' | 'styles' | 'mode' | ...
+  > {
+  // tree 特有属性
+  treeData?: DataNode[]
+  // ...
+}
+```
+
+**被忽略的 prop 必须出现在 `omitKeyList` 的补集中**（即不出现在 `omitKeyList` 中），否则会同时被 `forwardProps` 排除，导致完全丢失。例如 `placeholder`、`direction`、`autoFocus` 等未被 TreeSelect 显式声明但需要透传给 BaseSelect 的 prop，必须确保不在 `omitKeyList` 中。
+
+**适用场景**：任何用 `Omit<ExternalType>` 继承外部组件 props 的中间层组件（如 TreeSelect 继承 Select）。
+
+### 24. 受控/非受控 `internalValue` 初始化需兼容 `v-model:value`
+
+在源 JSX 项目中 `defaultValue` 是主要的数据源（`value` 由 `useMergedState` 管理）。但在 vapor SFC 中，`v-model:value` 场景下父组件只传 `:value`，`defaultValue` 为 `undefined`。
+
+**错误写法**：
+
+```ts
+// ❌ defaultValue 为 undefined，watch 不带 immediate 永远不会触发
+const internalValue = shallowRef(props.defaultValue)
+watch(
+  () => props.value,
+  v => {
+    internalValue.value = v
+  },
+)
+```
+
+**正确写法**：
+
+```ts
+// ✅ 初始化时取 defaultValue ?? value，watch 加 immediate 兜底
+const internalValue = shallowRef(props.defaultValue ?? props.value)
+watch(
+  () => props.value,
+  v => {
+    internalValue.value = v
+  },
+  { immediate: true },
+)
+```
+
+**适用场景**：所有管理受控/非受控值的组件（select, tree-select, cascader 等）。如果使用了 `useMergedState` 且正确配置了 `value`/`defaultValue` 则不受影响，但手动管理 `internalValue` 的组件（如 tree-select）必须注意。
+
+### 25. `useSelectTriggerControl` 的 window mousedown 监听会误关 popup
+
+`packages/select` 的 `useSelectTriggerControl` hook 在 `window` 上监听 `mousedown`，当点击不在 select 容器内的目标时关闭 popup。但 popup 内容通过 Portal 渲染在 `document.body` 下（不在 select 容器内），因此点击 popup 内部任意位置都会被判定为"外部点击"并关闭。
+
+`packages/trigger` 的 `useWinClick` 已有同样的问题，并通过 `popupPointerDownRef` + 检查 `popupElement.contains(target)` 解决。`useSelectTriggerControl` 缺了同样检查。
+
+**修复**：在 `useSelectTriggerControl` 中加入 `popupElements` 参数并检查：
+
+```ts
+// useSelectTriggerControl.ts
+export default function useSelectTriggerControl(
+  elements, // select 容器
+  open,
+  triggerOpen,
+  customizedTrigger,
+  popupElements?, // ← 新增：popup 元素
+) {
+  const onGlobalMouseDown = (event: MouseEvent) => {
+    // ...
+    if (open.value && !isInside(elements(), target)) {
+      // 点击在 popup 内 → 不关
+      if (popupElements && isInside(popupElements(), target)) return
+      triggerOpen(false)
+    }
+  }
+  // ...
+}
+```
+
+```ts
+// BaseSelect.vue
+useSelectTriggerControl(
+  getSelectElements,
+  mergedOpen,
+  triggerOpen,
+  computed(() => !!mergedComponents.value.root),
+  () => [triggerRef.value?.popupElement], // ← 传入 popup 元素
+)
+```
+
+**同时注意 `popupElement` 必须指向真实 DOM**：`packages/trigger/src/Trigger.vue` 中 `externalPopupRef` 因 `setPopupRef` 从未被调用始终为 `null`，正确的 popup ref 是内部 `popupEle`（通过 Transition `onBeforeEnter`→`onPrepare` 设置）。`defineExpose` 中必须暴露 `popupEle` 而非 `externalPopupRef`：
+
+```ts
+defineExpose({
+  setRef,
+  nativeElement: externalForwardRef,
+  popupElement: popupEle, // ✅ popupEle 是真实 DOM ref
+  forceAlign: triggerAlign,
+})
+```
+
+**适用场景**：所有在 select/trigger 之上构建弹出层、且 popup 内容通过 Portal 渲染的组件（select, tree-select, dropdown, date-picker 等）。
+
+### 26. 父组件注入子组件的 `<template #slotName>` 模式（替代 `<component :is>` 渲染组件）
+
+当一个组件 B 内建了默认子组件（如 `BaseSelect` 的 `<OptionList>`），而更高层的组件 A（如 `TreeSelect`）需要替换该子组件为自定义版本（如渲染 `Tree` 而非 flat list）时，使用**命名 slot 模式**：
+
+1. **子组件 B** 在需要被替换的位置用 `<slot name="X">默认内容</slot>` 包裹：
+
+   ```vue
+   <!-- BaseSelect.vue -->
+   <template #popup>
+     <slot name="optionList" ref="listRef">
+       <OptionList ref="listRef" />
+     </slot>
+   </template>
+   ```
+
+2. **父组件 A** 用 `<template #X>` 注入自定义内容：
+
+   ```vue
+   <!-- TreeSelect.vue -->
+   <BaseSelect v-bind="forwardProps" ...>
+     <template #optionList>
+       <slot name="optionList" ref="listRef">
+         <OptionList ref="listRef" />
+       </slot>
+     </template>
+   </BaseSelect>
+   ```
+
+**为什么不用 `<component :is>` 渲染组件**：规则 7.1/7.5 规定 `<component :is>` 仅用于渲染 HTML 标签。渲染 Vue 组件时，`<component :is="props.OptionList">` 在 vapor 下不可靠，且无法正确传递 slot/ref。命名 slot 模式是标准的 Vue slot 透传机制，与 vapor 兼容。
+
+**适用场景**：所有中间层组件包装基础组件、但需要允许上层替换特定子组件的场景（如 TreeSelect → BaseSelect、Pagination → Select、Table → Select 等）。
 
 ---
 
@@ -1481,10 +1616,10 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 | `Property 'value' does not exist`                                           | inject 返回 ComputedRef                                                                        | `computed(() => ref?.value)`                                                    |
 | `TS2322: Type 'string' is not assignable to type 'boolean'`                 | v-for + key 位置错误                                                                           | key 放在内部组件上                                                              |
 | `TS2345: Argument of type '{...}' is not assignable`                        | v-bind 展开类型不匹配                                                                          | 显式声明 props 或用 getter 对象                                                 |
-| 默认值不生效 / `??` 回退被跳过                                              | 布尔 prop 被 vapor 强制转为 `false`                                                            | `??` 改为 `                                                                     |     | `，或去除 prop 类型中的 `false` 分支 |
-| `TypeError: Failed to set an indexed property [0] on 'CSSStyleDeclaration'` | `...attrs.style` 展开引入非样式 key 或数字 key，`patchStyle` 设置到 CSSStyleDeclaration 时崩溃 | `attrs.style` 用 `for...in` 手动拷贝；`restAttrs` 排除 `style`；详见规则 17     |
-| 子组件收不到父组件更新的 props 值（如 Dialog 无法弹出）                     | 模板中 `v-bind="omit(props, ...)"` 返回普通对象快照，vapor 不响应式更新                        | 改为 `v-bind="props"` 或用 `computed(() => omit(props, ...))` 包装；详见规则 16 |
-| 事件不触发（`:onXxx` 写了但没反应）                                         | `onXxx` 定义在 props 中但 vapor 下父子组件间事件应走 `defineEmits`                             | 子组件加 `defineEmits` + `emit()`；父组件 `:onXxx` → `@xxx`；详见规则 18        |
+| 默认值不生效 / `??` 回退被跳过                                              | 布尔 prop 被 vapor 强制转为 `false`                                                            | `??` 改为 `\|\|`，或去除 prop 类型中的 `false` 分支                             |
+| `TypeError: Failed to set an indexed property [0] on 'CSSStyleDeclaration'` | `...attrs.style` 展开引入非样式 key 或数字 key，`patchStyle` 设置到 CSSStyleDeclaration 时崩溃 | `attrs.style` 用 `for...in` 手动拷贝；`restAttrs` 排除 `style`；详见规则 16     |
+| 子组件收不到父组件更新的 props 值（如 Dialog 无法弹出）                     | 模板中 `v-bind="omit(props, ...)"` 返回普通对象快照，vapor 不响应式更新                        | 改为 `v-bind="props"` 或用 `computed(() => omit(props, ...))` 包装；详见规则 15 |
+| 事件不触发（`:onXxx` 写了但没反应）                                         | `onXxx` 定义在 props 中但 vapor 下父子组件间事件应走 `defineEmits`                             | 子组件加 `defineEmits` + `emit()`；父组件 `:onXxx` → `@xxx`；详见规则 17        |
 | `TS2322: Type '(...) => void' is not assignable to type 'X'`                | `:onXxx` 类型不匹配，props 中的 `onXxx` 与父组件传递的函数签名不一致                           | 删除 props 中的 `onXxx`，改用 `defineEmits` 声明事件                            |
 
 ---
@@ -1499,27 +1634,29 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 
 ### 已迁移组件（@vapor-component/\*）
 
-| 包              | 模式                      | 特点                                                                                             |
-| --------------- | ------------------------- | ------------------------------------------------------------------------------------------------ |
-| switch          | 简单 UI                   | defineEmits 用法                                                                                 |
-| checkbox        | 简单 UI                   | useTemplateRef                                                                                   |
-| rate            | 简单 UI                   | useRefs hook                                                                                     |
-| segmented       | 简单 UI                   | 无内部依赖                                                                                       |
-| qrcode          | 简单 UI                   | useQRCode hook                                                                                   |
-| input           | 表单组件                  | useCount hook                                                                                    |
-| input-number    | 表单组件                  | useCursor, useFrame                                                                              |
-| textarea        | 表单组件                  | resize-observer 依赖；`attrs.style` 必须 `for...in` 拷贝（规则 17）                              |
-| collapse        | 父子组件                  | SemanticName, mergeSemantic                                                                      |
-| dialog          | Portal 组件               | RefContext, animatedVisible；`omit(props, ...)` 快照不响应式更新（规则 16）                      |
-| drawer          | Portal 组件               | useDrag, useFocusable, 双 context                                                                |
-| image           | Portal 组件               | PreviewGroup, useRegisterImage                                                                   |
-| portal          | 基础设施                  | useScrollLocker, useEscKeyDown                                                                   |
-| resize-observer | Observer                  | Collection 子组件, 双导出                                                                        |
-| mutate-observer | Observer                  | useMutateObserver hook                                                                           |
-| overflow        | 父子 + Context Provider   | useEffectState batcher；`attrs.style` 必须 `for...in` 拷贝（规则 17）                            |
-| tour            | Portal + Trigger 组合     | useTarget hook, 布尔 prop 强制转换坑                                                             |
-| listy           | Portal + VirtualList 组合 | slot 转发模式（`#default="slotProps"` 中转）、Portal `:open="true"` 必传、`onVisibleChange` 回调 |
-| select          | Trigger + VirtualList 组合 + 多层 context | `{...props}` 展开丢事件（规则 19）；回调 ref 不触发（规则 20）；computed class 不更新（规则 21）；triggerProps 剥离 onClick（规则 22）；SSR 安全打开状态（规则 23）；useOptions 双数据源；useOpen MessageChannel macroTask |
+| 包              | 模式                                      | 特点                                                                                                                                                                                                                       |
+| --------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| switch          | 简单 UI                                   | defineEmits 用法                                                                                                                                                                                                           |
+| checkbox        | 简单 UI                                   | useTemplateRef                                                                                                                                                                                                             |
+| rate            | 简单 UI                                   | useRefs hook                                                                                                                                                                                                               |
+| segmented       | 简单 UI                                   | 无内部依赖                                                                                                                                                                                                                 |
+| qrcode          | 简单 UI                                   | useQRCode hook                                                                                                                                                                                                             |
+| input           | 表单组件                                  | useCount hook                                                                                                                                                                                                              |
+| input-number    | 表单组件                                  | useCursor, useFrame                                                                                                                                                                                                        |
+| textarea        | 表单组件                                  | resize-observer 依赖；`attrs.style` 必须 `for...in` 拷贝（规则 16）                                                                                                                                                        |
+| collapse        | 父子组件                                  | SemanticName, mergeSemantic                                                                                                                                                                                                |
+| dialog          | Portal 组件                               | RefContext, animatedVisible；`omit(props, ...)` 快照不响应式更新（规则 16）                                                                                                                                                |
+| drawer          | Portal 组件                               | useDrag, useFocusable, 双 context                                                                                                                                                                                          |
+| image           | Portal 组件                               | PreviewGroup, useRegisterImage                                                                                                                                                                                             |
+| portal          | 基础设施                                  | useScrollLocker, useEscKeyDown                                                                                                                                                                                             |
+| resize-observer | Observer                                  | Collection 子组件, 双导出                                                                                                                                                                                                  |
+| mutate-observer | Observer                                  | useMutateObserver hook                                                                                                                                                                                                     |
+| overflow        | 父子 + Context Provider                   | useEffectState batcher；`attrs.style` 必须 `for...in` 拷贝（规则 16）                                                                                                                                                      |
+| tour            | Portal + Trigger 组合                     | useTarget hook, 布尔 prop 强制转换坑                                                                                                                                                                                       |
+| listy           | Portal + VirtualList 组合                 | slot 转发模式（`#default="slotProps"` 中转）、Portal `:open="true"` 必传、`onVisibleChange` 回调                                                                                                                           |
+| select          | Trigger + VirtualList 组合 + 多层 context | `{...props}` 展开丢事件（规则 18）；回调 ref 不触发（规则 19）；computed class 不更新（规则 20）；triggerProps 剥离 onClick（规则 21）；SSR 安全打开状态（规则 22）；useOptions 双数据源；useOpen MessageChannel macroTask |
+| tree            | Context + VirtualList + 递归子节点        | `@click`→`@mousedown`（vapor virtual-list 内 @click 不触发）；`reactive`+getter（规则 11）；`switcherIcon` 强制转换（规则 12）；无 CSSTransition 跳过 placeholder（规则 13）                                               |
+| tree-select     | BaseSelect 包装 + 双层 context + Tree     | `@vue-ignore` Omit（规则 24）；`internalValue` 初始化（规则 25）；popup mousedown 误关（规则 26）；命名 slot 注入子组件（规则 27）                                                                                         |
 
 ### 工程文件参考
 

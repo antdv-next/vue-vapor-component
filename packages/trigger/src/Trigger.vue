@@ -350,7 +350,7 @@
   defineExpose({
     setRef,
     nativeElement: externalForwardRef,
-    popupElement: externalPopupRef,
+    popupElement: popupEle,
     forceAlign: triggerAlign,
   })
 

@@ -43,6 +43,7 @@
     "@vapor-component/tooltip": "workspace:*",
     "@vapor-component/tour": "workspace:*",
     "@vapor-component/tree": "workspace:*",
+    "@vapor-component/tree-select": "workspace:*",
     "@vapor-component/trigger": "workspace:*",
     "@vapor-component/upload": "workspace:*",
     "@vapor-component/virtual-list": "workspace:*"

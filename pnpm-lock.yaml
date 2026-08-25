@@ -180,6 +180,9 @@ importers:
       '@vapor-component/tree':
         specifier: workspace:*
         version: link:../../packages/tree
+      '@vapor-component/tree-select':
+        specifier: workspace:*
+        version: link:../../packages/tree-select
       '@vapor-component/trigger':
         specifier: workspace:*
         version: link:../../packages/trigger
@@ -552,6 +555,21 @@ importers:
       '@vapor-component/virtual-list':
         specifier: workspace:^
         version: link:../virtual-list
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-rc.3(typescript@5.9.3)
+
+  packages/tree-select:
+    dependencies:
+      '@v-c/util':
+        specifier: 'catalog:'
+        version: 1.1.0(vue@3.6.0-rc.3(typescript@5.9.3))
+      '@vapor-component/select':
+        specifier: workspace:^
+        version: link:../select
+      '@vapor-component/tree':
+        specifier: workspace:^
+        version: link:../tree
       vue:
         specifier: 'catalog:'
         version: 3.6.0-rc.3(typescript@5.9.3)

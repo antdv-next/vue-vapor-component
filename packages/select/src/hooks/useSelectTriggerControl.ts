@@ -18,6 +18,7 @@ export default function useSelectTriggerControl(
   open: Ref<boolean>,
   triggerOpen: TriggerOpenType,
   customizedTrigger: Ref<boolean>,
+  popupElements?: () => (HTMLElement | SVGElement | undefined)[],
 ) {
   const onGlobalMouseDown = (event: MouseEvent) => {
     if (customizedTrigger.value) return
@@ -30,9 +31,15 @@ export default function useSelectTriggerControl(
       target = (event as any)._ori_target
     }
 
-    if (open.value && !isInside(elements(), target)) {
-      triggerOpen(false)
-    }
+    if (!open.value) return
+
+    // Don't close if clicking inside the select container OR the popup.
+    // Without checking popupElements, clicking inside the popup (which lives
+    // in a Portal outside the select DOM) is treated as "outside" and closes it.
+    if (isInside(elements(), target)) return
+    if (popupElements && isInside(popupElements(), target)) return
+
+    triggerOpen(false)
   }
 
   onMounted(() => {
