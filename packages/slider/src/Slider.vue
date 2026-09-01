@@ -17,7 +17,6 @@
   import warning from '@v-c/util/dist/warning'
   import {
     computed,
-    defineEmits,
     nextTick,
     onMounted,
     ref,

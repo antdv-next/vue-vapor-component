@@ -1,0 +1,109 @@
+import { onBeforeUnmount, ref, shallowRef, triggerRef } from 'vue'
+
+import { nextSlice } from '../utils/timeUtil'
+
+const PATH_SPLIT = '__VC_UTIL_PATH_SPLIT__'
+
+const getPathStr = (keyPath: string[]) => keyPath.join(PATH_SPLIT)
+const getPathKeys = (keyPathStr: string) => keyPathStr.split(PATH_SPLIT)
+
+export const OVERFLOW_KEY = 'vc-menu-more'
+
+export default function useKeyRecords() {
+  const key2pathRef = shallowRef(new Map<string, string>())
+  const path2keyRef = shallowRef(new Map<string, string>())
+  const overflowKeys = ref<string[]>([])
+  const updateRef = ref(0)
+  const destroyRef = ref(false)
+
+  const schedulePathRegisterUpdate = () => {
+    updateRef.value += 1
+    const id = updateRef.value
+
+    nextSlice(() => {
+      if (!destroyRef.value && id === updateRef.value) {
+        triggerRef(key2pathRef)
+        triggerRef(path2keyRef)
+      }
+    })
+  }
+
+  const registerPath = (key: string, keyPath: string[]) => {
+    if (process.env.NODE_ENV !== 'production') {
+      if (key2pathRef.value.has(key)) {
+        console.warn(
+          `Duplicated key '${key}' used in Menu by path [${keyPath.join(' > ')}]`,
+        )
+      }
+    }
+
+    const connectedPath = getPathStr(keyPath)
+    path2keyRef.value.set(connectedPath, key)
+    key2pathRef.value.set(key, connectedPath)
+    schedulePathRegisterUpdate()
+  }
+
+  const unregisterPath = (key: string, keyPath: string[]) => {
+    const connectedPath = getPathStr(keyPath)
+    path2keyRef.value.delete(connectedPath)
+    key2pathRef.value.delete(key)
+    schedulePathRegisterUpdate()
+  }
+
+  const refreshOverflowKeys = (keys: string[]) => {
+    overflowKeys.value = keys
+  }
+
+  const getKeyPath = (eventKey: string, includeOverflow?: boolean) => {
+    const fullPath = key2pathRef.value.get(eventKey) || ''
+    const keys = getPathKeys(fullPath)
+
+    if (includeOverflow && overflowKeys.value.includes(keys[0])) {
+      keys.unshift(OVERFLOW_KEY)
+    }
+
+    return keys
+  }
+
+  const isSubPathKey = (pathKeys: string[], eventKey: string) =>
+    pathKeys
+      .filter(item => item !== undefined)
+      .some(pathKey => {
+        const pathKeyList = getKeyPath(pathKey, true)
+        return pathKeyList.includes(eventKey)
+      })
+
+  const getKeys = () => {
+    const keys = Array.from(key2pathRef.value.keys())
+    if (overflowKeys.value.length) {
+      keys.push(OVERFLOW_KEY)
+    }
+    return keys
+  }
+
+  const getSubPathKeys = (key: string): Set<string> => {
+    const connectedPath = `${key2pathRef.value.get(key)}${PATH_SPLIT}`
+    const pathKeys = new Set<string>()
+
+    Array.from(path2keyRef.value.keys()).forEach(pathKey => {
+      if (pathKey.startsWith(connectedPath)) {
+        pathKeys.add(path2keyRef.value.get(pathKey)!)
+      }
+    })
+    return pathKeys
+  }
+
+  onBeforeUnmount(() => {
+    destroyRef.value = true
+  })
+
+  return {
+    registerPath,
+    unregisterPath,
+    refreshOverflowKeys,
+    isSubPathKey,
+    getKeyPath,
+    getKeys,
+    getSubPathKeys,
+  }
+}

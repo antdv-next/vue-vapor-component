@@ -2,7 +2,7 @@
 
 蒸汽模式无头组件
 
-English · 中文
+[English](./README.en-US.md) · 中文
 
 > [!WARNING]  
 > 本项目不是 `antdv-next` 适配 `vapor` 的最终方案，只是前期探索的个人尝试，但即使该方案最终未被采纳，也会维持开源协议，作为 SFC 形式且兼容 vapor 的 headless component 来说，仍有实现意义

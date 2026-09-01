@@ -10,6 +10,7 @@
   import InputNumberBasic from './demos/vapor/input-number/basic.vue'
   import InputBasic from './demos/vapor/input/basic.vue'
   import ListyBasic from './demos/vapor/listy/basic.vue'
+  import MenuBasic from './demos/vapor/menu/basic.vue'
   import MutateObserverBasic from './demos/vapor/mutate-observer/basic.vue'
   import NotificationBasic from './demos/vapor/notification/basic.vue'
   import OverflowBasic from './demos/vapor/overflow/basic.vue'
@@ -142,6 +143,9 @@
       />
       <TreeSelectBasic
         v-if="currentComponent === 'tree-select' && currentCase === 'basic'"
+      />
+      <MenuBasic
+        v-if="currentComponent === 'menu' && currentCase === 'basic'"
       />
     </template>
   </div>

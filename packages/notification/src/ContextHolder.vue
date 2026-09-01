@@ -10,7 +10,6 @@
     computed,
     unref,
     onMounted,
-    defineExpose,
     useTemplateRef,
     watch,
   } from 'vue'

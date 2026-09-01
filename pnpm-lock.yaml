@@ -123,6 +123,9 @@ importers:
       '@vapor-component/listy':
         specifier: workspace:*
         version: link:../../packages/listy
+      '@vapor-component/menu':
+        specifier: workspace:*
+        version: link:../../packages/menu
       '@vapor-component/mutate-observer':
         specifier: workspace:*
         version: link:../../packages/mutate-observer
@@ -326,6 +329,24 @@ importers:
       '@vapor-component/virtual-list':
         specifier: workspace:^
         version: link:../virtual-list
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-rc.3(typescript@5.9.3)
+
+  packages/menu:
+    dependencies:
+      '@v-c/util':
+        specifier: 'catalog:'
+        version: 1.1.0(vue@3.6.0-rc.3(typescript@5.9.3))
+      '@vapor-component/overflow':
+        specifier: workspace:^
+        version: link:../overflow
+      '@vapor-component/portal':
+        specifier: workspace:^
+        version: link:../portal
+      '@vapor-component/trigger':
+        specifier: workspace:^
+        version: link:../trigger
       vue:
         specifier: 'catalog:'
         version: 3.6.0-rc.3(typescript@5.9.3)
