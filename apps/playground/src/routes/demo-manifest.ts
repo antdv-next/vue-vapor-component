@@ -23,6 +23,11 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
+    component: 'cascader',
+    label: 'Cascader',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
     component: 'color-picker',
     label: 'ColorPicker',
     cases: [{ name: 'basic', label: 'Basic' }],

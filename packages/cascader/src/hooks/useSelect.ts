@@ -1,0 +1,85 @@
+import type { Ref } from 'vue'
+import type {
+  InternalValueType,
+  LegacyKey,
+  ShowCheckedStrategy,
+  SingleValueType,
+} from '../interface'
+import type { GetEntities } from './useEntities'
+import { conductCheck } from '@vapor-component/tree'
+import { toPathKey, toPathKeys } from '../utils/commonUtil'
+import { formatStrategyValues } from '../utils/treeUtil'
+
+export default function useSelect(
+  multiple: Ref<boolean>,
+  checkStrictly: Ref<boolean>,
+  triggerChange: (nextValues: InternalValueType) => void,
+  checkedValues: Ref<SingleValueType[]>,
+  halfCheckedValues: Ref<SingleValueType[]>,
+  missingCheckedValues: Ref<SingleValueType[]>,
+  getPathKeyEntities: GetEntities,
+  getValueByKeyPath: (pathKeys: LegacyKey[]) => SingleValueType[],
+  showCheckedStrategy?: Ref<ShowCheckedStrategy | undefined>,
+) {
+  return (valuePath: SingleValueType) => {
+    if (!multiple.value) {
+      triggerChange(valuePath)
+    } else {
+      const pathKey = toPathKey(valuePath)
+      const checkedPathKeys = toPathKeys(checkedValues.value)
+      const halfCheckedPathKeys = toPathKeys(halfCheckedValues.value)
+
+      const existInChecked = checkedPathKeys.includes(pathKey)
+      const existInMissing = missingCheckedValues.value.some(
+        (valueCells) => toPathKey(valueCells) === pathKey,
+      )
+
+      let nextCheckedValues = checkedValues.value
+      let nextMissingValues = missingCheckedValues.value
+
+      if (existInMissing && !existInChecked) {
+        nextMissingValues = missingCheckedValues.value.filter(
+          (valueCells) => toPathKey(valueCells) !== pathKey,
+        )
+      } else if (checkStrictly.value) {
+        nextCheckedValues = existInChecked
+          ? checkedValues.value.filter(
+              (valueCells) => toPathKey(valueCells) !== pathKey,
+            )
+          : [...checkedValues.value, valuePath]
+      } else {
+        const nextRawCheckedKeys = existInChecked
+          ? checkedPathKeys.filter((key) => key !== pathKey)
+          : [...checkedPathKeys, pathKey]
+
+        const pathKeyEntities = getPathKeyEntities()
+
+        let checkedKeys: LegacyKey[]
+        if (existInChecked) {
+          const result = conductCheck(
+            nextRawCheckedKeys,
+            { checked: false, halfCheckedKeys: halfCheckedPathKeys },
+            pathKeyEntities,
+          ) as { checkedKeys: LegacyKey[] }
+          checkedKeys = result.checkedKeys
+        } else {
+          const result = conductCheck(
+            nextRawCheckedKeys,
+            true,
+            pathKeyEntities,
+          ) as { checkedKeys: LegacyKey[] }
+          checkedKeys = result.checkedKeys
+        }
+
+        const deDuplicatedKeys = formatStrategyValues(
+          checkedKeys,
+          getPathKeyEntities,
+          showCheckedStrategy?.value,
+        )
+        nextCheckedValues = getValueByKeyPath(deDuplicatedKeys)
+      }
+
+      triggerChange([...nextMissingValues, ...nextCheckedValues])
+    }
+  }
+}

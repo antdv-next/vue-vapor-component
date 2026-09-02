@@ -3,6 +3,7 @@
   import CheckboxBasic from './demos/vapor/checkbox/basic.vue'
   import CollapseBasic from './demos/vapor/collapse/basic.vue'
   import ColorPickerBasic from './demos/vapor/color-picker/basic.vue'
+  import CascaderBasic from './demos/vapor/cascader/basic.vue'
   import DialogBasic from './demos/vapor/dialog/basic.vue'
   import DrawerBasic from './demos/vapor/drawer/basic.vue'
   import DropdownBasic from './demos/vapor/dropdown/basic.vue'
@@ -89,6 +90,9 @@
       />
       <ColorPickerBasic
         v-if="currentComponent === 'color-picker' && currentCase === 'basic'"
+      />
+      <CascaderBasic
+        v-if="currentComponent === 'cascader' && currentCase === 'basic'"
       />
       <DialogBasic
         v-if="currentComponent === 'dialog' && currentCase === 'basic'"

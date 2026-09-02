@@ -86,7 +86,7 @@ Pure vapor mode mixing in vdom components also requires `vaporInteropPlugin`, wh
 | Component       | Status | Verified | Notes                                       |
 | --------------- | ------ | -------- | ------------------------------------------- |
 | async-validator | ⭐️     | 🚀       |                                             |
-| cascader        | ⭕     |          |                                             |
+| cascader        | ✅     |          |                                             |
 | checkbox        | ✅     |          |                                             |
 | collapse        | ✅     |          |                                             |
 | color-picker    | ✅     |          |                                             |
@@ -100,7 +100,7 @@ Pure vapor mode mixing in vdom components also requires `vaporInteropPlugin`, wh
 | input-number    | ✅     |          |                                             |
 | listy           | ✅     |          |                                             |
 | mentions        | ⭕     |          |                                             |
-| menu            | ⭕     |          |                                             |
+| menu            | ✅     |          |                                             |
 | mini-decimal    | ⭐️     | 🚀       |                                             |
 | mutate-observer | ✅     |          |                                             |
 | notification    | ✅     |          | Limited by SFC, added configRef and onReady |

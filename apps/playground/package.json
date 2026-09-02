@@ -16,6 +16,7 @@
   "dependencies": {
     "@vapor-component/checkbox": "workspace:*",
     "@vapor-component/collapse": "workspace:*",
+    "@vapor-component/cascader": "workspace:*",
     "@vapor-component/color-picker": "workspace:*",
     "@vapor-component/dialog": "workspace:*",
     "@vapor-component/drawer": "workspace:*",

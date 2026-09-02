@@ -1,0 +1,27 @@
+{
+  "name": "@vapor-component/cascader",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "vp pack",
+    "prepublish": "pnpm build"
+  },
+  "dependencies": {
+    "@v-c/util": "catalog:",
+    "@vapor-component/select": "workspace:^",
+    "@vapor-component/tree": "workspace:^"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "packageManager": "pnpm@10.16.1"
+}

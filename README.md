@@ -86,7 +86,7 @@ import App from './App.vue'
 | 组件            | 状态 | 验证 | 备注                                |
 | --------------- | ---- | ---- | ----------------------------------- |
 | async-validator | ⭐️   | 🚀   |                                     |
-| cascader        | ⭕   |      |                                     |
+| cascader        | ✅   |      |                                     |
 | checkbox        | ✅   |      |                                     |
 | collapse        | ✅   |      |                                     |
 | color-picker    | ✅   |      |                                     |
@@ -100,7 +100,7 @@ import App from './App.vue'
 | input-number    | ✅   |      |                                     |
 | listy           | ✅   |      |                                     |
 | mentions        | ⭕   |      |                                     |
-| menu            | ⭕   |      |                                     |
+| menu            | ✅   |      |                                     |
 | mini-decimal    | ⭐️   | 🚀   |                                     |
 | mutate-observer | ✅   |      |                                     |
 | notification    | ✅   |      | 受限 SFC，多了 configRef 与 onReady |
