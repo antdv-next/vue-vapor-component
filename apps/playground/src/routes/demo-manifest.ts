@@ -73,6 +73,11 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
+    component: 'mentions',
+    label: 'Mentions',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
     component: 'mutate-observer',
     label: 'MutateObserver',
     cases: [{ name: 'basic', label: 'Basic' }],

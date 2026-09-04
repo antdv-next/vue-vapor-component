@@ -32,9 +32,6 @@
 
   // ======================== Container ========================
   function getPortalContainer(getContainer: GetContainer) {
-    if (getContainer === false) {
-      return false
-    }
     if (!canUseDom() || !getContainer) {
       return null
     }

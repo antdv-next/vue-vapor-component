@@ -29,7 +29,7 @@
     () => !!slots.addonBefore || !!props.addonBefore,
   )
   const hasAddonAfter = computed(() => !!slots.addonAfter || !!props.addonAfter)
-  const hasAllowClear = computed(() => !!slots.clearIcon || props.allowClear)
+  const hasAllowClear = computed(() => !!props.allowClear)
 
   function onInputClick(e: MouseEvent) {
     if (containerRef.value?.contains(e.target as Element)) {

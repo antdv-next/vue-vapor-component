@@ -1,0 +1,18 @@
+{
+  "extends": ["../../tsconfig.json"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.vue",
+    "../input/src/**/*.ts",
+    "../input/src/**/*.vue",
+    "../textarea/src/**/*.ts",
+    "../textarea/src/**/*.vue",
+    "../menu/src/**/*.ts",
+    "../menu/src/**/*.vue",
+    "../trigger/src/**/*.ts",
+    "../trigger/src/**/*.vue"
+  ]
+}
