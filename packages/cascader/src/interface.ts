@@ -1,5 +1,6 @@
 import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
+
 import { SHOW_PARENT, SHOW_CHILD } from './utils/commonUtil'
 
 export interface BaseOptionType {
@@ -69,10 +70,14 @@ export type BaseSelectSemanticName =
 
 export type PopupSemantic = 'list' | 'listItem'
 
-export type CascaderClassNames = Partial<Record<BaseSelectSemanticName, string>> & {
+export type CascaderClassNames = Partial<
+  Record<BaseSelectSemanticName, string>
+> & {
   popup?: Partial<Record<PopupSemantic, string>>
 }
-export type CascaderStyles = Partial<Record<BaseSelectSemanticName, CSSProperties>> & {
+export type CascaderStyles = Partial<
+  Record<BaseSelectSemanticName, CSSProperties>
+> & {
   popup?: Partial<Record<PopupSemantic, CSSProperties>>
 }
 

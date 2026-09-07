@@ -1,23 +1,21 @@
 <script setup vapor lang="ts">
-  import type { DataDrivenOptionProps, MentionsRef, OptionProps } from './interface'
+  import type {
+    DataDrivenOptionProps,
+    MentionsRef,
+    OptionProps,
+  } from './interface'
 
-  import TextArea from '@vapor-component/textarea'
   import { clsx } from '@v-c/util'
+  import useId from '@v-c/util/dist/hooks/useId'
   import KeyCode from '@v-c/util/dist/KeyCode'
   import omit from '@v-c/util/dist/omit'
   import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
-  import useId from '@v-c/util/dist/hooks/useId'
-  import {
-    computed,
-    shallowRef,
-    useAttrs,
-    useTemplateRef,
-    watch,
-  } from 'vue'
+  import TextArea from '@vapor-component/textarea'
+  import { computed, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 
+  import useEffectState from './hooks/useEffectState'
   import KeywordTrigger from './KeywordTrigger.vue'
   import { useMentionsContextProvider } from './MentionsContextKey'
-  import useEffectState from './hooks/useEffectState'
   import {
     filterOption as defaultFilterOption,
     validateSearch as defaultValidateSearch,
@@ -271,7 +269,10 @@
         return
       }
       const offset = which === KeyCode.UP ? -1 : 1
-      const nextIndex = getEnabledActiveIndex(activeIndex.value + offset, offset)
+      const nextIndex = getEnabledActiveIndex(
+        activeIndex.value + offset,
+        offset,
+      )
       if (nextIndex !== -1) {
         activeIndex.value = nextIndex
       }
@@ -305,12 +306,12 @@
     const { key, which } = event as any
     const target = event.target as HTMLTextAreaElement
     const selectionStartText = getBeforeSelectionText(target)
-    const { location: measureIndex, prefix: nextMeasurePrefix } = getLastMeasureIndex(
-      selectionStartText,
-      mergedPrefix.value,
-    )
+    const { location: measureIndex, prefix: nextMeasurePrefix } =
+      getLastMeasureIndex(selectionStartText, mergedPrefix.value)
 
-    if ([KeyCode.ESC, KeyCode.UP, KeyCode.DOWN, KeyCode.ENTER].includes(which)) {
+    if (
+      [KeyCode.ESC, KeyCode.UP, KeyCode.DOWN, KeyCode.ENTER].includes(which)
+    ) {
       return
     }
 
@@ -327,12 +328,12 @@
 
       if (validateMeasure) {
         if (
-          key === nextMeasurePrefix
-          || key === 'Shift'
-          || which === KeyCode.ALT
-          || key === 'AltGraph'
-          || mergedMeasuring.value
-          || (nextMeasureText !== mergedMeasureText.value && matchOption)
+          key === nextMeasurePrefix ||
+          key === 'Shift' ||
+          which === KeyCode.ALT ||
+          key === 'AltGraph' ||
+          mergedMeasuring.value ||
+          (nextMeasureText !== mergedMeasureText.value && matchOption)
         ) {
           startMeasure(nextMeasureText, nextMeasurePrefix, measureIndex)
         }
@@ -412,31 +413,34 @@
     const { style: _, class: __, ...safeRestAttrs } = restAttrs
     return {
       ...safeRestAttrs,
-      ...omit(props as Record<string, any>, [
-        'prefixCls',
-        'classNames',
-        'styles',
-        'prefix',
-        'split',
-        'notFoundContent',
-        'value',
-        'defaultValue',
-        'silent',
-        'validateSearch',
-        'filterOption',
-        'placement',
-        'direction',
-        'transitionName',
-        'getPopupContainer',
-        'popupClassName',
-        'rows',
-        'options',
-        'hasWrapper',
-        'suffix',
-        'allowClear',
-        'addonBefore',
-        'addonAfter',
-      ] as string[]),
+      ...omit(
+        props as Record<string, any>,
+        [
+          'prefixCls',
+          'classNames',
+          'styles',
+          'prefix',
+          'split',
+          'notFoundContent',
+          'value',
+          'defaultValue',
+          'silent',
+          'validateSearch',
+          'filterOption',
+          'placement',
+          'direction',
+          'transitionName',
+          'getPopupContainer',
+          'popupClassName',
+          'rows',
+          'options',
+          'hasWrapper',
+          'suffix',
+          'allowClear',
+          'addonBefore',
+          'addonAfter',
+        ] as string[],
+      ),
     }
   })
 
@@ -480,18 +484,13 @@
 </script>
 
 <template>
-  <div
-    v-if="!hasWrapper"
-    ref="container"
-    :class="containerCls"
-    :style="style"
-  >
+  <div v-if="!hasWrapper" ref="container" :class="containerCls" :style="style">
     <TextArea
       ref="textarea"
       v-bind="forwardedProps"
       :id="id"
       :prefix-cls="prefixCls"
-      :class-names="{textarea: classNames?.textarea}"
+      :class-names="{ textarea: classNames?.textarea }"
       :styles="mergedStyles"
       :value="mergedValue"
       :rows="rows"
@@ -508,11 +507,7 @@
       @focus="onInternalFocus"
       @blur="onInternalBlur"
     />
-    <div
-      v-if="mergedMeasuring"
-      ref="measure"
-      :class="measureCls"
-    >
+    <div v-if="mergedMeasuring" ref="measure" :class="measureCls">
       {{ valueBefore }}
       <KeywordTrigger
         :prefix-cls="prefixCls"
@@ -540,7 +535,7 @@
       v-bind="forwardedProps"
       :id="id"
       :prefix-cls="prefixCls"
-      :class-names="{textarea: classNames?.textarea}"
+      :class-names="{ textarea: classNames?.textarea }"
       :styles="mergedStyles"
       :value="mergedValue"
       :rows="rows"
@@ -557,11 +552,7 @@
       @focus="onInternalFocus"
       @blur="onInternalBlur"
     />
-    <div
-      v-if="mergedMeasuring"
-      ref="measure"
-      :class="measureCls"
-    >
+    <div v-if="mergedMeasuring" ref="measure" :class="measureCls">
       {{ valueBefore }}
       <KeywordTrigger
         :prefix-cls="prefixCls"

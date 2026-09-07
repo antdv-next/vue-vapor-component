@@ -5,6 +5,7 @@ import type {
   InternalValueType,
   SingleValueType,
 } from '../interface'
+
 import { SEARCH_MARK } from '../hooks/useSearchOptions'
 
 export const VALUE_SPLIT = '__VC_CASCADER_SPLIT__'
@@ -23,9 +24,7 @@ export function toPathValueStr(pathKey: string) {
   return pathKey.split(VALUE_SPLIT)
 }
 
-export function fillFieldNames(
-  fieldNames?: FieldNames,
-): InternalFieldNames {
+export function fillFieldNames(fieldNames?: FieldNames): InternalFieldNames {
   const { label, value, children } = fieldNames || {}
   const val = value || 'value'
   return {
@@ -66,21 +65,17 @@ export function getFullPathKeys(
   options: DefaultOptionType[],
   fieldNames: InternalFieldNames,
 ) {
-  return options.map((item) => {
+  return options.map(item => {
     const path = item[SEARCH_MARK]
     return path?.map((opt: Record<string, any>) => opt[fieldNames.value])
   })
 }
 
-function isMultipleValue(
-  value: InternalValueType,
-): value is SingleValueType[] {
+function isMultipleValue(value: InternalValueType): value is SingleValueType[] {
   return Array.isArray(value) && Array.isArray(value[0])
 }
 
-export function toRawValues(
-  value?: InternalValueType,
-): SingleValueType[] {
+export function toRawValues(value?: InternalValueType): SingleValueType[] {
   if (!value) {
     return []
   }
@@ -89,7 +84,7 @@ export function toRawValues(
     return value
   }
 
-  return (value.length === 0 ? [] : [value]).map((val) =>
+  return (value.length === 0 ? [] : [value]).map(val =>
     Array.isArray(val) ? val : [val],
   )
 }

@@ -1,22 +1,20 @@
 <script setup vapor lang="ts">
+  import type { CommonInputProps } from '@vapor-component/input'
+
   import type { MentionsRef, MentionsProps } from './interface'
 
-  import type { CommonInputProps } from '@vapor-component/input'
-  import { BaseInput } from '@vapor-component/input'
   import { clsx } from '@v-c/util'
   import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
+  import { BaseInput } from '@vapor-component/input'
   import { computed, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 
   import InternalMentions from './InternalMentions.vue'
 
   defineOptions({ name: 'VcMentions', inheritAttrs: false })
 
-  const props = withDefaults(
-    defineProps<MentionsProps>(),
-    {
-      prefixCls: 'vc-mentions',
-    },
-  )
+  const props = withDefaults(defineProps<MentionsProps>(), {
+    prefixCls: 'vc-mentions',
+  })
 
   const emit = defineEmits<{
     change: [value: string]
@@ -74,11 +72,9 @@
   )
 
   const nodeCls = computed(() =>
-    clsx(
-      props.prefixCls,
-      className,
-      { [`${props.prefixCls}-has-suffix`]: hasSuffix.value },
-    ),
+    clsx(props.prefixCls, className, {
+      [`${props.prefixCls}-has-suffix`]: hasSuffix.value,
+    }),
   )
 
   const internalProps = computed(() => ({

@@ -1,6 +1,8 @@
 import type { Ref } from 'vue'
+
 import type { CascaderProps } from '../Cascader'
 import type { SearchConfig } from '../interface'
+
 import { warning } from '@v-c/util'
 import { computed } from 'vue'
 
@@ -8,7 +10,9 @@ export type SearchConfigResult = [Ref<boolean>, Ref<SearchConfig>]
 
 export default function useSearchConfig(
   showSearch: Ref<CascaderProps['showSearch']>,
-  props: Ref<Pick<CascaderProps, 'autoClearSearchValue' | 'searchValue' | 'onSearch'>>,
+  props: Ref<
+    Pick<CascaderProps, 'autoClearSearchValue' | 'searchValue' | 'onSearch'>
+  >,
 ): SearchConfigResult {
   const mergedShowSearch = computed<boolean>(() => {
     if (!showSearch.value) {
@@ -43,7 +47,10 @@ export default function useSearchConfig(
       config.limit = false
 
       if ((import.meta as any).env?.DEV) {
-        warning(false, '`limit` of showSearch should be positive number or false.')
+        warning(
+          false,
+          '`limit` of showSearch should be positive number or false.',
+        )
       }
     }
 

@@ -14,9 +14,9 @@
     "test": "vp test"
   },
   "dependencies": {
+    "@vapor-component/cascader": "workspace:*",
     "@vapor-component/checkbox": "workspace:*",
     "@vapor-component/collapse": "workspace:*",
-    "@vapor-component/cascader": "workspace:*",
     "@vapor-component/color-picker": "workspace:*",
     "@vapor-component/dialog": "workspace:*",
     "@vapor-component/drawer": "workspace:*",
@@ -25,8 +25,8 @@
     "@vapor-component/input": "workspace:*",
     "@vapor-component/input-number": "workspace:*",
     "@vapor-component/listy": "workspace:*",
-    "@vapor-component/menu": "workspace:*",
     "@vapor-component/mentions": "workspace:*",
+    "@vapor-component/menu": "workspace:*",
     "@vapor-component/mutate-observer": "workspace:*",
     "@vapor-component/notification": "workspace:*",
     "@vapor-component/overflow": "workspace:*",
@@ -42,6 +42,7 @@
     "@vapor-component/slider": "workspace:*",
     "@vapor-component/steps": "workspace:*",
     "@vapor-component/switch": "workspace:*",
+    "@vapor-component/tabs": "workspace:*",
     "@vapor-component/textarea": "workspace:*",
     "@vapor-component/tooltip": "workspace:*",
     "@vapor-component/tour": "workspace:*",

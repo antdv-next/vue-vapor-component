@@ -1,9 +1,10 @@
 <script setup vapor lang="ts">
+  import type { MenuRef } from '@vapor-component/menu'
+
   import type { DropdownMenuProps } from './interface'
 
-  import type { MenuRef } from '@vapor-component/menu'
-  import Menu from '@vapor-component/menu'
   import { getDOM } from '@v-c/util/dist/Dom/findDOMNode'
+  import Menu from '@vapor-component/menu'
   import {
     computed,
     nextTick,
@@ -22,9 +23,7 @@
   const menuRef = useTemplateRef<MenuRef>('menu')
 
   const activeIndex = computed(() => mentionsContext?.value?.activeIndex ?? -1)
-  const activeOptionKey = computed(
-    () => props.options[activeIndex.value]?.key,
-  )
+  const activeOptionKey = computed(() => props.options[activeIndex.value]?.key)
 
   // ===================== List Event Binding =====================
   let removeListListeners: VoidFunction | undefined
@@ -77,25 +76,22 @@
   )
 
   // ===================== Scroll Active Into View =====================
-  watch(
-    [activeIndex, activeOptionKey, () => props.opened],
-    () => {
-      if (!props.opened || activeIndex.value === -1) {
+  watch([activeIndex, activeOptionKey, () => props.opened], () => {
+    if (!props.opened || activeIndex.value === -1) {
+      return
+    }
+    nextTick(() => {
+      const key = activeOptionKey.value
+      if (!key) {
         return
       }
-      nextTick(() => {
-        const key = activeOptionKey.value
-        if (!key) {
-          return
-        }
-        const activeItem = menuRef.value?.findItem?.({ key })
-        activeItem?.scrollIntoView({
-          block: 'nearest',
-          inline: 'nearest',
-        })
+      const activeItem = menuRef.value?.findItem?.({ key })
+      activeItem?.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest',
       })
-    },
-  )
+    })
+  })
 
   onBeforeUnmount(() => {
     removeListListeners?.()
@@ -141,11 +137,7 @@
       </slot>
     </Menu.Item>
 
-    <Menu.Item
-      v-if="!options.length"
-      key="not-found"
-      disabled
-    >
+    <Menu.Item v-if="!options.length" key="not-found" disabled>
       <slot name="not-found">
         {{ mentionsContext?.notFoundContent }}
       </slot>

@@ -1,29 +1,45 @@
 <script setup vapor lang="ts">
+  import type { CascaderProps } from './Cascader'
   import type { DefaultOptionType, SingleValueType } from './interface'
+
   import { clsx } from '@v-c/util'
   import { computed, shallowRef, toRef, watch } from 'vue'
 
-  import type { CascaderProps } from './Cascader'
   import { useCascaderProvider } from './CascaderContextKey'
   import useMissingValues from './hooks/useMissingValues'
   import useOptions from './hooks/useOptions'
   import useSelect from './hooks/useSelect'
   import useValues from './hooks/useValues'
   import RawOptionList from './OptionList/List.vue'
-  import {
-    fillFieldNames,
-    SHOW_PARENT,
-    toRawValues,
-  } from './utils'
+  import { fillFieldNames, SHOW_PARENT, toRawValues } from './utils'
   import { toPathOptions } from './utils/treeUtil'
 
   const props = withDefaults(
-    defineProps<Pick<CascaderProps, 'value' | 'defaultValue' | 'changeOnSelect' | 'options' | 'prefixCls' | 'checkable' | 'checkStrictly' | 'fieldNames' | 'showCheckedStrategy' | 'loadData' | 'expandTrigger' | 'expandIcon' | 'loadingIcon' | 'disabled' | 'optionRender'> & {
-      className?: string
-      style?: any
-      direction?: 'ltr' | 'rtl'
-      notFoundContent?: any
-    }>(),
+    defineProps<
+      Pick<
+        CascaderProps,
+        | 'value'
+        | 'defaultValue'
+        | 'changeOnSelect'
+        | 'options'
+        | 'prefixCls'
+        | 'checkable'
+        | 'checkStrictly'
+        | 'fieldNames'
+        | 'showCheckedStrategy'
+        | 'loadData'
+        | 'expandTrigger'
+        | 'expandIcon'
+        | 'loadingIcon'
+        | 'disabled'
+        | 'optionRender'
+      > & {
+        className?: string
+        style?: any
+        direction?: 'ltr' | 'rtl'
+        notFoundContent?: any
+      }
+    >(),
     {
       prefixCls: 'vc-cascader',
       expandIcon: '>',
@@ -42,7 +58,7 @@
   const internalRawValues = shallowRef(props.defaultValue ?? props.value)
   watch(
     () => props.value,
-    (newVal) => {
+    newVal => {
       internalRawValues.value = newVal
     },
     { immediate: true },
@@ -84,12 +100,12 @@
 
     const nextRawValues = toRawValues(nextValues)
 
-    const valueOptions = nextRawValues.map((valueCells) =>
+    const valueOptions = nextRawValues.map(valueCells =>
       toPathOptions(
         valueCells,
         mergedOptions.value,
         mergedFieldNames.value,
-      ).map((valueOpt) => valueOpt.option),
+      ).map(valueOpt => valueOpt.option),
     )
 
     const triggerValues = multiple.value ? nextRawValues : nextRawValues[0]
@@ -129,7 +145,9 @@
     loadData: props.loadData,
     expandTrigger: props.expandTrigger,
     expandIcon:
-      props.expandIcon !== undefined ? props.expandIcon : (props.expandIcon as any),
+      props.expandIcon !== undefined
+        ? props.expandIcon
+        : (props.expandIcon as any),
     loadingIcon: props.loadingIcon,
     popupMenuColumnStyle: undefined,
     optionRender: props.optionRender,

@@ -1,14 +1,15 @@
 <script setup vapor lang="ts">
   import type { BaseSelectRef } from '@vapor-component/select'
+
+  import type { CascaderProps } from './Cascader'
   import type { CascaderContextProps } from './interface'
+
   import useId from '@v-c/util/dist/hooks/useId'
   import useMergedState from '@v-c/util/dist/hooks/useMergedState'
   import { BaseSelect } from '@vapor-component/select'
   import { computed, shallowRef, toRef, useAttrs, watch } from 'vue'
 
-  import type { CascaderProps } from './Cascader'
   import { useCascaderProvider } from './CascaderContextKey'
-  import OptionList from './OptionList.vue'
   import useDisplayValues from './hooks/useDisplayValues'
   import useMissingValues from './hooks/useMissingValues'
   import useOptions from './hooks/useOptions'
@@ -16,6 +17,7 @@
   import useSearchOptions from './hooks/useSearchOptions'
   import useSelect from './hooks/useSelect'
   import useValues from './hooks/useValues'
+  import OptionList from './OptionList.vue'
   import {
     fillFieldNames,
     formatStrategyValues,
@@ -56,7 +58,7 @@
   const internalRawValues = shallowRef(props.defaultValue ?? props.value)
   watch(
     () => props.value,
-    (newVal) => {
+    newVal => {
       internalRawValues.value = newVal
     },
     { immediate: true },
@@ -66,9 +68,7 @@
     internalRawValues.value = values
   }
 
-  const rawValues = computed(() =>
-    toRawValues(internalRawValues.value as any),
-  )
+  const rawValues = computed(() => toRawValues(internalRawValues.value as any))
 
   // ==================== FieldNames ====================
   const mergedFieldNames = computed(() => fillFieldNames(props.fieldNames))
@@ -171,12 +171,12 @@
 
     const nextRawValues = toRawValues(nextValues)
 
-    const valueOptions = nextRawValues.map((valueCells) =>
+    const valueOptions = nextRawValues.map(valueCells =>
       toPathOptions(
         valueCells,
         mergedOptions.value,
         mergedFieldNames.value,
-      ).map((valueOpt) => valueOpt.option),
+      ).map(valueOpt => valueOpt.option),
     )
 
     const triggerValues = multiple.value ? nextRawValues : nextRawValues[0]
@@ -218,9 +218,7 @@
       return
     }
 
-    const val = info.values?.[0] as
-      | { valueCells: any }
-      | undefined
+    const val = info.values?.[0] as { valueCells: any } | undefined
     if (val?.valueCells) {
       onInternalSelect(val.valueCells)
     }

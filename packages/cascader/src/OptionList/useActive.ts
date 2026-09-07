@@ -1,6 +1,9 @@
 import type { Ref } from 'vue'
+
 import type { LegacyKey } from '../interface'
+
 import { ref, watch } from 'vue'
+
 import { useCascaderContext } from '../CascaderContextKey'
 
 function useActive(

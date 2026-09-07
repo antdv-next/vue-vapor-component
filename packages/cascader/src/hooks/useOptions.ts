@@ -1,7 +1,15 @@
 import type { Ref } from 'vue'
-import type { DefaultOptionType, InternalFieldNames, LegacyKey, SingleValueType } from '../interface'
+
+import type {
+  DefaultOptionType,
+  InternalFieldNames,
+  LegacyKey,
+  SingleValueType,
+} from '../interface'
 import type { GetEntities } from './useEntities'
+
 import { computed } from 'vue'
+
 import useEntities from './useEntities'
 
 export default function useOptions(
@@ -21,11 +29,9 @@ export default function useOptions(
     const keyPathEntities = getPathKeyEntities()
     const valField = mergedFieldNames.value.value as string
 
-    return pathKeys.map((pathKey) => {
+    return pathKeys.map(pathKey => {
       const { nodes } = keyPathEntities[pathKey]
-      return nodes.map(
-        (node) => (node as Record<string, any>)[valField],
-      )
+      return nodes.map(node => (node as Record<string, any>)[valField])
     })
   }
 

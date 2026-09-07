@@ -1,5 +1,10 @@
 <script setup vapor lang="ts">
-  import type { DefaultOptionType, LegacyKey, SingleValueType } from '../interface'
+  import type {
+    DefaultOptionType,
+    LegacyKey,
+    SingleValueType,
+  } from '../interface'
+
   import { clsx } from '@v-c/util'
   import {
     computed,
@@ -10,6 +15,7 @@
     watch,
     watchEffect,
   } from 'vue'
+
   import { useCascaderContext } from '../CascaderContextKey'
   import {
     getFullPathKeys,
@@ -93,7 +99,7 @@
       return
     }
 
-    const nextLoadingKeys = loadingKeys.value.filter((loadingKey) => {
+    const nextLoadingKeys = loadingKeys.value.filter(loadingKey => {
       const valueStrCells = toPathValueStr(String(loadingKey))
       const optionList = toPathOptions(
         valueStrCells as SingleValueType,
@@ -120,11 +126,11 @@
   })
 
   // ========================== Values ==========================
-  const checkedSet = computed(() =>
-    new Set(toPathKeys(context.value?.values || [])),
+  const checkedSet = computed(
+    () => new Set(toPathKeys(context.value?.values || [])),
   )
-  const halfCheckedSet = computed(() =>
-    new Set(toPathKeys(context.value?.halfValues || [])),
+  const halfCheckedSet = computed(
+    () => new Set(toPathKeys(context.value?.halfValues || [])),
   )
 
   // ====================== Accessibility =======================
@@ -156,7 +162,11 @@
     )
   }
 
-  const onPathSelect = (valuePath: SingleValueType, leaf: boolean, fromKeyboard = false) => {
+  const onPathSelect = (
+    valuePath: SingleValueType,
+    leaf: boolean,
+    fromKeyboard = false,
+  ) => {
     context.value?.onSelect(valuePath)
 
     if (

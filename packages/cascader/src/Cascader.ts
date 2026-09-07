@@ -1,5 +1,6 @@
 import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
+
 import type {
   CascaderClassNames,
   CascaderStyles,

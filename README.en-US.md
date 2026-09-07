@@ -99,7 +99,7 @@ Pure vapor mode mixing in vdom components also requires `vaporInteropPlugin`, wh
 | input           | ✅     |          |                                             |
 | input-number    | ✅     |          |                                             |
 | listy           | ✅     |          |                                             |
-| mentions        | ⭕     |          |                                             |
+| mentions        | ✅     |          |                                             |
 | menu            | ✅     |          |                                             |
 | mini-decimal    | ⭐️     | 🚀       |                                             |
 | mutate-observer | ✅     |          |                                             |
@@ -119,7 +119,7 @@ Pure vapor mode mixing in vdom components also requires `vaporInteropPlugin`, wh
 | steps           | ✅     |          |                                             |
 | switch          | ✅     |          |                                             |
 | table           | ⭕     |          |                                             |
-| tabs            | ⭕     |          |                                             |
+| tabs            | ✅     |          |                                             |
 | textarea        | ✅     |          |                                             |
 | tooltip         | ✅     |          |                                             |
 | tour            | ✅     |          |                                             |

@@ -1,11 +1,14 @@
 import type { Ref } from 'vue'
+
 import type {
   DefaultOptionType,
   InternalFieldNames,
   LegacyKey,
   SingleValueType,
 } from '../interface'
+
 import KeyCode from '@v-c/util/dist/KeyCode'
+
 import { SEARCH_MARK } from '../hooks/useSearchOptions'
 import { getFullPathKeys, toPathKey } from '../utils/commonUtil'
 
@@ -14,7 +17,10 @@ export default function useKeyboard(
   fieldNames: InternalFieldNames,
   activeValueCells: Ref<LegacyKey[]>,
   setActiveValueCells: (activeValueCells: LegacyKey[]) => void,
-  onKeyBoardSelect: (valueCells: SingleValueType, option: DefaultOptionType) => void,
+  onKeyBoardSelect: (
+    valueCells: SingleValueType,
+    option: DefaultOptionType,
+  ) => void,
   contextProps: {
     direction: Ref<'ltr' | 'rtl' | undefined>
     searchValue: Ref<string>
@@ -35,8 +41,9 @@ export default function useKeyboard(
     for (let i = 0; i < len && currentOptions; i += 1) {
       const nextActiveIndex = currentOptions.findIndex(
         (_option, index) =>
-          (pathKeys[index] ? toPathKey(pathKeys[index] as LegacyKey[]) : (_option as any)[fieldNames.value])
-          === activeValueCells.value[i],
+          (pathKeys[index]
+            ? toPathKey(pathKeys[index] as LegacyKey[])
+            : (_option as any)[fieldNames.value]) === activeValueCells.value[i],
       )
 
       if (nextActiveIndex === -1) {
@@ -47,13 +54,16 @@ export default function useKeyboard(
       mergedActiveIndexes.push(activeIndex)
       mergedActiveValueCells.push(activeValueCells.value[i])
 
-      currentOptions = currentOptions[activeIndex]?.[fieldNames.children as string] || []
+      currentOptions =
+        currentOptions[activeIndex]?.[fieldNames.children as string] || []
     }
 
     let activeOptions: DefaultOptionType[] = options.value
     for (let i = 0; i < mergedActiveIndexes.length - 1; i += 1) {
       activeOptions =
-        activeOptions[mergedActiveIndexes[i]]?.[fieldNames.children as string] || []
+        activeOptions[mergedActiveIndexes[i]]?.[
+          fieldNames.children as string
+        ] || []
     }
 
     return {
@@ -69,8 +79,12 @@ export default function useKeyboard(
   }
 
   const offsetActiveOption = (offset: number) => {
-    const { lastActiveOptions, lastActiveIndex, fullPathKeys, validActiveValueCells } =
-      getActiveStatus()
+    const {
+      lastActiveOptions,
+      lastActiveIndex,
+      fullPathKeys,
+      validActiveValueCells,
+    } = getActiveStatus()
     const len = lastActiveOptions.length
 
     let currentIndex = lastActiveIndex
@@ -111,7 +125,7 @@ export default function useKeyboard(
     const nextOptions: DefaultOptionType[] =
       lastActiveOptions[lastActiveIndex]?.[fieldNames.children as string] || []
 
-    const nextOption = nextOptions.find((option) => !option.disabled)
+    const nextOption = nextOptions.find(option => !option.disabled)
 
     if (nextOption) {
       const nextActiveCells = [
@@ -181,7 +195,7 @@ export default function useKeyboard(
             if (originOptions.length) {
               onKeyBoardSelect(
                 originOptions.map(
-                  (opt) => (opt as Record<string, any>)[fieldNames.value],
+                  opt => (opt as Record<string, any>)[fieldNames.value],
                 ),
                 originOptions[originOptions.length - 1],
               )

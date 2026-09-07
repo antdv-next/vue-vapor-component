@@ -1,6 +1,7 @@
 <script setup vapor lang="ts">
   import { clsx } from '@v-c/util'
   import { computed } from 'vue'
+
   import { useCascaderContext } from '../CascaderContextKey'
 
   const props = defineProps<{
@@ -13,8 +14,8 @@
 
   const context = useCascaderContext()
   const checkable = computed(() => context.value?.checkable)
-  const customCheckbox = computed(
-    () => typeof checkable.value !== 'boolean' ? checkable.value : null,
+  const customCheckbox = computed(() =>
+    typeof checkable.value !== 'boolean' ? checkable.value : null,
   )
 
   const nodeCls = computed(() =>

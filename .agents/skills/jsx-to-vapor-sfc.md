@@ -1570,6 +1570,191 @@ defineExpose({
 
 **适用场景**：所有中间层组件包装基础组件、但需要允许上层替换特定子组件的场景（如 TreeSelect → BaseSelect、Pagination → Select、Table → Select 等）。
 
+### 27. `!!slots.xxx` 在 Vapor 中永远为真（即使 slot 未提供）
+
+Vapor 模式下 `useSlots()` 返回的 slots 对象对任意 slot 名都返回 truthy 值，即使父组件并未传递该 slot。用 `!!slots.xxx` 检测 slot 是否存在**永远为 true**。
+
+**问题场景** — BaseInput 的 clear icon：
+
+```ts
+// ❌ 错误：即使父组件未传 #clearIcon slot，!!slots.clearIcon 仍为 true
+const hasAllowClear = computed(() => !!slots.clearIcon || props.allowClear)
+// 结果：clear 按钮永远渲染
+```
+
+**修复**：移除 `!!slots.xxx` 检查，改为只检查已合并的 prop。上游组件（如 `Input.vue`）已负责将 slot 内容合并到 prop 中再传给下游：
+
+```ts
+// Input.vue — 将 #clearIcon slot 合并到 allowClear prop
+const mergedAllowClear = computed(() =>
+  slots.clearIcon ? slots.clearIcon() : props.allowClear,
+)
+
+// BaseInput.vue — 只检查 allowClear prop
+// ✅ 正确：不再依赖 !!slots.clearIcon
+const hasAllowClear = computed(() => !!props.allowClear)
+```
+
+**RULE**：Vapor 中绝不要用 `!!slots.xxx` 检测 slot 是否提供。改用父组件合并后的 prop（或等价的布尔状态）来判断。
+
+**适用场景**：所有需要条件渲染"如果父组件提供了某个 slot 就显示对应 UI"的场景（clear icon、loading icon、prefix icon 等）。
+
+### 28. 类型联合包含 `false` 时，Vapor 将 `undefined` 强制转为 `false`
+
+这是规则 7（布尔 prop 的 `??` fallback 失效）的延伸。当 prop 的类型联合中包含 `false` 分支时（如 `type GetContainer = string | Element | (() => Element) | false`），Vapor 编译器将其视为布尔 prop，未传时 `undefined` 被强制转为 `false`。
+
+**问题场景** — Portal 的 `getContainer`：
+
+```ts
+// ❌ 危险：getContainer 类型包含 false，vapor 将 undefined → false
+getContainer?: string | ContainerType | (() => ContainerType) | false
+
+// Portal.vue 中：
+function getPortalContainer(getContainer: GetContainer) {
+  if (getContainer === false) return false  // ← undefined 被转为 false，永远命中！
+  if (!canUseDom() || !getContainer) return null
+  // ...
+}
+// 结果：getPortalContainer 始终返回 false（内联渲染），popup 被渲染在父组件内部而非 body 下
+// popup 因父组件 z-index:-1 或 overflow:hidden 而不可见
+```
+
+**修复方案 A（推荐）**：去除类型中的 `false` 分支（参见规则 7 的根本修复）：
+
+```ts
+// ✅ 安全：不包含 false，undefined 不会被强制转换
+getContainer?: string | ContainerType | (() => ContainerType)
+```
+
+**修复方案 B**：删除 `=== false` 早退，利用 `!getContainer` 统一处理：
+
+```ts
+// ✅ 正确：!false === true, !undefined === true，两者统一返回 null（teleport 到 body）
+function getPortalContainer(getContainer: GetContainer) {
+  if (!canUseDom() || !getContainer) return null
+  if (typeof getContainer === 'string')
+    return document.querySelector(getContainer)
+  if (typeof getContainer === 'function')
+    return getDOM(getContainer()) as ContainerType
+  return (
+    typeof getContainer === 'object' ? getDOM(getContainer) : getContainer
+  ) as ContainerType
+}
+```
+
+**RULE**：当 prop 类型联合包含 `false` 时，绝不要写 `if (x === false)` 早退。用 `if (!x)` 统一处理（`!false === true`, `!undefined === true`），或更根本地去除类型中的 `false` 分支。
+
+**常见受影响场景**：
+
+- `getContainer?: (() => HTMLElement) | false`（Portal）
+- 任何 `boolean | { ... }` 联合类型（如 `mask`）
+- 任何在 `interface.ts` 中写了 `X | false` 的 prop
+
+**检测手段**：
+
+```bash
+grep -rn '| false' packages/*/src/interface.ts
+```
+
+### 29. CSS 子选择器 `> element` 在组件嵌套包装下失效
+
+当组件的内部结构添加了中间包装层（如 `BaseInput` 的 affix-wrapper），CSS 子选择器 `> element` 无法匹配到更深层的元素。
+
+**问题场景** — Mentions 双边框：
+
+```less
+// ❌ 错误：textarea 被 BaseInput 的 <span class="affix-wrapper"> 包裹
+// .vc-mentions > textarea 不匹配，外层 .vc-mentions 和内部 textarea 都有 border → 双框
+.vc-mentions {
+  border: 1px solid #999;
+}
+.vc-mentions > textarea {
+  border: none; // ← 子选择器不匹配，永远不生效
+}
+```
+
+**DOM 结构（实际）**：
+
+```html
+<div class="vc-mentions">                    <!-- border: 1px solid -->
+  <span class="vc-mentions-affix-wrapper">   <!-- 中间层，CSS 选不中 -->
+    <textarea class="vc-mentions">            <!-- border: 1px solid → 第二个框！ -->
+  </span>
+</div>
+```
+
+**修复**：改用后代选择器（不加 `>`）：
+
+```less
+// ✅ 正确：后代选择器能匹配任意深度的 textarea
+.vc-mentions {
+  border: 1px solid #999;
+
+  textarea {
+    border: none; // ← 无论 textarea 嵌套多深都能匹配
+    width: 100%;
+  }
+}
+```
+
+**RULE**：当组件内部使用了 BaseInput/affix-wrapper 等中间包装组件时，CSS 子选择器 `> element` 不会匹配嵌套更深的 form 元素。改用后代选择器。
+
+**适用场景**：
+
+- Mentions 的 textarea（被 BaseInput 的 affix-wrapper 包裹）
+- Input 的 prefix/suffix（被 affix-wrapper 包裹）
+- 任何通过组件嵌套（而非直接嵌套 DOM）包装的表单元素
+
+### 30. 基于外部值的 computed 无法被内部 ref 覆盖
+
+当 computed 同时读取外部值（如 props/mergedValue）和内部 ref 时，外部值的检查逻辑会阻止内部 ref 生效，导致状态无法收敛。
+
+**问题场景** — Mentions 弹窗选择后不关闭：
+
+```ts
+// ❌ 错误：先检查 mergedValue 是否包含 '@'，后检查 measuring ref
+const mergedMeasuringInfo = computed(() => {
+  // 优先检查值中是否还有 @ → 选了 "John" 后 value = "@John " 仍含 @ → 永远返回 true
+  for (let i = 0; i < mergedPrefix.value.length; i += 1) {
+    const curPrefix = mergedPrefix.value[i]
+    const index = mergedValue.value.lastIndexOf(curPrefix!)
+    if (index >= 0) return [true as const, '', curPrefix, index]
+  }
+  // 只有 value 不含 @ 时才用内部 ref
+  return [
+    measuring.value,
+    measureText.value,
+    measurePrefix.value,
+    measureLocation.value,
+  ] as const
+})
+```
+
+选择 "John" 后，`mergedValue` 变为 `"@John "`，`lastIndexOf('@')` 返回 `0`（位置非 -1），`mergedMeasuring` 永远 `true` → 弹窗不关闭。
+
+**修复**：去除外部值检查，直接用内部 ref 作为唯一来源：
+
+```ts
+// ✅ 正确：measuring ref 是唯一状态源，不依赖 value 中是否包含前缀字符
+const mergedMeasuringInfo = computed(() => {
+  return [
+    measuring.value,
+    measureText.value,
+    measurePrefix.value,
+    measureLocation.value,
+  ] as const
+})
+```
+
+**参考项目的防护**：源 JSX 项目的 computed 中有 `if (open?.value)` 守卫，确保外部值检查只在有外部弹窗上下文时执行。Vapor 版本没有外部弹窗上下文，所以直接去除整个外部值检查分支。
+
+**RULE**：当 computed 同时读取外部值（props / mergedValue / user input）和内部 ref 时，确保外部值检查不会阻止内部 ref 生效。如果组件不依赖外部上下文，直接用内部 ref 作为唯一状态源。
+
+**适用场景**：
+
+- Mentions 的测量状态（`mergedMeasuring`）
+- 任何需要"打开/关闭"状态但外部值中残留触发字符的组件（mentions、auto-complete 等）
+
 ---
 
 ## 十二、依赖关系速查

@@ -1,6 +1,6 @@
-import type { TextAreaProps, TextAreaRef } from '@vapor-component/textarea'
-import type { CommonInputProps } from '@vapor-component/input'
 import type { VueNode } from '@v-c/util/dist/type'
+import type { CommonInputProps } from '@vapor-component/input'
+import type { TextAreaProps, TextAreaRef } from '@vapor-component/textarea'
 import type { CSSProperties } from 'vue'
 
 // ========================= Types =========================

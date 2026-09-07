@@ -1,5 +1,7 @@
 import type { ComputedRef, InjectionKey } from 'vue'
+
 import type { CascaderContextProps } from './interface'
+
 import { computed, inject, provide } from 'vue'
 
 const CascaderContextKey: InjectionKey<
@@ -13,5 +15,8 @@ export function useCascaderProvider(
 }
 
 export function useCascaderContext(): ComputedRef<CascaderContextProps | null> {
-  return inject(CascaderContextKey, computed(() => null))
+  return inject(
+    CascaderContextKey,
+    computed(() => null),
+  )
 }

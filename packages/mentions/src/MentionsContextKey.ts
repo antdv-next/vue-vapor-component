@@ -1,5 +1,7 @@
-import type { MentionsContextProps } from './interface'
 import type { ComputedRef, InjectionKey } from 'vue'
+
+import type { MentionsContextProps } from './interface'
+
 import { inject, provide } from 'vue'
 
 const MentionsContextKey: InjectionKey<ComputedRef<MentionsContextProps>> =

@@ -1,6 +1,8 @@
 <script setup vapor lang="ts">
   import type { MentionsContextProps } from './interface'
+
   import { computed } from 'vue'
+
   import { useMentionsContextProvider } from './MentionsContextKey'
 
   defineOptions({ name: 'MentionsProvider', inheritAttrs: false })

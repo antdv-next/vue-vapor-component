@@ -1,11 +1,14 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import type { CascaderProps } from '../Cascader'
 import type {
   DefaultOptionType,
   InternalFieldNames,
   SingleValueType,
 } from '../interface'
+
 import { cloneVNode, computed, isVNode } from 'vue'
+
 import { toPathKey } from '../utils/commonUtil'
 import { toPathOptions } from '../utils/treeUtil'
 
@@ -23,12 +26,18 @@ export default (
         const mergedLabels = multiple.value ? labels.slice(-1) : labels
         const split = ' / '
 
-        if (mergedLabels.every((label) => ['string', 'number'].includes(typeof label))) {
+        if (
+          mergedLabels.every(label =>
+            ['string', 'number'].includes(typeof label),
+          )
+        ) {
           return mergedLabels.join(split)
         }
 
         return mergedLabels.reduce((list: any[], label, index) => {
-          const nextLabel = isVNode(label) ? cloneVNode(label, { key: index }) : label
+          const nextLabel = isVNode(label)
+            ? cloneVNode(label, { key: index })
+            : label
           if (index === 0) {
             return [nextLabel]
           }
@@ -36,7 +45,7 @@ export default (
         }, [])
       })
 
-    return rawValues.value.map((valueCells) => {
+    return rawValues.value.map(valueCells => {
       const valueOptions = toPathOptions(
         valueCells,
         options.value,
@@ -45,7 +54,8 @@ export default (
 
       const label = mergedDisplayRender(
         valueOptions.map(
-          ({ option, value }) => option?.[fieldNames.value.label as string] ?? value,
+          ({ option, value }) =>
+            option?.[fieldNames.value.label as string] ?? value,
         ),
         valueOptions.map(({ option }) => option),
       )

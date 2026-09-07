@@ -1,4 +1,5 @@
 import type { DefaultOptionType, InternalFieldNames } from '../interface'
+
 import { warning } from '@v-c/util'
 
 export function warningNullOptions(

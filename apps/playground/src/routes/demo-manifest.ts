@@ -153,6 +153,11 @@ export const demoManifest: DemoGroup[] = [
     cases: [{ name: 'basic', label: 'Basic' }],
   },
   {
+    component: 'tabs',
+    label: 'Tabs',
+    cases: [{ name: 'basic', label: 'Basic' }],
+  },
+  {
     component: 'textarea',
     label: 'TextArea',
     cases: [{ name: 'basic', label: 'Basic' }],

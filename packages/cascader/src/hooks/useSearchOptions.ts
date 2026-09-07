@@ -1,5 +1,11 @@
 import type { ComputedRef, Ref } from 'vue'
-import type { DefaultOptionType, InternalFieldNames, SearchConfig } from '../interface'
+
+import type {
+  DefaultOptionType,
+  InternalFieldNames,
+  SearchConfig,
+} from '../interface'
+
 import { computed } from 'vue'
 
 export const SEARCH_MARK = '__vc_cascader_search_mark__'
@@ -9,8 +15,10 @@ const defaultFilter: SearchConfig['filter'] = (
   options,
   { label = '' },
 ) =>
-  options.some((opt) =>
-    String(opt[label as string]).toLowerCase().includes(search.toLowerCase()),
+  options.some(opt =>
+    String(opt[label as string])
+      .toLowerCase()
+      .includes(search.toLowerCase()),
   )
 
 const defaultRender: SearchConfig['render'] = (
@@ -18,7 +26,7 @@ const defaultRender: SearchConfig['render'] = (
   path,
   _prefixCls,
   fieldNames,
-) => path.map((opt) => opt[fieldNames.label]).join(' / ')
+) => path.map(opt => opt[fieldNames.label]).join(' / ')
 
 function useSearchOptions(
   search: Ref<string>,
@@ -33,7 +41,12 @@ function useSearchOptions(
     const mergedOptions = options.value
     const mergedFieldNames = fieldNames.value
     const mergedPrefixCls = prefixCls.value
-    const { filter = defaultFilter, render = defaultRender, limit = 50, sort } = config.value
+    const {
+      filter = defaultFilter,
+      render = defaultRender,
+      limit = 50,
+      sort,
+    } = config.value
 
     const filteredOptions: DefaultOptionType[] = []
     if (!mergedSearch) {
@@ -45,7 +58,7 @@ function useSearchOptions(
       pathOptions: DefaultOptionType[],
       parentDisabled = false,
     ) {
-      list.forEach((option) => {
+      list.forEach(option => {
         if (
           !sort &&
           limit !== false &&
@@ -60,17 +73,11 @@ function useSearchOptions(
 
         const mergedDisabled = parentDisabled || option.disabled
 
-        if (
-          !children ||
-          children.length === 0 ||
-          enableHalfPath?.value
-        ) {
+        if (!children || children.length === 0 || enableHalfPath?.value) {
           if (
-            filter?.(
-              mergedSearch,
-              connectedPathOptions,
-              { label: mergedFieldNames.label },
-            )
+            filter?.(mergedSearch, connectedPathOptions, {
+              label: mergedFieldNames.label,
+            })
           ) {
             filteredOptions.push({
               ...option,

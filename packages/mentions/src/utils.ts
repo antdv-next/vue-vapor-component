@@ -59,8 +59,7 @@ function reduceText(text: string, targetText: string, split: string) {
     if (lower(restText[i]) !== lower(targetText[i])) {
       restText = restText.slice(i)
       break
-    }
-    else if (i === targetTextLen - 1) {
+    } else if (i === targetTextLen - 1) {
       restText = restText.slice(targetTextLen)
     }
   }
@@ -75,8 +74,8 @@ function reduceText(text: string, targetText: string, split: string) {
  *  => little @light test
  */
 export function replaceWithMeasure(text: string, measureConfig: MeasureConfig) {
-  const { measureLocation, prefix, targetText, selectionStart, split }
-    = measureConfig
+  const { measureLocation, prefix, targetText, selectionStart, split } =
+    measureConfig
 
   let beforeMeasureText = text.slice(0, measureLocation)
   if (beforeMeasureText[beforeMeasureText.length - split.length] === split) {
@@ -116,7 +115,10 @@ export function setInputSelection(
   input.focus()
 }
 
-export function validateSearch(text: string, split: MentionsProps['split']): boolean {
+export function validateSearch(
+  text: string,
+  split: MentionsProps['split'],
+): boolean {
   return !split || !(text ?? '').includes(split)
 }
 

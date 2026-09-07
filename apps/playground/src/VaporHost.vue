@@ -1,9 +1,9 @@
 <script setup vapor lang="ts">
   import VaporIntro from './components/VaporIntro.vue'
+  import CascaderBasic from './demos/vapor/cascader/basic.vue'
   import CheckboxBasic from './demos/vapor/checkbox/basic.vue'
   import CollapseBasic from './demos/vapor/collapse/basic.vue'
   import ColorPickerBasic from './demos/vapor/color-picker/basic.vue'
-  import CascaderBasic from './demos/vapor/cascader/basic.vue'
   import DialogBasic from './demos/vapor/dialog/basic.vue'
   import DrawerBasic from './demos/vapor/drawer/basic.vue'
   import DropdownBasic from './demos/vapor/dropdown/basic.vue'
@@ -11,8 +11,8 @@
   import InputNumberBasic from './demos/vapor/input-number/basic.vue'
   import InputBasic from './demos/vapor/input/basic.vue'
   import ListyBasic from './demos/vapor/listy/basic.vue'
-  import MenuBasic from './demos/vapor/menu/basic.vue'
   import MentionsBasic from './demos/vapor/mentions/basic.vue'
+  import MenuBasic from './demos/vapor/menu/basic.vue'
   import MutateObserverBasic from './demos/vapor/mutate-observer/basic.vue'
   import NotificationBasic from './demos/vapor/notification/basic.vue'
   import OverflowBasic from './demos/vapor/overflow/basic.vue'
@@ -28,6 +28,7 @@
   import SliderBasic from './demos/vapor/slider/basic.vue'
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
+  import TabsBasic from './demos/vapor/tabs/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
   import TooltipBasic from './demos/vapor/tooltip/basic.vue'
   import TourBasic from './demos/vapor/tour/basic.vue'
@@ -49,6 +50,9 @@
 
       <StepsBasic
         v-if="currentComponent === 'steps' && currentCase === 'basic'"
+      />
+      <TabsBasic
+        v-if="currentComponent === 'tabs' && currentCase === 'basic'"
       />
       <CheckboxBasic
         v-if="currentComponent === 'checkbox' && currentCase === 'basic'"

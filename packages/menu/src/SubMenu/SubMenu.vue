@@ -18,10 +18,10 @@
     usePathTrackerProvider,
   } from '../PathContextKey'
   import { usePathUserContext } from '../PathContextKey'
+  import defaultPlacements from '../placements'
   import { usePrivateContext } from '../PrivateContextKey'
   import { warnItemProp } from '../utils/warnUtil'
   import SubMenuList from './SubMenuList.vue'
-  import defaultPlacements from '../placements'
 
   defineOptions({ name: 'VcSubMenu', inheritAttrs: false })
 
@@ -91,7 +91,9 @@
   // ===================== Selection =====================
   const childrenSelected = computed(() => {
     const key = props.eventKey
-    return key ? pathUserContext.value.isSubPathKey(selectedKeys.value, key) : false
+    return key
+      ? pathUserContext.value.isSubPathKey(selectedKeys.value, key)
+      : false
   })
 
   // ===================== Active =====================

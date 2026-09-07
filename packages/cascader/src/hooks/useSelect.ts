@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import type {
   InternalValueType,
   LegacyKey,
@@ -6,7 +7,9 @@ import type {
   SingleValueType,
 } from '../interface'
 import type { GetEntities } from './useEntities'
+
 import { conductCheck } from '@vapor-component/tree'
+
 import { toPathKey, toPathKeys } from '../utils/commonUtil'
 import { formatStrategyValues } from '../utils/treeUtil'
 
@@ -31,7 +34,7 @@ export default function useSelect(
 
       const existInChecked = checkedPathKeys.includes(pathKey)
       const existInMissing = missingCheckedValues.value.some(
-        (valueCells) => toPathKey(valueCells) === pathKey,
+        valueCells => toPathKey(valueCells) === pathKey,
       )
 
       let nextCheckedValues = checkedValues.value
@@ -39,17 +42,17 @@ export default function useSelect(
 
       if (existInMissing && !existInChecked) {
         nextMissingValues = missingCheckedValues.value.filter(
-          (valueCells) => toPathKey(valueCells) !== pathKey,
+          valueCells => toPathKey(valueCells) !== pathKey,
         )
       } else if (checkStrictly.value) {
         nextCheckedValues = existInChecked
           ? checkedValues.value.filter(
-              (valueCells) => toPathKey(valueCells) !== pathKey,
+              valueCells => toPathKey(valueCells) !== pathKey,
             )
           : [...checkedValues.value, valuePath]
       } else {
         const nextRawCheckedKeys = existInChecked
-          ? checkedPathKeys.filter((key) => key !== pathKey)
+          ? checkedPathKeys.filter(key => key !== pathKey)
           : [...checkedPathKeys, pathKey]
 
         const pathKeyEntities = getPathKeyEntities()

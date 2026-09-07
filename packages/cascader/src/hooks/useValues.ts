@@ -1,8 +1,11 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import type { LegacyKey, SingleValueType } from '../interface'
 import type { GetMissValues } from './useMissingValues'
+
 import { conductCheck } from '@vapor-component/tree'
 import { computed } from 'vue'
+
 import { toPathKeys } from '../utils/commonUtil'
 
 export default function useValues(
@@ -12,11 +15,13 @@ export default function useValues(
   getPathKeyEntities: () => Record<string, any>,
   getValueByKeyPath: (pathKeys: LegacyKey[]) => SingleValueType[],
   getMissingValues: GetMissValues,
-): ComputedRef<[
-  checkedValues: SingleValueType[],
-  halfCheckedValues: SingleValueType[],
-  missingCheckedValues: SingleValueType[],
-]> {
+): ComputedRef<
+  [
+    checkedValues: SingleValueType[],
+    halfCheckedValues: SingleValueType[],
+    missingCheckedValues: SingleValueType[],
+  ]
+> {
   return computed(() => {
     const [existValues, missingValues] = getMissingValues(rawValues.value)
 

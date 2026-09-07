@@ -4,10 +4,17 @@
 
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
-  import type { DefaultOptionType, LegacyKey, SingleValueType } from '../interface'
+
+  import type {
+    DefaultOptionType,
+    LegacyKey,
+    SingleValueType,
+  } from '../interface'
+
   import { clsx } from '@v-c/util'
   import pickAttrs from '@v-c/util/dist/pickAttrs'
   import { computed, nextTick, ref, watch } from 'vue'
+
   import { useCascaderContext } from '../CascaderContextKey'
   import { SEARCH_MARK } from '../hooks/useSearchOptions'
   import { isLeaf, scrollIntoParentView, toPathKey } from '../utils/commonUtil'
@@ -46,7 +53,7 @@
       return []
     }
 
-    return props.options.map((option) => {
+    return props.options.map(option => {
       const { disabled, disableCheckbox } = option
       const searchOptions: Record<string, any>[] = (option as any)[SEARCH_MARK]
       const label = (option as any)[FIX_LABEL] ?? option[fieldNames.label]
@@ -55,7 +62,7 @@
       const isMergedLeaf = isLeaf(option, fieldNames)
 
       const fullPath = searchOptions
-        ? searchOptions.map((opt) => opt[fieldNames.value])
+        ? searchOptions.map(opt => opt[fieldNames.value])
         : [...props.prevValuePath, value]
       const fullPathKey = toPathKey(fullPath as SingleValueType)
 
@@ -97,7 +104,8 @@
       if (!menuRef.value) return
       nextTick(() => {
         const selector = `.${menuItemPrefixCls.value}-active`
-        const activeElement = menuRef.value?.querySelector<HTMLElement>(selector)
+        const activeElement =
+          menuRef.value?.querySelector<HTMLElement>(selector)
         if (activeElement) {
           scrollIntoParentView(activeElement)
         }
@@ -116,7 +124,9 @@
   >
     <template v-for="info in optionInfoList" :key="info.fullPathKey">
       <li
-        v-bind="pickAttrs(info.option as any, { aria: true, data: true }) as any"
+        v-bind="
+          pickAttrs(info.option as any, { aria: true, data: true }) as any
+        "
         :class="
           clsx(menuItemPrefixCls, context?.classNames?.popup?.listItem, {
             [menuItemPrefixCls + '-expand']: !info.isLeaf,
@@ -127,8 +137,8 @@
           })
         "
         :style="{
-          ...(context?.popupMenuColumnStyle as CSSProperties || {}),
-          ...(context?.styles?.popup?.listItem as CSSProperties || {}),
+          ...((context?.popupMenuColumnStyle as CSSProperties) || {}),
+          ...((context?.styles?.popup?.listItem as CSSProperties) || {}),
         }"
         role="menuitemcheckbox"
         :title="
@@ -176,7 +186,7 @@
             }
           }
         "
-        @mousedown="(e) => e.preventDefault()"
+        @mousedown="e => e.preventDefault()"
       >
         <template v-if="multiple">
           <Checkbox

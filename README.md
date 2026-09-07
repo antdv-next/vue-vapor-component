@@ -99,7 +99,7 @@ import App from './App.vue'
 | input           | ✅   |      |                                     |
 | input-number    | ✅   |      |                                     |
 | listy           | ✅   |      |                                     |
-| mentions        | ⭕   |      |                                     |
+| mentions        | ✅   |      |                                     |
 | menu            | ✅   |      |                                     |
 | mini-decimal    | ⭐️   | 🚀   |                                     |
 | mutate-observer | ✅   |      |                                     |
@@ -119,7 +119,7 @@ import App from './App.vue'
 | steps           | ✅   |      |                                     |
 | switch          | ✅   |      |                                     |
 | table           | ⭕   |      |                                     |
-| tabs            | ⭕   |      |                                     |
+| tabs            | ✅   |      |                                     |
 | textarea        | ✅   |      |                                     |
 | tooltip         | ✅   |      |                                     |
 | tour            | ✅   |      |                                     |

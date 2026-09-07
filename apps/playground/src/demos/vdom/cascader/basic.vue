@@ -1,7 +1,5 @@
 <script setup lang="ts">
-  import Cascader, {
-    SHOW_CHILD,
-  } from '@vapor-component/cascader'
+  import Cascader, { SHOW_CHILD } from '@vapor-component/cascader'
   import { ref } from 'vue'
 
   import '@/styles/select.less'
@@ -80,7 +78,7 @@
         :options="options"
         placeholder="Select a location..."
         @change="
-          (val) => {
+          val => {
             singleValue = val
             onChange(val, null)
           }
@@ -98,7 +96,7 @@
         :change-on-select="true"
         placeholder="Select at any level..."
         @change="
-          (val) => {
+          val => {
             changeOnSelectValue = val
           }
         "
@@ -115,7 +113,7 @@
         :show-search="true"
         placeholder="Search and select..."
         @change="
-          (val) => {
+          val => {
             searchValue = val
           }
         "
@@ -133,7 +131,7 @@
         :show-checked-strategy="SHOW_CHILD"
         placeholder="Check options..."
         @change="
-          (val) => {
+          val => {
             checkableValue = val
           }
         "
