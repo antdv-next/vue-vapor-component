@@ -462,15 +462,24 @@ const nodeCls = computed(() =>
 用于受控/非受控状态同步（collapse, rate, image 使用）：
 
 ```ts
-import useMergedState from '@v-c/util/dist/hooks/useMergedState'
-
+// ❌ 旧 JSX 模式 — onChange 调用 props.onChange?.()，vapor SFC 中 v-model 无法更新
 const [activeKey, setActiveKey] = useMergedState<Key[], Ref<Key[]>>([], {
   value: toRef(props, 'activeKey') as Ref<Key | Key[]>,
   onChange: v => props.onChange?.(v as Key[]),
   defaultValue: props.defaultActiveKey,
   postState: normalizeToArray,
 })
+
+// ✅ vapor SFC 模式 — onChange 用 emit('update:xxx', v) 通知父组件
+const [activeKey, setActiveKey] = useMergedState<Key[], Ref<Key[]>>([], {
+  value: toRef(props, 'activeKey') as Ref<Key | Key[]>,
+  onChange: v => emit('update:active-key', v as Key[]),  // ← v-model 的生命线
+  defaultValue: props.defaultActiveKey,
+  postState: normalizeToArray,
+})
 ```
+
+**⚠️ 注意**：`useMergedState` 的 `onChange` 在 vapor SFC 中必须用 `emit('update:xxx', v)` 而非 `props.onChange?.(v)`。缺少 `onChange` 会导致 v-model 场景下 UI 静默不更新——详见规则 31。
 
 ### 6.6 Ref 使用约定
 
@@ -518,26 +527,28 @@ defineExpose({
 
 ### 7.2 v-for + key
 
-**`<template v-for>` 本身不加 `:key`**，key 放在内部每个组件上：
+**`:key` 放在 `<template v-for>` 上**，不要在内部组件上重复：
 
 ```vue
-<template v-for="(item, idx) in mergedData">
-  <Item :key="getKey(item, idx)" :item="item" :order="idx" />
+<template v-for="(item, idx) in mergedData" :key="getKey(item, idx)">
+  <Item :item="item" :order="idx" />
 </template>
 ```
+
+**原因**：Vue 3 支持在 `<template v-for>` 上设置 `:key`，这是推荐做法。当 `<template v-for>` 包含多个子元素时，`:key` 必须放在 `<template>` 上，因为没有单个内部元素可以承载它。即使只有一个子元素，统一放在 `<template>` 上也是更一致的写法（参见规则 5）。
 
 ### 7.3 v-if / v-else
 
 ```vue
-<template v-for="(item, idx) in mergedData">
+<template v-for="(item, idx) in mergedData" :key="getKey(item, idx)">
   <ContextProvider v-if="props.renderRawItem" :value="context">
     <component :is="props.renderRawItem(item, idx)" />
   </ContextProvider>
-  <Item v-else :key="getKey(item, idx)" :item="item" />
+  <Item v-else :item="item" />
 </template>
 ```
 
-**注意**：`v-else` 必须紧跟 `v-if`，且都在同一个父 `<template>` 内。
+**注意**：`v-else` 必须紧跟 `v-if`，且都在同一个父 `<template>` 内。`:key` 放在 `<template>` 上，不要在内部组件上重复。
 
 ### 7.4 条件渲染 + 子组件绑定
 
@@ -1352,9 +1363,9 @@ const forwardProps = computed(() => {
 
 **适用场景**：所有从父组件接收回调 ref 并需要转发到 DOM 元素的场景（Trigger 组件的 `setRef` 回调是典型用例）。
 
-### 20. Vapor 中 computed `:class` 绑定可能不响应式更新
+### 20. Vapor 中 computed `:class` 和 ARIA 属性绑定可能不响应式更新
 
-在 Vapor 模式下，依赖响应式状态的 computed class 绑定（如 focus/open 状态类）可能不会在状态变化时更新。需要用 `watch` + `classList.toggle` 作为兜底。
+在 Vapor 模式下，依赖响应式状态的 computed class 绑定和 ARIA 属性绑定（如 `aria-hidden`、`tabindex`、`aria-selected`、`aria-disabled`）可能不会在状态变化时更新。需要用 `watch` + `classList.toggle` / `setAttribute` 作为兜底。
 
 **不够可靠的写法**：
 
@@ -1363,12 +1374,12 @@ const forwardProps = computed(() => {
   const nodeCls = computed(() => clsx(prefixCls, { focused, open }))
 </script>
 <template>
-  <!-- ❌ focused/open 变化时类名可能不更新 -->
-  <div :class="nodeCls" />
+  <!-- ❌ focused/open 变化时类名和 ARIA 属性可能不更新 -->
+  <div :class="nodeCls" :aria-hidden="!open" :tabindex="open ? 0 : -1" />
 </template>
 ```
 
-**正确写法**：`:class` 绑定 + `watch` 兜底双重保障：
+**正确写法**：`:class` + ARIA 绑定 + `watch` 兜底双重保障：
 
 ```vue
 <script setup vapor lang="ts">
@@ -1381,16 +1392,18 @@ const forwardProps = computed(() => {
       if (!el) return
       el.classList.toggle(`${prefixCls.value}-focused`, f)
       el.classList.toggle(`${prefixCls.value}-open`, o)
+      el.setAttribute('aria-hidden', String(!o))
+      el.setAttribute('tabindex', o ? '0' : '-1')
     },
     { immediate: true },
   )
 </script>
 <template>
-  <div ref="rootRef" :class="nodeCls" />
+  <div ref="rootRef" :class="nodeCls" :aria-hidden="!open" :tabindex="open ? 0 : -1" />
 </template>
 ```
 
-**适用场景**：依赖响应式状态（focus/open/active 等）的动态 CSS 类名。`:class` 用于初始渲染，`watch` 确保后续更新。
+**适用场景**：依赖响应式状态（focus/open/active 等）的动态 CSS 类名和 ARIA 属性（aria-hidden、tabindex、aria-selected、aria-disabled）。`:class` + ARIA 绑定用于初始渲染，`watch` 确保后续更新。
 
 ### 21. 转发 Trigger 组件的 triggerProps 时必须剥离 `onClick`
 
@@ -1755,6 +1768,215 @@ const mergedMeasuringInfo = computed(() => {
 - Mentions 的测量状态（`mergedMeasuring`）
 - 任何需要"打开/关闭"状态但外部值中残留触发字符的组件（mentions、auto-complete 等）
 
+### 31. `useMergedState` + `v-model` 必须配 `onChange`（受控模式静默失效）
+
+`useMergedState` 的 `watchEffect` 在受控模式下（父组件传入 `value` prop）始终取 `value.value` 而非 `innerValue.value`。`triggerChange` 更新 `innerValue` 后 `mergedValue` 不会变化，除非 `onChange` 回调让父组件通过 v-model 更新 prop。
+
+**问题流程**：
+
+```
+triggerChange(key) → innerValue.value = key
+  → watchEffect 重算: val = value.value !== undefined ? value.value : innerValue.value
+  → val = value.value（旧值！因为父组件还没更新）
+  → mergedValue.value = value.value（仍然旧值）
+  → 无 onChange 回调 → 父组件永远不知道 → UI 不更新
+```
+
+**❌ 错误写法**（旧 JSX 模式，vapor SFC 中 v-model 无法更新）：
+
+```ts
+// ❌ 缺少 onChange → triggerChange 后 mergedValue 永远不更新
+const [mergedActiveKey, setMergedActiveKey] = useMergedState<string, Ref<string | undefined>>(
+  props.activeKey ?? defaultKey.value,
+  { value: toRef(props, 'activeKey') as Ref<string> },
+)
+```
+
+**✅ 正确写法**（vapor SFC 模式，必须 emit('update:xxx') 通知父组件）：
+
+```ts
+// ✅ onChange 触发 v-model 更新 → 父组件更新 prop → watchEffect 重算 → mergedValue 更新
+const [mergedActiveKey, setMergedActiveKey] = useMergedState<string, Ref<string | undefined>>(
+  props.activeKey ?? defaultKey.value,
+  {
+    value: toRef(props, 'activeKey') as Ref<string>,
+    onChange: v => emit('update:active-key', v),  // ← 关键：v-model 的生命线
+  },
+)
+```
+
+**配套**：`defineEmits` 中必须声明 `'update:xxx'`：
+
+```ts
+const emit = defineEmits<{
+  change: [activeKey: string]
+  'update:active-key': [activeKey: string]  // ← v-model:active-key 需要
+}>()
+```
+
+**RULE**：使用 `useMergedState` 管理受控状态时，必须同时提供 `value`（`toRef(props, 'xxx')`）和 `onChange`（`v => emit('update:xxx', v)`）。缺少 `onChange` 会导致 v-model 场景下 UI 静默不更新——`change` 事件正常触发但视觉无变化。
+
+**适用场景**：所有使用 `useMergedState` 且需要 `v-model` 支持的组件（tabs、collapse、input 等）。注意 skill 6.5 节展示的 `onChange: v => props.onChange?.(v)` 是旧 JSX 模式，vapor SFC 中必须改为 `emit('update:xxx', v)`。
+
+### 32. `RenderComponent` / `h()` 列表渲染 → `<template v-for>` + 子组件
+
+源 JSX 项目大量使用 `h(RenderComponent, { render: items.map(...) })` 或 `RenderComponent` 组件渲染列表。vapor SFC 中必须改用 `<template v-for>` + 子组件。
+
+**❌ 源 JSX 模式**：
+
+```tsx
+// JSX 中使用 RenderComponent + h() 动态构建列表
+{
+  RenderComponent: h(RenderComponent, {
+    render: tabs.map((tab, index) =>
+      h(TabNode, {
+        key: tab.key,
+        tab,
+        active: tab.key === activeKey,
+        onClick: () => onTabClick(tab),
+      })
+    ),
+  })
+}
+```
+
+**✅ vapor SFC 模式**：
+
+```vue
+<!-- 用 template v-for + 子组件替代 RenderComponent -->
+<template v-for="tab in tabs" :key="tab.key">
+  <TabNode
+    :tab="tab"
+    :active="tab.key === activeKey"
+    :disabled="tab.disabled"
+    @click="onTabClick"
+  />
+</template>
+```
+
+**要点**：`:key` 放在 `<template v-for>` 上，不要在内部组件上重复（参见规则 7.2、规则 5）。
+
+**RULE**：JSX 中的 `RenderComponent` + `h()` 列表模式，vapor SFC 中统一用 `<template v-for>` + 子组件替代。key 放在 `<template>` 上。
+
+### 33. `h(Menu, ...)` → 模板 `<Menu>` + `<Menu.Item>` + `#overlay` slot
+
+源 JSX 中通过 `h(Menu, props, [h(Menu.Item, ...)])` 在 computed 中动态构建菜单。vapor SFC 中必须改用模板组件 + slot。
+
+**❌ 源 JSX 模式**（computed 中 h() 构建 Menu）：
+
+```tsx
+const overlay = computed(() =>
+  h(Menu, { selectedKeys: selectedKeys.value },
+    tabs.value.map(tab =>
+      h(Menu.Item, {
+        key: tab.key,
+        eventKey: tab.key,
+        disabled: tab.disabled,
+      }, [h('span', tab.label)])
+    )
+  )
+)
+```
+
+**✅ vapor SFC 模式**（template + `#overlay` slot）：
+
+```vue
+<Dropdown :visible="open">
+  <button>...</button>
+  <template #overlay>
+    <Menu :selected-keys="selectedKey ? [selectedKey] : undefined" @click="onMenuClick">
+      <template v-for="tab in tabs" :key="tab.key">
+        <Menu.Item :key="tab.key" :event-key="tab.key" :disabled="tab.disabled">
+          <span>{{ tab.label }}</span>
+        </Menu.Item>
+      </template>
+    </Menu>
+  </template>
+</Dropdown>
+```
+
+**易错点**：`event-key="tab.key"` 会被解析为字符串字面量 `"tab.key"`，必须用 `:event-key="tab.key"` 绑定表达式。同理，所有动态值必须用 `:` 前缀绑定。
+
+**RULE**：JSX 中通过 `h()` 在 computed 中构建的 Menu/Menu.Item 结构，vapor SFC 中必须改用 `<template>` + 子组件 + `#overlay` slot 模式。所有动态属性必须用 `:attr="expr"` 绑定。
+
+### 34. `v-if` + `v-show` 组合模式（TabPanel 懒渲染）
+
+TabPanel 需要同时控制 DOM 存在性（懒渲染/销毁）和可见性（显示/隐藏）。用 `v-if` 控制 DOM 创建/销毁，用 `v-show` 控制 `display:none`。
+
+```vue
+<script setup vapor lang="ts">
+  const visitedKeys = reactive(new Set<string>())
+
+  watch(
+    () => props.activeKey,
+    (key) => {
+      if (key != null) visitedKeys.add(key)
+    },
+    { immediate: true },
+  )
+
+  function shouldRender(item: Tab) {
+    if (item.key === props.activeKey) return true        // 当前激活 → 渲染
+    if (item.forceRender) return true                    // 强制渲染 → 渲染
+    if ((props.destroyOnHidden ?? item.destroyOnHidden) === true) return false  // 销毁 → 移除
+    return visitedKeys.has(item.key)                      // 已访问过 → 保留但隐藏
+  }
+</script>
+<template>
+  <template v-for="item in tabs" :key="item.key">
+    <TabPane
+      v-if="shouldRender(item)"                              <!-- DOM 存在性 -->
+      v-show="item.key === activeKey || item.forceRender"    <!-- 可见性 -->
+      :active="item.key === activeKey"
+      ...
+    />
+  </template>
+</template>
+```
+
+**`v-if` 控制是否创建 DOM**，**`v-show` 控制 `display:none`**。两者组合实现"首次访问才渲染，之后只切换可见性"，避免重复创建/销毁 DOM 节点。
+
+**RULE**：面板/标签页类组件需要懒渲染时，用 `v-if` 控制 DOM 存在性 + `v-show` 控制可见性 + `reactive(new Set())` 跟踪已访问项。
+
+### 35. Wrapper 组件转发事件必须 `defineEmits`
+
+Wrapper 组件（如 `TabNavListWrapper`）包装子组件并转发事件时，必须用 `defineEmits` 声明，否则父组件的 `@event` 会被 Vue 当作 prop 而非事件监听器。
+
+**❌ 错误**（Wrapper 没有 defineEmits）：
+
+```vue
+<script setup vapor lang="ts">
+  // 缺少 defineEmits → 父组件 @tab-click 被当作 prop 传递
+  const props = defineProps<TabNavListWrapperProps>()
+</script>
+<template>
+  <TabNavList v-bind="props" @tab-click="handler" />
+</template>
+```
+
+**✅ 正确**（Wrapper 声明 defineEmits 并显式转发）：
+
+```vue
+<script setup vapor lang="ts">
+  const props = defineProps<TabNavListWrapperProps>()
+  const emit = defineEmits<{
+    'tab-click': [key: string, e: MouseEvent | KeyboardEvent]
+    'tab-scroll': [info: { direction: 'left' | 'right' | 'top' | 'bottom' }]
+    edit: [type: 'add' | 'remove', info: { key?: string, event: MouseEvent | KeyboardEvent }]
+  }>()
+</script>
+<template>
+  <TabNavList
+    v-bind="props"
+    @tab-click="(key: string, e: MouseEvent | KeyboardEvent) => emit('tab-click', key, e)"
+    @tab-scroll="(info: { direction: 'left' | 'right' | 'top' | 'bottom' }) => emit('tab-scroll', info)"
+    @edit="(type: 'add' | 'remove', info: { key?: string, event: MouseEvent | KeyboardEvent }) => emit('edit', type, info)"
+  />
+</template>
+```
+
+**RULE**：Wrapper 组件必须 `defineEmits` 声明所有需转发的事件，并在模板中显式转发。缺少 `defineEmits` 时，父组件的 `@event` 会被 Vue 解析为 prop 而非事件监听器。
+
 ---
 
 ## 十二、依赖关系速查
@@ -1842,6 +2064,7 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 | select          | Trigger + VirtualList 组合 + 多层 context | `{...props}` 展开丢事件（规则 18）；回调 ref 不触发（规则 19）；computed class 不更新（规则 20）；triggerProps 剥离 onClick（规则 21）；SSR 安全打开状态（规则 22）；useOptions 双数据源；useOpen MessageChannel macroTask |
 | tree            | Context + VirtualList + 递归子节点        | `@click`→`@mousedown`（vapor virtual-list 内 @click 不触发）；`reactive`+getter（规则 11）；`switcherIcon` 强制转换（规则 12）；无 CSSTransition 跳过 placeholder（规则 13）                                               |
 | tree-select     | BaseSelect 包装 + 双层 context + Tree     | `@vue-ignore` Omit（规则 24）；`internalValue` 初始化（规则 25）；popup mousedown 误关（规则 26）；命名 slot 注入子组件（规则 27）                                                                                         |
+| tabs            | 父子 + Context + RenderComponent + Menu    | `useMergedState`+`v-model` 必须配 `onChange`（规则 31）；ARIA 属性需 `watch` 兜底（规则 20）；`RenderComponent`→`template v-for`（规则 32）；`h(Menu)`→模板 Menu+`#overlay`（规则 33）；`v-if`+`v-show` 懒渲染（规则 34）；Wrapper 转发需 `defineEmits`（规则 35） |
 
 ### 工程文件参考
 

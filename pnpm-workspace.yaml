@@ -8,21 +8,26 @@ packages:
 
 catalog:
   '@ant-design/fast-color': latest
+  '@types/luxon': latest
   '@v-c/util': latest
   '@v-c/mini-decimal': latest
   '@vitejs/plugin-vue': latest
   '@vue/test-utils': latest
+  date-fns: latest
+  dayjs: latest
   jsdom: latest
   less: latest
+  luxon: latest
+  moment: latest
   resize-observer-polyfill: latest
   lint-staged: latest
   simple-git-hooks: latest
   unplugin-vue: latest
-  vite: latest
+  vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plugin-vue-devtools: latest
   vite-plus: latest
-  vitest: latest
-  vue: 3.6.0-rc.3
+  vitest: npm:@voidzero-dev/vite-plus-test@latest
+  vue: 3.6.0-rc.8
   vue-tsc: latest
 
 onlyBuiltDependencies:
@@ -32,3 +37,5 @@ onlyBuiltDependencies:
 overrides:
   make-dir: ^5.1.0
   semver: ^7.0.0
+  vite@*: 'catalog:'
+  vitest@*: 'catalog:'

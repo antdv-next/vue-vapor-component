@@ -1,0 +1,42 @@
+{
+  "name": "@vapor-component/picker",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./generate": "./src/generate/index.ts",
+    "./generate/*": "./src/generate/*.ts",
+    "./locale/*": "./src/locale/*.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "prepublish": "pnpm build"
+  },
+  "dependencies": {
+    "@v-c/util": "catalog:",
+    "@vapor-component/overflow": "workspace:^",
+    "@vapor-component/resize-observer": "workspace:^",
+    "@vapor-component/trigger": "workspace:^",
+    "date-fns": "catalog:",
+    "dayjs": "catalog:",
+    "luxon": "catalog:",
+    "moment": "catalog:"
+  },
+  "devDependencies": {
+    "@types/luxon": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "packageManager": "pnpm@10.16.1"
+}

@@ -28,9 +28,9 @@
     "less": "catalog:",
     "playwright-core": "^1.62.1",
     "unplugin-vue": "catalog:",
-    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vite": "catalog:",
     "vite-plus": "catalog:",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
+    "vitest": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
   },

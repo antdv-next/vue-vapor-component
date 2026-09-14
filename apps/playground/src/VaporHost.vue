@@ -17,6 +17,7 @@
   import NotificationBasic from './demos/vapor/notification/basic.vue'
   import OverflowBasic from './demos/vapor/overflow/basic.vue'
   import PaginationBasic from './demos/vapor/pagination/basic.vue'
+  import PickerBasic from './demos/vapor/picker/basic.vue'
   import PortalBasic from './demos/vapor/portal/basic.vue'
   import ProgressBasic from './demos/vapor/progress/basic.vue'
   import QRCodeBasic from './demos/vapor/qrcode/basic.vue'
@@ -83,6 +84,9 @@
       />
       <PaginationBasic
         v-if="currentComponent === 'pagination' && currentCase === 'basic'"
+      />
+      <PickerBasic
+        v-if="currentComponent === 'picker' && currentCase === 'basic'"
       />
       <QRCodeBasic
         v-if="currentComponent === 'qrcode' && currentCase === 'basic'"
