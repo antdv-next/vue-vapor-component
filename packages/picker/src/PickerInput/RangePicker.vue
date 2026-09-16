@@ -845,7 +845,7 @@
     :popup-class-name="popupClassName"
     :visible="mergedOpen"
     :on-close="onPopupClose"
-    :range="true"
+    range
   >
     <template #default="{ trigger, setRef }">
       <RangeSelector

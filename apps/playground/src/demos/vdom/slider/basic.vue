@@ -32,7 +32,7 @@
       :min="0"
       :max="100"
       :step="1"
-      :range="true"
+      range
       @change="
         v => {
           rangeValue = v as number[]
@@ -48,7 +48,7 @@
       :max="100"
       :step="5"
       :marks="marks"
-      :dots="true"
+      dots
       @change="
         v => {
           marksValue = v as number
@@ -58,13 +58,7 @@
     <p style="margin-top: 15px">Marks: {{ marksValue }}</p>
 
     <h4>Disabled</h4>
-    <Slider
-      :value="disabledValue"
-      :min="0"
-      :max="100"
-      :step="1"
-      :disabled="true"
-    />
+    <Slider :value="disabledValue" :min="0" :max="100" :step="1" disabled />
 
     <h4>Vertical</h4>
     <div style="display: flex; gap: 40px; height: 240px">
@@ -73,7 +67,7 @@
         :min="0"
         :max="100"
         :step="1"
-        :vertical="true"
+        vertical
         @change="
           v => {
             verticalValue = v as number

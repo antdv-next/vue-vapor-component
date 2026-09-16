@@ -93,7 +93,7 @@
       <Cascader
         :value="changeOnSelectValue"
         :options="options"
-        :change-on-select="true"
+        change-on-select
         placeholder="Select at any level..."
         @change="
           val => {
@@ -110,7 +110,7 @@
       <Cascader
         :value="searchValue"
         :options="options"
-        :show-search="true"
+        show-search
         placeholder="Search and select..."
         @change="
           val => {
@@ -127,7 +127,7 @@
       <Cascader
         :value="checkableValue"
         :options="options"
-        :checkable="true"
+        checkable
         :show-checked-strategy="SHOW_CHILD"
         placeholder="Check options..."
         @change="

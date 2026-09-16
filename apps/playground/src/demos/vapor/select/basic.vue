@@ -77,14 +77,14 @@
           :mode="currentMode === 'single' ? undefined : (currentMode as any)"
           :options="options"
           :value="currentValue"
-          :show-search="true"
+          show-search
           :disabled="disabledFlag"
           :loading="loadingFlag"
           :allow-clear="allowClearFlag"
           :placeholder="'Select an option...'"
           :max-count="3"
           :max-tag-count="2"
-          :default-active-first-option="true"
+          default-active-first-option
           @change="
             (val, opt) => {
               currentValue = val
@@ -101,7 +101,7 @@
         <p>Grouped options:</p>
         <Select
           :options="groupedOptions"
-          :show-search="true"
+          show-search
           :placeholder="'Select from groups...'"
         />
       </div>
@@ -111,9 +111,9 @@
         <Select
           :value="singleValue"
           :options="options"
-          :show-search="true"
+          show-search
           :placeholder="'Search fruits...'"
-          :allow-clear="true"
+          allow-clear
           @change="
             val => {
               singleValue = val
@@ -128,7 +128,7 @@
           mode="tags"
           :value="tagsValue"
           :options="options"
-          :show-search="true"
+          show-search
           :placeholder="'Type to add tags...'"
           @change="
             val => {

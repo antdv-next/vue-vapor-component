@@ -92,7 +92,7 @@
       <TreeSelect
         v-model:value="singleValue"
         :tree-data="treeData"
-        :show-search="true"
+        show-search
         placeholder="Select one..."
         :disabled="disabledFlag"
         @change="onChange"
@@ -109,7 +109,7 @@
         v-model:value="multipleValue"
         :tree-data="treeData"
         multiple
-        :show-search="true"
+        show-search
         placeholder="Select multiple..."
         @change="onChange"
       />
@@ -123,7 +123,7 @@
         v-model:value="checkableValue"
         :tree-data="treeData"
         tree-checkable
-        :show-search="true"
+        show-search
         :show-checked-strategy="SHOW_CHILD"
         placeholder="Check nodes..."
         @change="onChange"
@@ -139,7 +139,7 @@
         :tree-data="treeData"
         tree-checkable
         tree-check-strictly
-        :show-search="true"
+        show-search
         :show-checked-strategy="SHOW_ALL"
         placeholder="Check strictly..."
         @change="onChange"

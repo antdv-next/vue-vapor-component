@@ -195,7 +195,7 @@
       :read-only="!inputEditable"
       v-bind="props.inputProps"
       :value="inputValue || ''"
-      :sync-width="true"
+      sync-width
     />
   </div>
 </template>

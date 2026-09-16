@@ -76,7 +76,7 @@
         key: (item: Item) => item.group,
         title: (key: any, items: any[]) => `${key} (${items.length})`,
       }"
-      :sticky="true"
+      sticky
       @scroll="onScroll"
     >
       <template #default="slotProps">

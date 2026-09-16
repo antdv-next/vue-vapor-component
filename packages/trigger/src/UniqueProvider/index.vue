@@ -159,8 +159,8 @@
           :style="mergedOptions.popupStyle"
           :target="mergedOptions.target"
           :open="open"
-          :keep-dom="true"
-          :fresh="true"
+          keep-dom
+          fresh
           :auto-destroy="false"
           :ready="ready"
           :offset-x="offsetX"

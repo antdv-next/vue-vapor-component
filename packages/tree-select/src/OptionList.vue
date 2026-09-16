@@ -287,7 +287,7 @@
         "
         :active-key="activeKey"
         :checkable="legacyContext?.checkable"
-        :check-strictly="true"
+        check-strictly
         :checked-keys="mergedCheckedKeys"
         :selected-keys="
           !legacyContext?.checkable ? legacyContext?.checkedKeys : []

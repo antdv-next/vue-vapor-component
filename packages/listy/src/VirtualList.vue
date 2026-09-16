@@ -117,7 +117,7 @@
     :prefix-cls="prefixCls"
     :full-height="false"
     item-key="taggedKey"
-    :virtual="true"
+    virtual
     :class="classNames?.root"
     :style="styles?.root"
     @scroll="(e: Event) => emit('scroll', e)"

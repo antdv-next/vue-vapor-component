@@ -99,7 +99,7 @@
       body: bodyComponent,
     }"
     internal-hooks="vc-table-internal-hook"
-    :tailor="true"
+    tailor
     ref="tableRef"
     :body-ref="bodyRef"
   >

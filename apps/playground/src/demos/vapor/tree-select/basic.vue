@@ -79,7 +79,7 @@
       <TreeSelect
         :value="singleValue"
         :tree-data="treeData"
-        :show-search="true"
+        show-search
         placeholder="Select one..."
         @change="
           val => {
@@ -98,7 +98,7 @@
         :value="multipleValue"
         :tree-data="treeData"
         multiple
-        :show-search="true"
+        show-search
         placeholder="Select multiple..."
         @change="
           val => {
@@ -116,7 +116,7 @@
         :value="checkableValue"
         :tree-data="treeData"
         tree-checkable
-        :show-search="true"
+        show-search
         :show-checked-strategy="SHOW_CHILD"
         placeholder="Check nodes..."
         @change="
@@ -136,7 +136,7 @@
         :tree-data="treeData"
         tree-checkable
         tree-check-strictly
-        :show-search="true"
+        show-search
         :show-checked-strategy="SHOW_ALL"
         placeholder="Check strictly..."
         @change="

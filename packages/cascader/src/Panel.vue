@@ -185,7 +185,7 @@
         :prefix-cls="prefixCls ?? 'vc-cascader'"
         :multiple="multiple"
         :search-value="''"
-        :open="true"
+        open
         :direction="direction"
         :disabled="disabled"
       />

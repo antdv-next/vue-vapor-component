@@ -106,8 +106,8 @@
         <Picker
           :generate-config="generateConfig"
           :value="datetimeValue"
-          :show-time="true"
-          :show-now="true"
+          show-time
+          show-now
           @change="onDatetimeChange"
           @ok="val => console.log('[Vapor] OK:', val)"
         />
@@ -166,7 +166,7 @@
           :generate-config="generateConfig"
           :value="rangeTimeValue"
           :presets="rangePresets"
-          :show-time="true"
+          show-time
           render-extra-footer="Range with time — pick both sides."
         />
       </div>

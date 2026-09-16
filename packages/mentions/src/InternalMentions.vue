@@ -515,7 +515,7 @@
         :placement="placement"
         :direction="direction"
         :options="mergedOptions"
-        :visible="true"
+        visible
         :get-popup-container="getPopupContainer"
         :popup-class-name="popupClassName"
         :popup-style="styles?.popup"
@@ -560,7 +560,7 @@
         :placement="placement"
         :direction="direction"
         :options="mergedOptions"
-        :visible="true"
+        visible
         :get-popup-container="getPopupContainer"
         :popup-class-name="popupClassName"
         :popup-style="styles?.popup"

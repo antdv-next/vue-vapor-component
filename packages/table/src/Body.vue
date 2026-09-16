@@ -108,13 +108,13 @@
 
     <ExpandedRow
       v-else
-      :expanded="true"
+      expanded
       :class-name="`${context.prefixCls}-placeholder`"
       :prefix-cls="context.prefixCls"
       :component="context.getComponent(['body', 'row'], 'tr')"
       :cell-component="context.getComponent(['body', 'cell'], 'td')"
       :col-span="context.flattenColumns.length"
-      :is-empty="true"
+      is-empty
     >
       <slot name="empty">
         {{ context.emptyNode }}

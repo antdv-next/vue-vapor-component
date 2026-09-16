@@ -292,7 +292,7 @@
           :row-key="line.rowKey"
           :index="line.key"
           :style="line.style"
-          :extra="true"
+          extra
           :get-height="line.getHeight"
         />
       </template>

@@ -92,7 +92,7 @@
 </script>
 
 <template>
-  <Portal v-if="container" :open="true" :get-container="() => container!">
+  <Portal v-if="container" open :get-container="() => container!">
     <div :class="`${prefixCls}-group-header-holder`">
       <GroupHeader
         :group="group"

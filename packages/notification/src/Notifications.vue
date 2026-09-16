@@ -100,7 +100,7 @@
 <template>
   <Portal
     v-if="container"
-    :open="true"
+    open
     :auto-destroy="false"
     :get-container="() => container!"
   >

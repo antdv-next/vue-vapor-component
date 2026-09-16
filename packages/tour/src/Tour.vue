@@ -379,7 +379,7 @@
       :popup-class-name="clsx(rootClassName, stepClassName)"
       :prefix-cls="prefixCls"
       :force-render="false"
-      :auto-destroy="true"
+      auto-destroy
       :z-index="zIndex"
       :arrow="!!mergedArrow"
       @popup-align="onPopupAlign"

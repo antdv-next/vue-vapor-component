@@ -435,7 +435,14 @@
       </template>
       <template v-else>{{ mergedAppendNode }}</template>
     </template>
-    <template v-if="column && !isInternalColumn && rowType === 'body' && tableContext.hasRenderSlot">
+    <template
+      v-if="
+        column &&
+        !isInternalColumn &&
+        rowType === 'body' &&
+        tableContext.hasRenderSlot
+      "
+    >
       <slot
         name="render"
         :value="rawValue"

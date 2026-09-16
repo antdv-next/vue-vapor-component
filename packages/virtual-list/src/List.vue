@@ -783,7 +783,7 @@
       :scroll-offset="offsetLeft"
       :scroll-range="contentScrollWidth"
       :rtl="isRTL"
-      :horizontal="true"
+      horizontal
       :spin-size="horizontalScrollBarSpinSize"
       :container-size="size.width"
       :show-scroll-bar="showScrollBar"

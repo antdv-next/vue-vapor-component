@@ -50,13 +50,13 @@
   </label>
   <label>
     ColorPicker (disabled):
-    <ColorPicker :value="'#f5222d'" :disabled="true" />
+    <ColorPicker :value="'#f5222d'" disabled />
   </label>
   <label>
     ColorPicker (disabled alpha):
     <ColorPicker
       :value="'rgba(0, 128, 255, 0.5)'"
-      :disabled-alpha="true"
+      disabled-alpha
       @change="onChange"
       @update:value="v => console.log('update:value (no alpha)', v)"
     />
