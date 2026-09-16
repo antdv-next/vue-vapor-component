@@ -1,5 +1,7 @@
 import type { Day, Locale, Month } from 'date-fns'
+
 import type { GenerateConfig } from './index'
+
 import {
   addDays,
   addMonths,
@@ -17,7 +19,6 @@ import {
   getYear,
   isAfter,
   isValid,
-
   parse as parseDate,
   setDate,
   setHours,
@@ -33,7 +34,9 @@ import * as locales from 'date-fns/locale'
 function getLocale(locale: string): Locale {
   const tmpLocales: Record<string, Locale> = locales
   return (
-    tmpLocales[locale] || tmpLocales[locale.replace(/_/g, '')] || tmpLocales[locale.replace(/_.*$/g, '')]
+    tmpLocales[locale] ||
+    tmpLocales[locale.replace(/_/g, '')] ||
+    tmpLocales[locale.replace(/_.*$/g, '')]
   )
 }
 
@@ -50,7 +53,9 @@ function localeParse(format: string) {
 }
 
 function parse(text: string, format: string, locale: string) {
-  return parseDate(text, localeParse(format), new Date(), { locale: getLocale(locale) })
+  return parseDate(text, localeParse(format), new Date(), {
+    locale: getLocale(locale),
+  })
 }
 
 /**
@@ -104,7 +109,7 @@ const generateConfig: GenerateConfig<Date> = {
   isValidate: date => isValid(date),
 
   locale: {
-    getWeekFirstDay: (locale) => {
+    getWeekFirstDay: locale => {
       const clone = getLocale(locale)
       return clone.options?.weekStartsOn
     },
@@ -114,11 +119,13 @@ const generateConfig: GenerateConfig<Date> = {
     getWeek: (locale, date) => {
       return getWeek(date, { locale: getLocale(locale) })
     },
-    getShortWeekDays: (locale) => {
+    getShortWeekDays: locale => {
       const clone = getLocale(locale)
-      return Array.from({ length: 7 }).map((_, i) => clone.localize.day(i as Day, { width: 'short' }))
+      return Array.from({ length: 7 }).map((_, i) =>
+        clone.localize.day(i as Day, { width: 'short' }),
+      )
     },
-    getShortMonths: (locale) => {
+    getShortMonths: locale => {
       const clone = getLocale(locale)
       return Array.from({ length: 12 }).map((_, i) =>
         clone.localize.month(i as Month, { width: 'abbreviated' }),

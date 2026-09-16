@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import raf from '@v-c/util/dist/raf'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 
@@ -22,7 +23,11 @@ export default function useDelayState<T>(
   onChange?: (next: T) => void,
 ) {
   const internalValue = ref(defaultValue)
-  const state = computed(() => (isUncontrolled(value.value, defaultValue) ? internalValue.value : value.value))
+  const state = computed(() =>
+    isUncontrolled(value.value, defaultValue)
+      ? internalValue.value
+      : value.value,
+  )
 
   const nextValueRef = ref(state.value)
   const rafRef = ref<number>()
@@ -51,8 +56,7 @@ export default function useDelayState<T>(
 
     if (next || immediately) {
       doUpdate()
-    }
-    else {
+    } else {
       rafRef.value = raf(doUpdate)
     }
   }

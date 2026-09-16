@@ -4,7 +4,7 @@ import type { Ref } from 'vue'
  * A range selector's `id` may be a single string or a per-field pair.
  * RangeSelector 的 `id` 可以是单个字符串，也可以是起/止字段各自的 id。
  */
-export type SelectorIdType = string | { start?: string, end?: string }
+export type SelectorIdType = string | { start?: string; end?: string }
 
 /**
  * The object a parent receives back from a template ref on `<Input>`.

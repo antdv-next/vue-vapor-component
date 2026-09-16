@@ -1,8 +1,11 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import type { GenerateConfig } from '../generate'
 import type { DisabledTimes, SharedTimeProps } from '../interface'
+
 import { warning } from '@v-c/util'
 import { computed } from 'vue'
+
 import { leftPad } from '../utils/miscUtil'
 
 // eslint-disable-next-line ts/consistent-type-definitions
@@ -264,9 +267,9 @@ function findValidateTime<DateType extends object = any>(
       // Find most closest unit
       const validateUnits = units.filter(unit => !unit.disabled)
       const reverseEnabledUnits = [...validateUnits].reverse()
-      const validateUnit
-        = reverseEnabledUnits.find(unit => unit.value <= nextValue)
-          || validateUnits[0]
+      const validateUnit =
+        reverseEnabledUnits.find(unit => unit.value <= nextValue) ||
+        validateUnits[0]
 
       if (validateUnit) {
         nextValue = validateUnit.value

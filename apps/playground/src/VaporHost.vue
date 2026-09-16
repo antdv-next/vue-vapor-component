@@ -29,6 +29,7 @@
   import SliderBasic from './demos/vapor/slider/basic.vue'
   import StepsBasic from './demos/vapor/steps/basic.vue'
   import SwitchBasic from './demos/vapor/switch/basic.vue'
+  import TableBasic from './demos/vapor/table/basic.vue'
   import TabsBasic from './demos/vapor/tabs/basic.vue'
   import TextAreaBasic from './demos/vapor/textarea/basic.vue'
   import TooltipBasic from './demos/vapor/tooltip/basic.vue'
@@ -51,6 +52,9 @@
 
       <StepsBasic
         v-if="currentComponent === 'steps' && currentCase === 'basic'"
+      />
+      <TableBasic
+        v-if="currentComponent === 'table' && currentCase === 'basic'"
       />
       <TabsBasic
         v-if="currentComponent === 'tabs' && currentCase === 'basic'"

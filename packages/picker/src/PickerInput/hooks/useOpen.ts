@@ -1,6 +1,9 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import type { OpenConfig } from '../../interface'
+
 import { computed } from 'vue'
+
 import useDelayState from './useDelayState'
 
 /**
@@ -10,13 +13,21 @@ import useDelayState from './useDelayState'
 export default function useOpen(
   open: Ref<boolean | undefined>,
   defaultOpen: Ref<boolean | undefined>,
-  disabledList: Ref<Array<boolean | undefined>> | ComputedRef<Array<boolean | undefined>>,
+  disabledList:
+    | Ref<Array<boolean | undefined>>
+    | ComputedRef<Array<boolean | undefined>>,
   onOpenChange?: (open: boolean) => void,
 ) {
-  const mergedOpen = computed(() => (disabledList.value?.every(disabled => disabled) ? false : open.value))
+  const mergedOpen = computed(() =>
+    disabledList.value?.every(disabled => disabled) ? false : open.value,
+  )
 
   // Delay for handle the open state, in case fast shift from `open` -> `close` -> `open`
-  const [rafOpen, setRafOpen] = useDelayState(mergedOpen, defaultOpen.value || false, onOpenChange)
+  const [rafOpen, setRafOpen] = useDelayState(
+    mergedOpen,
+    defaultOpen.value || false,
+    onOpenChange,
+  )
 
   function setOpen(next: boolean, config: OpenConfig = {}) {
     if (!config.inherit || rafOpen.value) {

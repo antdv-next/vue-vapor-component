@@ -1,5 +1,7 @@
 import type { Ref } from 'vue'
+
 import type { InternalMode, PanelMode } from '../../interface'
+
 import { computed } from 'vue'
 
 export default function useShowNow(
@@ -22,6 +24,9 @@ export default function useShowNow(
       return showToday.value
     }
 
-    return !rangePicker?.value && (picker.value === 'date' || picker.value === 'time')
+    return (
+      !rangePicker?.value &&
+      (picker.value === 'date' || picker.value === 'time')
+    )
   })
 }

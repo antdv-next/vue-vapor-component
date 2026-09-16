@@ -1,5 +1,7 @@
 import type { Ref } from 'vue'
+
 import { watch } from 'vue'
+
 import { isTargetInContainers } from './useFocusEvents'
 
 interface FocusLockSelectorRef {
@@ -42,15 +44,17 @@ export default function useFocusLock(
       return
     }
 
-    const inputFields = [selectorRef.value?.startInput, selectorRef.value?.endInput]
+    const inputFields = [
+      selectorRef.value?.startInput,
+      selectorRef.value?.endInput,
+    ]
     // In vapor, `defineExpose` may expose a `Ref` instead of the DOM element
     // (gotcha #7), so guard `getRootNode` as optional too.
     // vapor 的 `defineExpose` 可能暴露 `Ref` 而非 DOM 元素（规则 #7），
     // 因此对 `getRootNode` 也做可选调用。
-    const inputRoot = (inputFields[index.value] as HTMLElement)?.getRootNode?.() as
-      | Document
-      | ShadowRoot
-      | undefined
+    const inputRoot = (
+      inputFields[index.value] as HTMLElement
+    )?.getRootNode?.() as Document | ShadowRoot | undefined
 
     // `document.activeElement` stops at the shadow host. Read from the input's
     // own root first so focus locking can identify the actual field.
@@ -64,7 +68,8 @@ export default function useFocusLock(
 
     const focusInOtherField = inputFields.some(
       (field, fieldIndex) =>
-        fieldIndex !== index.value && isTargetInContainers(activeElement, [field]),
+        fieldIndex !== index.value &&
+        isTargetInContainers(activeElement, [field]),
     )
 
     if (focusInOtherField) {

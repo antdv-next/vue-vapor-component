@@ -1,4 +1,5 @@
 import type { Locale } from '../interface'
+
 import { commonLocale } from './common'
 
 const locale: Locale = {
@@ -20,10 +21,10 @@ const locale: Locale = {
 
   dayFormat: 'DD', // 'D',
 
-  previousMonth: 'Előző hónap\', // \'Previous month',
-  nextMonth: 'Következő hónap\', // \'Next month',
-  previousYear: 'Múlt év\', // \'Last year',
-  nextYear: 'Jövő év\', // \'Next year',
+  previousMonth: "Előző hónap', // 'Previous month",
+  nextMonth: "Következő hónap', // 'Next month",
+  previousYear: "Múlt év', // 'Last year",
+  nextYear: "Jövő év', // 'Next year",
   previousDecade: 'Előző évtized', // 'Last decade',
   nextDecade: 'Következő évtized', // 'Next decade',
   previousCentury: 'Múlt évszázad', // 'Last century',

@@ -1,6 +1,8 @@
 import type { Ref } from 'vue'
+
 import type { GenerateConfig } from '../generate'
 import type { InternalMode, Locale } from '../interface'
+
 import { isSame } from '../utils/dateUtil'
 
 /**
@@ -14,7 +16,9 @@ export default function useToggleDates<DateType>(
   panelMode: Ref<InternalMode>,
 ) {
   function toggleDates(list: DateType[], target: DateType) {
-    const index = list.findIndex(date => isSame(generateConfig.value, locale.value, date, target, panelMode.value))
+    const index = list.findIndex(date =>
+      isSame(generateConfig.value, locale.value, date, target, panelMode.value),
+    )
 
     if (index === -1) {
       return [...list, target]

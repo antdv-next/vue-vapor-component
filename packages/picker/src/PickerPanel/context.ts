@@ -1,6 +1,11 @@
 import type { InjectionKey, Ref } from 'vue'
-import type { FilledPanelClassNames, FilledPanelStyles } from '../hooks/useSemantic'
+
+import type {
+  FilledPanelClassNames,
+  FilledPanelStyles,
+} from '../hooks/useSemantic'
 import type { PanelMode, SharedPanelProps } from '../interface'
+
 import { computed, defineVaporComponent, inject, provide } from 'vue'
 
 export interface SharedPanelContextProps {
@@ -12,11 +17,12 @@ export interface SharedPanelContextProps {
 // reactive access. `InjectionKey<Ref<...>>` is the standard Vue typing — a plain
 // `Symbol(...) as Ref<...>` cast trips TS2352 and makes `provide` reject the
 // key (TS2345).
-const SharedPanelContextKey: InjectionKey<Ref<SharedPanelContextProps>> = Symbol(
-  'SharedPanelContext',
-)
+const SharedPanelContextKey: InjectionKey<Ref<SharedPanelContextProps>> =
+  Symbol('SharedPanelContext')
 
-export function provideSharedPanelContext(context: Ref<SharedPanelContextProps>) {
+export function provideSharedPanelContext(
+  context: Ref<SharedPanelContextProps>,
+) {
   provide(SharedPanelContextKey, context)
 }
 
@@ -27,38 +33,38 @@ export function useSharedPanelContext() {
   ) as Ref<SharedPanelContextProps> | null
 }
 
-export interface PanelContextProps<DateType extends object = any>
-  extends Pick<
-    SharedPanelProps<DateType>,
-    | 'prefixCls'
-    | 'cellRender'
-    | 'generateConfig'
-    | 'locale'
-    | 'onSelect'
-    | 'hoverValue'
-    | 'hoverRangeValue'
-    | 'onHover'
-    | 'values'
-    | 'pickerValue'
+export interface PanelContextProps<DateType extends object = any> extends Pick<
+  SharedPanelProps<DateType>,
+  | 'prefixCls'
+  | 'cellRender'
+  | 'generateConfig'
+  | 'locale'
+  | 'onSelect'
+  | 'hoverValue'
+  | 'hoverRangeValue'
+  | 'onHover'
+  | 'values'
+  | 'pickerValue'
 
-    // Limitation
-    | 'disabledDate'
-    | 'minDate'
-    | 'maxDate'
+  // Limitation
+  | 'disabledDate'
+  | 'minDate'
+  | 'maxDate'
 
-    // Icon
-    | 'prevIcon'
-    | 'nextIcon'
-    | 'superPrevIcon'
-    | 'superNextIcon'
-  > {
+  // Icon
+  | 'prevIcon'
+  | 'nextIcon'
+  | 'superPrevIcon'
+  | 'superNextIcon'
+> {
   panelType: PanelMode
   now: DateType
   classNames: FilledPanelClassNames
   styles: FilledPanelStyles
 }
 
-const PanelContextKey: InjectionKey<Ref<PanelContextProps>> = Symbol('PanelContext')
+const PanelContextKey: InjectionKey<Ref<PanelContextProps>> =
+  Symbol('PanelContext')
 
 export function providePanelContext<DateType extends object = any>(
   context: Ref<PanelContextProps<DateType>>,
@@ -67,10 +73,9 @@ export function providePanelContext<DateType extends object = any>(
 }
 
 export function usePanelContext<DateType extends object = any>() {
-  return inject(
-    PanelContextKey,
-    null as any,
-  ) as Ref<PanelContextProps<DateType>> | null
+  return inject(PanelContextKey, null as any) as Ref<
+    PanelContextProps<DateType>
+  > | null
 }
 
 export function useInfo<DateType extends object = any>(
@@ -138,9 +143,8 @@ export interface PickerHackContextProps {
   onCellDblClick?: () => void
 }
 
-const PickerHackContextKey: InjectionKey<Ref<PickerHackContextProps>> = Symbol(
-  'PickerHackContext',
-)
+const PickerHackContextKey: InjectionKey<Ref<PickerHackContextProps>> =
+  Symbol('PickerHackContext')
 
 export function providePickerHackContext(context: Ref<PickerHackContextProps>) {
   provide(PickerHackContextKey, context)
@@ -164,11 +168,17 @@ export function usePickerHackContext() {
  */
 export const PickerHackContextProvider = defineVaporComponent<{
   value: PickerHackContextProps
-}>((props, { slots }) => {
-  provide(PickerHackContextKey, computed(() => props.value))
-  return slots?.default?.()
-}, {
-  props: {
-    value: { type: Object, required: true },
+}>(
+  (props, { slots }) => {
+    provide(
+      PickerHackContextKey,
+      computed(() => props.value),
+    )
+    return slots?.default?.()
   },
-})
+  {
+    props: {
+      value: { type: Object, required: true },
+    },
+  },
+)

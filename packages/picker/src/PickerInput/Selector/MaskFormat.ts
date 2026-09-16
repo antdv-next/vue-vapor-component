@@ -36,7 +36,7 @@ export default class MaskFormat {
     const strCells = (format.split(cellReg) || []).filter(str => str)
 
     let offset = 0
-    this.cells = strCells.map((text) => {
+    this.cells = strCells.map(text => {
       const mask = FORMAT_KEYS.includes(text as FormatKey)
 
       const start = offset
@@ -89,7 +89,10 @@ export default class MaskFormat {
         return i
       }
 
-      const dist = Math.min(Math.abs(anchorIndex - start), Math.abs(anchorIndex - end))
+      const dist = Math.min(
+        Math.abs(anchorIndex - start),
+        Math.abs(anchorIndex - end),
+      )
       if (dist < closetDist) {
         closetDist = dist
         closetIndex = i

@@ -1,5 +1,7 @@
 import type { Ref } from 'vue'
+
 import type { SharedPickerProps } from '../interface'
+
 import { computed } from 'vue'
 
 // `popup` is optional inside the `styles` / `classNames` intersection, so a

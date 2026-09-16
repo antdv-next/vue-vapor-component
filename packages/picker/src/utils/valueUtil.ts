@@ -17,7 +17,9 @@ export function parseValue<DateType>(
     return value as DateType | null | undefined
   }
 
-  const parsed = generateConfig.locale.parse(locale.locale, value, [valueFormat])
+  const parsed = generateConfig.locale.parse(locale.locale, value, [
+    valueFormat,
+  ])
 
   if (parsed && generateConfig.isValidate(parsed)) {
     return parsed
@@ -60,4 +62,3 @@ export function formatValues<DateType>(
 
   return values.map(value => formatValue(value, config))
 }
-

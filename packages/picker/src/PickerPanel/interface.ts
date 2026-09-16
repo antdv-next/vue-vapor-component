@@ -1,5 +1,6 @@
 import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
+
 import type {
   CellRender,
   Components,
@@ -35,8 +36,7 @@ type BasePickerPanelSharedProps<DateType extends object = any> = Pick<
 >
 
 export interface BasePickerPanelProps<DateType extends object = any>
-  extends BasePickerPanelSharedProps<DateType>,
-  SharedTimeProps<DateType> {
+  extends BasePickerPanelSharedProps<DateType>, SharedTimeProps<DateType> {
   // Style
   prefixCls?: string
 
@@ -93,8 +93,9 @@ export interface BasePickerPanelProps<DateType extends object = any>
   hideHeader?: boolean
 }
 
-export interface SinglePickerPanelProps<DateType extends object = any>
-  extends BasePickerPanelProps<DateType> {
+export interface SinglePickerPanelProps<
+  DateType extends object = any,
+> extends BasePickerPanelProps<DateType> {
   multiple?: false
 
   defaultValue?: DateType
@@ -102,13 +103,14 @@ export interface SinglePickerPanelProps<DateType extends object = any>
   onChange?: (date: DateType) => void
 }
 
-export type PickerPanelProps<DateType extends object = any> = BasePickerPanelProps<DateType> & {
-  /** multiple selection. Not support time or datetime picker */
-  multiple?: boolean
+export type PickerPanelProps<DateType extends object = any> =
+  BasePickerPanelProps<DateType> & {
+    /** multiple selection. Not support time or datetime picker */
+    multiple?: boolean
 
-  defaultValue?: DateType | DateType[] | null
-  value?: DateType | DateType[] | null
-  onChange?: (date: DateType | DateType[]) => void
-  styles?: Partial<Record<PanelSemanticName, CSSProperties>>
-  classNames?: Partial<Record<PanelSemanticName, string>>
-}
+    defaultValue?: DateType | DateType[] | null
+    value?: DateType | DateType[] | null
+    onChange?: (date: DateType | DateType[]) => void
+    styles?: Partial<Record<PanelSemanticName, CSSProperties>>
+    classNames?: Partial<Record<PanelSemanticName, string>>
+  }

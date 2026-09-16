@@ -1,7 +1,9 @@
 import type { Ref } from 'vue'
+
 import type { GenerateConfig } from '../../generate'
 import type { DisabledDate, Locale } from '../../interface'
 import type { RangeValueType } from '../interface'
+
 import { isSame } from '../../utils/dateUtil'
 import { getFromDate } from '../../utils/miscUtil'
 
@@ -24,32 +26,42 @@ export default function useRangeDisabledDate<DateType extends object = any>(
 
     const mergedInfo = {
       ...info,
-      from: getFromDate<DateType>(values.value as DateType[], triggeredFields.value, activeIndex),
+      from: getFromDate<DateType>(
+        values.value as DateType[],
+        triggeredFields.value,
+        activeIndex,
+      ),
     }
 
     // ============================ Disabled ============================
     // Should not select days before the start date
     if (
-      activeIndex === 1
-      && disabled.value[0]
-      && start
+      activeIndex === 1 &&
+      disabled.value[0] &&
+      start &&
       // Same date isOK
-      && !isSame(generateConfig.value, locale.value, start, date, mergedInfo.type)
+      !isSame(
+        generateConfig.value,
+        locale.value,
+        start,
+        date,
+        mergedInfo.type,
+      ) &&
       // Before start date
-      && generateConfig.value.isAfter(start, date)
+      generateConfig.value.isAfter(start, date)
     ) {
       return true
     }
 
     // Should not select days after the end date
     if (
-      activeIndex === 0
-      && disabled.value[1]
-      && end
+      activeIndex === 0 &&
+      disabled.value[1] &&
+      end &&
       // Same date isOK
-      && !isSame(generateConfig.value, locale.value, end, date, mergedInfo.type)
+      !isSame(generateConfig.value, locale.value, end, date, mergedInfo.type) &&
       // After end date
-      && generateConfig.value.isAfter(date, end)
+      generateConfig.value.isAfter(date, end)
     ) {
       return true
     }

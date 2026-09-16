@@ -44,7 +44,7 @@ export function pickProps<T extends object>(
   const mergedKeys = (keys || Object.keys(props)) as typeof keys
 
   if (Array.isArray(mergedKeys)) {
-    mergedKeys.forEach((key) => {
+    mergedKeys.forEach(key => {
       if (props[key] !== undefined) {
         clone[key] = props[key]
       }
@@ -110,9 +110,7 @@ export function getFromDate<DateType>(
   triggeredFields: number[],
   activeIndex: number,
 ) {
-  const firstValuedIndex = triggeredFields.find(
-    index => calendarValues[index],
-  )
+  const firstValuedIndex = triggeredFields.find(index => calendarValues[index])
 
   return activeIndex !== firstValuedIndex
     ? calendarValues[firstValuedIndex!]

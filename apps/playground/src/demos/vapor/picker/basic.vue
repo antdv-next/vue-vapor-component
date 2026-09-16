@@ -43,7 +43,10 @@
   const allowClearFlag = ref(true)
 
   const disabledDate = (date: any) =>
-    generateConfig.isAfter(date, generateConfig.addMonth(generateConfig.getNow(), 1))
+    generateConfig.isAfter(
+      date,
+      generateConfig.addMonth(generateConfig.getNow(), 1),
+    )
 
   function onSingleChange(val: any, str: any) {
     singleValue.value = val
@@ -89,9 +92,13 @@
           :placeholder="'Select date'"
           @change="onSingleChange"
           @open-change="open => console.log('[Vapor] open:', open)"
-          @calendar-change="(_, str) => console.log('[Vapor] calendar change:', str)"
+          @calendar-change="
+            (_, str) => console.log('[Vapor] calendar change:', str)
+          "
         />
-        <p>Current value: <code>{{ String(singleValue) }}</code></p>
+        <p>
+          Current value: <code>{{ String(singleValue) }}</code>
+        </p>
       </div>
 
       <div class="demo-section">
@@ -144,9 +151,13 @@
           :allow-clear="allowClearFlag"
           :placeholder="['Start date', 'End date']"
           @change="onRangeChange"
-          @calendar-change="(_, str) => console.log('[Vapor] range calendar:', str)"
+          @calendar-change="
+            (_, str) => console.log('[Vapor] range calendar:', str)
+          "
         />
-        <p>Current value: <code>{{ String(rangeValue) }}</code></p>
+        <p>
+          Current value: <code>{{ String(rangeValue) }}</code>
+        </p>
       </div>
 
       <div class="demo-section">

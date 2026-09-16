@@ -1,4 +1,5 @@
 import type { VueNode } from '@v-c/util/dist/type'
+
 import type {
   BaseInfo,
   PanelMode,
@@ -21,8 +22,9 @@ export interface CustomTagProps<DateType extends object = any> {
   closable: boolean
 }
 
-export interface BasePickerProps<DateType extends object = any> extends
-  SharedPickerProps<DateType> {
+export interface BasePickerProps<
+  DateType extends object = any,
+> extends SharedPickerProps<DateType> {
   // Structure
   id?: string
 
@@ -94,9 +96,8 @@ type PickerTimeProps<DateType extends object = any> = Omit<
   'format' | 'defaultValue'
 >
 
-export interface PickerProps<DateType extends object = any> extends
-  BasePickerProps<DateType>,
-    PickerTimeProps<DateType> {
+export interface PickerProps<DateType extends object = any>
+  extends BasePickerProps<DateType>, PickerTimeProps<DateType> {
   use12Hours?: boolean
 }
 
@@ -105,8 +106,9 @@ type RangePickerSharedProps<DateType extends object = any> = Omit<
   'showTime' | 'id'
 >
 
-export interface BaseRangePickerProps<DateType extends object> extends
-  RangePickerSharedProps<DateType> {
+export interface BaseRangePickerProps<
+  DateType extends object,
+> extends RangePickerSharedProps<DateType> {
   // Structure
   id?: SelectorIdType
 
@@ -136,12 +138,20 @@ export interface BaseRangePickerProps<DateType extends object> extends
    *
    * Note: `defaultPickerValue` priority is higher than `value` for the first open.
    */
-  defaultPickerValue?: [DateType | string, DateType | string] | DateType | string | null
+  defaultPickerValue?:
+    | [DateType | string, DateType | string]
+    | DateType
+    | string
+    | null
   /**
    * Config each start & end field popup panel date.
    * When config `pickerValue`, you must also provide `onPickerValueChange` to handle changes.
    */
-  pickerValue?: [DateType | string, DateType | string] | DateType | string | null
+  pickerValue?:
+    | [DateType | string, DateType | string]
+    | DateType
+    | string
+    | null
   /**
    * Each popup panel `pickerValue` includes `mode` change will trigger the callback.
    * @param date The changed picker value
@@ -161,7 +171,8 @@ export interface BaseRangePickerProps<DateType extends object> extends
   /** @deprecated Please use `presets` instead */
   ranges?: Record<
     string,
-    Exclude<RangeValueType<DateType>, null> | (() => Exclude<RangeValueType<DateType>, null>)
+    | Exclude<RangeValueType<DateType>, null>
+    | (() => Exclude<RangeValueType<DateType>, null>)
   >
 
   // Control
@@ -185,13 +196,15 @@ type RangePickerTimeProps<DateType extends object = any> = Omit<
   'format' | 'defaultValue' | 'defaultOpenValue'
 >
 
-export interface RangePickerProps<DateType extends object = any> extends
-  BaseRangePickerProps<DateType>,
-    RangePickerTimeProps<DateType> {}
+export interface RangePickerProps<DateType extends object = any>
+  extends BaseRangePickerProps<DateType>, RangePickerTimeProps<DateType> {}
 
 export type RangeValueType<DateType> = [
   start: DateType | null | undefined,
   end: DateType | null | undefined,
 ]
 
-export type NoUndefinedRangeValueType<DateType> = [start: DateType | null, end: DateType | null]
+export type NoUndefinedRangeValueType<DateType> = [
+  start: DateType | null,
+  end: DateType | null,
+]

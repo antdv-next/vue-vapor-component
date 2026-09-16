@@ -1,7 +1,10 @@
 import type { Ref } from 'vue'
+
 import type { GenerateConfig } from '../../generate'
 import type { InternalMode, Locale, PanelMode } from '../../interface'
+
 import { computed, ref, watch } from 'vue'
+
 import useSyncState from '../../hooks/useSyncState'
 import { fillTime, isSame } from '../../utils/dateUtil'
 
@@ -34,7 +37,10 @@ export function offsetPanelDate<DateType = any>(
 
 const EMPTY_LIST: any[] = []
 
-export default function useRangePickerValue<DateType extends object, ValueType extends DateType[]>(
+export default function useRangePickerValue<
+  DateType extends object,
+  ValueType extends DateType[],
+>(
   generateConfig: Ref<GenerateConfig<DateType>>,
   locale: Ref<Locale>,
   calendarValue: Ref<ValueType>,
@@ -52,10 +58,18 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   defaultPickerValue: Ref<any> = ref(EMPTY_LIST),
   pickerValue: Ref<any> = ref(EMPTY_LIST),
   timeDefaultValue: Ref<any> = ref(EMPTY_LIST),
-  onPickerValueChange?: ((dates: ValueType, info: any) => void) | Ref<((dates: ValueType, info: any) => void) | undefined>,
+  onPickerValueChange?:
+    | ((dates: ValueType, info: any) => void)
+    | Ref<((dates: ValueType, info: any) => void) | undefined>,
   minDate?: Ref<DateType | undefined>,
   maxDate?: Ref<DateType | undefined>,
-): [currentIndexPickerValue: Ref<DateType>, setCurrentIndexPickerValue: (value: DateType, source?: 'reset' | 'panel') => void] {
+): [
+  currentIndexPickerValue: Ref<DateType>,
+  setCurrentIndexPickerValue: (
+    value: DateType,
+    source?: 'reset' | 'panel',
+  ) => void,
+] {
   const isTimePicker = computed(() => pickerMode.value === 'time')
 
   const mergedActiveIndex = computed(() => activeIndex.value || 0)
@@ -70,44 +84,74 @@ export default function useRangePickerValue<DateType extends object, ValueType e
       now = fillTime(generateConfig.value, now)
     }
 
-    return defaultPickerValue.value?.[index] || calendarValue.value?.[index] || now
+    return (
+      defaultPickerValue.value?.[index] || calendarValue.value?.[index] || now
+    )
   }
 
-  const [getStartPickerValue, setStartPickerValue]
-    = useSyncState(getDefaultPickerValue(0), () => pickerValue.value?.[0])
+  const [getStartPickerValue, setStartPickerValue] = useSyncState(
+    getDefaultPickerValue(0),
+    () => pickerValue.value?.[0],
+  )
 
-  const [getEndPickerValue, setEndPickerValue]
-    = useSyncState(getDefaultPickerValue(1), () => pickerValue.value?.[1])
+  const [getEndPickerValue, setEndPickerValue] = useSyncState(
+    getDefaultPickerValue(1),
+    () => pickerValue.value?.[1],
+  )
 
   const currentPickerValue = computed(() => {
-    const current = [getStartPickerValue(true), getEndPickerValue(true)][mergedActiveIndex.value]
+    const current = [getStartPickerValue(true), getEndPickerValue(true)][
+      mergedActiveIndex.value
+    ]
     if (!current) {
       return current
     }
 
     return isTimePicker.value
       ? current
-      : fillTime(generateConfig.value, current, timeDefaultValue.value?.[mergedActiveIndex.value])
+      : fillTime(
+          generateConfig.value,
+          current,
+          timeDefaultValue.value?.[mergedActiveIndex.value],
+        )
   }) as Ref<DateType>
 
-  const setCurrentPickerValue = (nextPickerValue: DateType, source: 'reset' | 'panel' = 'panel') => {
+  const setCurrentPickerValue = (
+    nextPickerValue: DateType,
+    source: 'reset' | 'panel' = 'panel',
+  ) => {
     const prevStartPickerValue = getStartPickerValue(true)
     const prevEndPickerValue = getEndPickerValue(true)
 
-    const updater = [setStartPickerValue, setEndPickerValue][mergedActiveIndex.value]
+    const updater = [setStartPickerValue, setEndPickerValue][
+      mergedActiveIndex.value
+    ]
     updater(nextPickerValue)
 
     const clone: any[] = [prevStartPickerValue, prevEndPickerValue]
     clone[mergedActiveIndex.value] = nextPickerValue
 
-    const mergedCallback = typeof onPickerValueChange === 'function' ? onPickerValueChange : onPickerValueChange?.value
+    const mergedCallback =
+      typeof onPickerValueChange === 'function'
+        ? onPickerValueChange
+        : onPickerValueChange?.value
 
     if (
-      mergedCallback
-      && (
-        !isSame(generateConfig.value, locale.value, prevStartPickerValue, clone[0], pickerMode.value)
-        || !isSame(generateConfig.value, locale.value, prevEndPickerValue, clone[1], pickerMode.value)
-      )
+      mergedCallback &&
+      (!isSame(
+        generateConfig.value,
+        locale.value,
+        prevStartPickerValue,
+        clone[0],
+        pickerMode.value,
+      ) ||
+        !isSame(
+          generateConfig.value,
+          locale.value,
+          prevEndPickerValue,
+          clone[1],
+          pickerMode.value,
+        ))
     ) {
       mergedCallback(clone as ValueType, {
         source,
@@ -122,13 +166,15 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   const isSamePanel = (date1: DateType, date2: DateType) => {
     if (pickerMode.value === 'year') {
       return (
-        Math.floor(generateConfig.value.getYear(date1) / 10)
-        === Math.floor(generateConfig.value.getYear(date2) / 10)
+        Math.floor(generateConfig.value.getYear(date1) / 10) ===
+        Math.floor(generateConfig.value.getYear(date2) / 10)
       )
     }
 
-    const panelMode: PanelMode
-      = pickerMode.value === 'month' || pickerMode.value === 'quarter' ? 'year' : 'month'
+    const panelMode: PanelMode =
+      pickerMode.value === 'month' || pickerMode.value === 'quarter'
+        ? 'year'
+        : 'month'
     return isSame(generateConfig.value, locale.value, date1, date2, panelMode)
   }
 
@@ -140,8 +186,14 @@ export default function useRangePickerValue<DateType extends object, ValueType e
       return endDate
     }
 
-    const nextPanelDate = offsetPanelDate(generateConfig.value, pickerMode.value, startDate, 1)
-    const endInPanels = isSamePanel(startDate, endDate) || isSamePanel(nextPanelDate, endDate)
+    const nextPanelDate = offsetPanelDate(
+      generateConfig.value,
+      pickerMode.value,
+      startDate,
+      1,
+    )
+    const endInPanels =
+      isSamePanel(startDate, endDate) || isSamePanel(nextPanelDate, endDate)
 
     return endInPanels
       ? startDate
@@ -151,7 +203,11 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   const prevActiveIndexRef = ref<number | null>(null)
 
   watch(
-    () => [open.value, mergedActiveIndex.value, calendarValue.value?.[mergedActiveIndex.value]],
+    () => [
+      open.value,
+      mergedActiveIndex.value,
+      calendarValue.value?.[mergedActiveIndex.value],
+    ],
     () => {
       if (!open.value) {
         return
@@ -161,38 +217,62 @@ export default function useRangePickerValue<DateType extends object, ValueType e
         return
       }
 
-      let nextPickerValue: DateType | null = isTimePicker.value ? null : generateConfig.value.getNow()
+      let nextPickerValue: DateType | null = isTimePicker.value
+        ? null
+        : generateConfig.value.getNow()
 
       if (
-        preserveOnFieldChange.value
-        && prevActiveIndexRef.value !== null
-        && prevActiveIndexRef.value !== mergedActiveIndex.value
+        preserveOnFieldChange.value &&
+        prevActiveIndexRef.value !== null &&
+        prevActiveIndexRef.value !== mergedActiveIndex.value
       ) {
-        nextPickerValue = [getStartPickerValue(true), getEndPickerValue(true)][mergedActiveIndex.value ^ 1]
-      }
-      else if (calendarValue.value?.[mergedActiveIndex.value]) {
-        nextPickerValue = mergedActiveIndex.value === 0
-          ? calendarValue.value[0]
-          : getEndDatePickerValue(calendarValue.value[0] as any, calendarValue.value[1] as any)
-      }
-      else if (calendarValue.value?.[mergedActiveIndex.value ^ 1]) {
-        nextPickerValue = calendarValue.value[mergedActiveIndex.value ^ 1] as any
+        nextPickerValue = [getStartPickerValue(true), getEndPickerValue(true)][
+          mergedActiveIndex.value ^ 1
+        ]
+      } else if (calendarValue.value?.[mergedActiveIndex.value]) {
+        nextPickerValue =
+          mergedActiveIndex.value === 0
+            ? calendarValue.value[0]
+            : getEndDatePickerValue(
+                calendarValue.value[0] as any,
+                calendarValue.value[1] as any,
+              )
+      } else if (calendarValue.value?.[mergedActiveIndex.value ^ 1]) {
+        nextPickerValue = calendarValue.value[
+          mergedActiveIndex.value ^ 1
+        ] as any
       }
 
       if (!nextPickerValue) {
         return
       }
 
-      if (minDate?.value && generateConfig.value.isAfter(minDate.value, nextPickerValue)) {
+      if (
+        minDate?.value &&
+        generateConfig.value.isAfter(minDate.value, nextPickerValue)
+      ) {
         nextPickerValue = minDate.value
       }
 
       const offsetPickerValue = multiplePanel.value
-        ? offsetPanelDate(generateConfig.value, pickerMode.value, nextPickerValue, 1)
+        ? offsetPanelDate(
+            generateConfig.value,
+            pickerMode.value,
+            nextPickerValue,
+            1,
+          )
         : nextPickerValue
-      if (maxDate?.value && generateConfig.value.isAfter(offsetPickerValue, maxDate.value)) {
+      if (
+        maxDate?.value &&
+        generateConfig.value.isAfter(offsetPickerValue, maxDate.value)
+      ) {
         nextPickerValue = multiplePanel.value
-          ? offsetPanelDate(generateConfig.value, pickerMode.value, maxDate.value, -1)
+          ? offsetPanelDate(
+              generateConfig.value,
+              pickerMode.value,
+              maxDate.value,
+              -1,
+            )
           : maxDate.value
       }
 
@@ -206,8 +286,7 @@ export default function useRangePickerValue<DateType extends object, ValueType e
     () => {
       if (open.value) {
         prevActiveIndexRef.value = mergedActiveIndex.value
-      }
-      else {
+      } else {
         prevActiveIndexRef.value = null
       }
     },
@@ -215,10 +294,17 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   )
 
   watch(
-    () => [open.value, mergedActiveIndex.value, defaultPickerValue.value?.[mergedActiveIndex.value]],
+    () => [
+      open.value,
+      mergedActiveIndex.value,
+      defaultPickerValue.value?.[mergedActiveIndex.value],
+    ],
     () => {
       if (open.value && defaultPickerValue.value?.[mergedActiveIndex.value]) {
-        setCurrentPickerValue(defaultPickerValue.value[mergedActiveIndex.value] as any, 'reset')
+        setCurrentPickerValue(
+          defaultPickerValue.value[mergedActiveIndex.value] as any,
+          'reset',
+        )
       }
     },
     { flush: 'post' },

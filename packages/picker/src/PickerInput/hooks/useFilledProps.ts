@@ -1,8 +1,11 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import type { FormatType, InternalMode, PickerMode } from '../../interface'
 import type { PickerProps, RangePickerProps } from '../interface'
+
 import { warning } from '@v-c/util'
 import { computed } from 'vue'
+
 import useLocale from '../../hooks/useLocale'
 import { fillShowTimeConfig, getTimeProps } from '../../hooks/useTimeConfig'
 import { isSameTimestamp } from '../../utils/dateUtil'
@@ -14,12 +17,12 @@ import { useFieldFormat } from './useFieldFormat'
 import useInputReadOnly from './useInputReadOnly'
 import useInvalidate from './useInvalidate'
 
-type UseInvalidate<DateType extends object = any>
-  = typeof useInvalidate<DateType>
+type UseInvalidate<DateType extends object = any> =
+  typeof useInvalidate<DateType>
 
-type PickedProps<DateType extends object = any>
-  = | RangePickerProps<DateType>
-    | PickerProps<DateType>
+type PickedProps<DateType extends object = any> =
+  | RangePickerProps<DateType>
+  | PickerProps<DateType>
 
 type ExcludeBooleanType<T> = T extends boolean ? never : T
 
@@ -40,8 +43,8 @@ function useList<T, M = T>(
   let cache: M[] | undefined
   return computed(() => {
     const val = value.value
-    let list
-      = val === null || val === undefined
+    let list =
+      val === null || val === undefined
         ? val
         : toArray(val).map(item => (transform ? transform(item) : item))
 
@@ -51,9 +54,15 @@ function useList<T, M = T>(
       list = clone
     }
 
-    if (isSameItem && cache && Array.isArray(list)
-      && cache.length === list.length
-      && list.every((item, index) => item === cache![index] || isSameItem(cache![index], item as M))
+    if (
+      isSameItem &&
+      cache &&
+      Array.isArray(list) &&
+      cache.length === list.length &&
+      list.every(
+        (item, index) =>
+          item === cache![index] || isSameItem(cache![index], item as M),
+      )
     ) {
       return cache
     }
@@ -67,8 +76,8 @@ type FilledProps<
   InProps extends PickedProps,
   DateType extends GetGeneric<InProps>,
   UpdaterProps extends object = object,
-> = Omit<InProps, keyof UpdaterProps | 'showTime' | 'value' | 'defaultValue'>
-  & UpdaterProps & {
+> = Omit<InProps, keyof UpdaterProps | 'showTime' | 'value' | 'defaultValue'> &
+  UpdaterProps & {
     picker: PickerMode
     showTime?: ExcludeBooleanType<InProps['showTime']>
     value?: ToArrayType<InProps['value'], DateType>
@@ -127,11 +136,9 @@ export default function useFilledProps<
     () => multipleInteractivePicker.value || (props.value as any).multiple,
   )
 
-  const mergedNeedConfirm = computed(
-    () => {
-      return props.value.needConfirm ?? multipleInteractivePicker.value
-    },
-  )
+  const mergedNeedConfirm = computed(() => {
+    return props.value.needConfirm ?? multipleInteractivePicker.value
+  })
 
   // ========================== Time ==========================
   // Auto `format` need to check `showTime.showXXX` first.
@@ -171,9 +178,24 @@ export default function useFilledProps<
   const isSameParsedDate = (prev: any, next: any) =>
     isSameTimestamp(props.value.generateConfig, prev, next)
 
-  const values = useList(computed(() => props.value.value), false, parseByValueFormat, isSameParsedDate)
-  const defaultValues = useList(computed(() => props.value.defaultValue), false, parseByValueFormat, isSameParsedDate)
-  const pickerValues = useList(computed(() => props.value.pickerValue), false, parseByValueFormat, isSameParsedDate)
+  const values = useList(
+    computed(() => props.value.value),
+    false,
+    parseByValueFormat,
+    isSameParsedDate,
+  )
+  const defaultValues = useList(
+    computed(() => props.value.defaultValue),
+    false,
+    parseByValueFormat,
+    isSameParsedDate,
+  )
+  const pickerValues = useList(
+    computed(() => props.value.pickerValue),
+    false,
+    parseByValueFormat,
+    isSameParsedDate,
+  )
   const defaultPickerValues = useList(
     computed(() => props.value.defaultPickerValue),
     false,
@@ -258,8 +280,8 @@ export default function useFilledProps<
   )
 
   // ======================== Merged ========================
-  const mergedProps: ComputedRef<FilledProps<InProps, DateType, UpdaterProps>>
-    = computed(() => {
+  const mergedProps: ComputedRef<FilledProps<InProps, DateType, UpdaterProps>> =
+    computed(() => {
       const target = {
         ...filledProps.value,
         needConfirm: mergedNeedConfirm.value,

@@ -1,677 +1,717 @@
 <script setup vapor lang="ts">
-import type { PickerProps } from './interface'
-import type { BaseInfo, InternalMode, PanelMode, SelectorProps } from '../interface'
-import type { RangeValueChangeSource } from './hooks/useRangeValueChange'
-import { clsx } from '@v-c/util'
-import omit from '@v-c/util/dist/omit'
-import pickAttrs from '@v-c/util/dist/pickAttrs'
-import { computed, ref, useTemplateRef, watch } from 'vue'
-import useSemantic from '../hooks/useSemantic'
-import useToggleDates from '../hooks/useToggleDates'
-import PickerTrigger from '../PickerTrigger/index.vue'
-import { pickTriggerProps } from '../PickerTrigger/util'
-import { cloneProps, toArray } from '../utils/miscUtil'
-import { formatValue as formatByValueFormat, formatValues as formatValuesByValueFormat } from '../utils/valueUtil'
-import { providePickerContext } from './context'
-import useCellRender from './hooks/useCellRender'
-import useFieldsInvalidate from './hooks/useFieldsInvalidate'
-import useFilledProps from './hooks/useFilledProps'
-import useFocusEvents, { isTargetInContainers } from './hooks/useFocusEvents'
-import useOpen from './hooks/useOpen'
-import usePresets from './hooks/usePresets'
-import useRangePickerValue from './hooks/useRangePickerValue'
-import useRangeValue, { useInnerValue } from './hooks/useRangeValue'
-import useRangeValueChange from './hooks/useRangeValueChange'
-import useShowNow from './hooks/useShowNow'
-import Popup from './Popup/index.vue'
-import SingleSelector from './Selector/SingleSelector/index.vue'
+  import type {
+    BaseInfo,
+    InternalMode,
+    PanelMode,
+    SelectorProps,
+  } from '../interface'
+  import type { RangeValueChangeSource } from './hooks/useRangeValueChange'
+  import type { PickerProps } from './interface'
 
-defineOptions({ name: 'VcPicker', inheritAttrs: false })
+  import { clsx } from '@v-c/util'
+  import omit from '@v-c/util/dist/omit'
+  import pickAttrs from '@v-c/util/dist/pickAttrs'
+  import { computed, ref, useTemplateRef, watch } from 'vue'
 
-// `order` defaults to `true`. Vapor coerces an absent boolean prop to `false`
-// (skill rule 7), so the default has to come from the runtime props definition
-// instead of a `?? true` fallback in `useFilledProps`.
-// `order` 默认 `true`。vapor 会把缺省的布尔 prop 强制成 `false`（规则 7），
-// 因此默认值必须写在运行时 props 定义里，而不是靠 `?? true` 回退。
-const props = withDefaults(defineProps<PickerProps>(), { order: true })
+  import useSemantic from '../hooks/useSemantic'
+  import useToggleDates from '../hooks/useToggleDates'
+  import PickerTrigger from '../PickerTrigger/index.vue'
+  import { pickTriggerProps } from '../PickerTrigger/util'
+  import { cloneProps, toArray } from '../utils/miscUtil'
+  import {
+    formatValue as formatByValueFormat,
+    formatValues as formatValuesByValueFormat,
+  } from '../utils/valueUtil'
+  import { providePickerContext } from './context'
+  import useCellRender from './hooks/useCellRender'
+  import useFieldsInvalidate from './hooks/useFieldsInvalidate'
+  import useFilledProps from './hooks/useFilledProps'
+  import useFocusEvents, { isTargetInContainers } from './hooks/useFocusEvents'
+  import useOpen from './hooks/useOpen'
+  import usePresets from './hooks/usePresets'
+  import useRangePickerValue from './hooks/useRangePickerValue'
+  import useRangeValue, { useInnerValue } from './hooks/useRangeValue'
+  import useRangeValueChange from './hooks/useRangeValueChange'
+  import useShowNow from './hooks/useShowNow'
+  import Popup from './Popup/index.vue'
+  import SingleSelector from './Selector/SingleSelector/index.vue'
 
-// ========================= Prop =========================
-const [
-  filledProps,
-  internalPicker,
-  complexPicker,
-  formatList,
-  maskFormat,
-  isInvalidateDate,
-] = useFilledProps<PickerProps, any, object>(computed(() => props) as any)
+  defineOptions({ name: 'VcPicker', inheritAttrs: false })
 
-const fp = computed(() => filledProps.value)
+  // `order` defaults to `true`. Vapor coerces an absent boolean prop to `false`
+  // (skill rule 7), so the default has to come from the runtime props definition
+  // instead of a `?? true` fallback in `useFilledProps`.
+  // `order` 默认 `true`。vapor 会把缺省的布尔 prop 强制成 `false`（规则 7），
+  // 因此默认值必须写在运行时 props 定义里，而不是靠 `?? true` 回退。
+  const props = withDefaults(defineProps<PickerProps>(), { order: true })
 
-const prefixCls = computed(() => fp.value.prefixCls)
-const rootClassName = computed(() => fp.value.rootClassName)
-const styles = computed(() => fp.value.styles)
-const classNames = computed(() => fp.value.classNames)
-const previewValue = computed(() => fp.value.previewValue)
-const order = computed(() => fp.value.order)
-const defaultValue = computed(() => fp.value.defaultValue)
-const value = computed(() => fp.value.value)
-const needConfirm = computed(() => fp.value.needConfirm)
-const onKeyDown = computed(() => fp.value.onKeyDown)
-const disabled = computed(() => fp.value.disabled)
-const disabledDate = computed(() => fp.value.disabledDate)
-const minDate = computed(() => fp.value.minDate)
-const maxDate = computed(() => fp.value.maxDate)
-const defaultOpen = computed(() => fp.value.defaultOpen)
-const open = computed(() => fp.value.open)
-const onOpenChange = computed(() => fp.value.onOpenChange)
-const locale = computed(() => fp.value.locale)
-const generateConfig = computed(() => fp.value.generateConfig)
-const picker = computed(() => fp.value.picker)
-const showNow = computed(() => fp.value.showNow)
-const showToday = computed(() => fp.value.showToday)
-const showTime = computed(() => fp.value.showTime)
-const mode = computed(() => fp.value.mode)
-const onPanelChange = computed(() => fp.value.onPanelChange)
-const onCalendarChange = computed(() => fp.value.onCalendarChange)
-const onOk = computed(() => fp.value.onOk)
-const valueFormat = computed(() => fp.value.valueFormat)
-const multiple = computed(() => fp.value.multiple)
-const defaultPickerValue = computed(() => fp.value.defaultPickerValue)
-const pickerValue = computed(() => fp.value.pickerValue)
-const onPickerValueChange = computed(() => fp.value.onPickerValueChange)
-const inputReadOnly = computed(() => fp.value.inputReadOnly)
-const suffixIcon = computed(() => fp.value.suffixIcon)
-const removeIcon = computed(() => fp.value.removeIcon)
-const onFocus = computed(() => fp.value.onFocus)
-const onBlur = computed(() => fp.value.onBlur)
-const presets = computed(() => fp.value.presets)
-const components = computed(() => fp.value.components)
-const cellRender = computed(() => fp.value.cellRender)
-const dateRender = computed(() => fp.value.dateRender)
-const monthCellRender = computed(() => fp.value.monthCellRender)
-const onClick = computed(() => {
-  const handler = fp.value.onClick as any
-  if (Array.isArray(handler)) {
-    return (event: MouseEvent) => {
-      handler.forEach((fn: any) => fn?.(event))
+  // ========================= Prop =========================
+  const [
+    filledProps,
+    internalPicker,
+    complexPicker,
+    formatList,
+    maskFormat,
+    isInvalidateDate,
+  ] = useFilledProps<PickerProps, any, object>(computed(() => props) as any)
+
+  const fp = computed(() => filledProps.value)
+
+  const prefixCls = computed(() => fp.value.prefixCls)
+  const rootClassName = computed(() => fp.value.rootClassName)
+  const styles = computed(() => fp.value.styles)
+  const classNames = computed(() => fp.value.classNames)
+  const previewValue = computed(() => fp.value.previewValue)
+  const order = computed(() => fp.value.order)
+  const defaultValue = computed(() => fp.value.defaultValue)
+  const value = computed(() => fp.value.value)
+  const needConfirm = computed(() => fp.value.needConfirm)
+  const onKeyDown = computed(() => fp.value.onKeyDown)
+  const disabled = computed(() => fp.value.disabled)
+  const disabledDate = computed(() => fp.value.disabledDate)
+  const minDate = computed(() => fp.value.minDate)
+  const maxDate = computed(() => fp.value.maxDate)
+  const defaultOpen = computed(() => fp.value.defaultOpen)
+  const open = computed(() => fp.value.open)
+  const onOpenChange = computed(() => fp.value.onOpenChange)
+  const locale = computed(() => fp.value.locale)
+  const generateConfig = computed(() => fp.value.generateConfig)
+  const picker = computed(() => fp.value.picker)
+  const showNow = computed(() => fp.value.showNow)
+  const showToday = computed(() => fp.value.showToday)
+  const showTime = computed(() => fp.value.showTime)
+  const mode = computed(() => fp.value.mode)
+  const onPanelChange = computed(() => fp.value.onPanelChange)
+  const onCalendarChange = computed(() => fp.value.onCalendarChange)
+  const onOk = computed(() => fp.value.onOk)
+  const valueFormat = computed(() => fp.value.valueFormat)
+  const multiple = computed(() => fp.value.multiple)
+  const defaultPickerValue = computed(() => fp.value.defaultPickerValue)
+  const pickerValue = computed(() => fp.value.pickerValue)
+  const onPickerValueChange = computed(() => fp.value.onPickerValueChange)
+  const inputReadOnly = computed(() => fp.value.inputReadOnly)
+  const suffixIcon = computed(() => fp.value.suffixIcon)
+  const removeIcon = computed(() => fp.value.removeIcon)
+  const onFocus = computed(() => fp.value.onFocus)
+  const onBlur = computed(() => fp.value.onBlur)
+  const presets = computed(() => fp.value.presets)
+  const components = computed(() => fp.value.components)
+  const cellRender = computed(() => fp.value.cellRender)
+  const dateRender = computed(() => fp.value.dateRender)
+  const monthCellRender = computed(() => fp.value.monthCellRender)
+  const onClick = computed(() => {
+    const handler = fp.value.onClick as any
+    if (Array.isArray(handler)) {
+      return (event: MouseEvent) => {
+        handler.forEach((fn: any) => fn?.(event))
+      }
+    }
+    return handler
+  })
+  const autoFocus = computed(
+    () => (fp.value as any).autoFocus ?? (fp.value as any).autofocus,
+  )
+  const tabIndex = computed(
+    () => (fp.value as any).tabIndex ?? (fp.value as any).tabindex,
+  )
+  const onMouseDown = computed(
+    () =>
+      (fp.value as any).onMouseDown ??
+      (fp.value as any).onMousedown ??
+      (() => {}),
+  )
+
+  // ========================= Refs =========================
+  const selectorRef = useTemplateRef<any>('selector')
+  const popupRef = ref<HTMLDivElement>()
+  // Vapor unwraps `Ref`s in template expressions, so the callback that mutates
+  // `popupRef.value` must be defined in the script, not inlined in the template.
+  // vapor 在模板表达式中会解包 `Ref`，因此修改 `popupRef.value` 的回调必须定义
+  // 在 script 中，而不能内联在模板里。
+  const onPopupContainerRef = (el: HTMLDivElement | undefined) => {
+    popupRef.value = el
+  }
+
+  defineExpose({
+    get nativeElement() {
+      return selectorRef.value?.nativeElement
+    },
+    focus: (options?: FocusOptions) => {
+      selectorRef.value?.focus(options)
+    },
+    blur: () => {
+      selectorRef.value?.blur()
+    },
+  })
+
+  // ========================= Util =========================
+  function pickerParam<T>(values: T | T[]) {
+    if (values === null) return null
+    return multiple.value ? values : (values as T[])[0]
+  }
+
+  const toValueByFormat = (values: any[] | null) => {
+    const parsed = pickerParam(values as any)
+    const config = {
+      generateConfig: generateConfig.value,
+      locale: locale.value,
+      valueFormat: valueFormat.value,
+    }
+
+    if (Array.isArray(parsed)) return formatValuesByValueFormat(parsed, config)
+    return formatByValueFormat(parsed, config)
+  }
+
+  const toggleDates = useToggleDates(generateConfig, locale, internalPicker)
+
+  // ======================= Semantic =======================
+  const semanticCtx = useSemantic(classNames, styles)
+
+  // ========================= Open =========================
+  const [mergedOpen, triggerOpen] = useOpen(
+    open,
+    defaultOpen,
+    computed(() => [disabled.value]),
+    open => {
+      onOpenChange.value?.(open)
+    },
+  )
+
+  // ======================= Calendar =======================
+  const onInternalCalendarChange = (
+    dates: any[],
+    dateStrings: string[],
+    info: BaseInfo,
+  ) => {
+    if (onCalendarChange.value) {
+      const filteredInfo = { ...info }
+      delete filteredInfo.range
+      onCalendarChange.value(
+        toValueByFormat(dates),
+        pickerParam(dateStrings)!,
+        filteredInfo,
+      )
     }
   }
-  return handler
-})
-const autoFocus = computed(() => (fp.value as any).autoFocus ?? (fp.value as any).autofocus)
-const tabIndex = computed(() => (fp.value as any).tabIndex ?? (fp.value as any).tabindex)
-const onMouseDown = computed(
-  () => (fp.value as any).onMouseDown ?? (fp.value as any).onMousedown ?? (() => {}),
-)
 
-// ========================= Refs =========================
-const selectorRef = useTemplateRef<any>('selector')
-const popupRef = ref<HTMLDivElement>()
-// Vapor unwraps `Ref`s in template expressions, so the callback that mutates
-// `popupRef.value` must be defined in the script, not inlined in the template.
-// vapor 在模板表达式中会解包 `Ref`，因此修改 `popupRef.value` 的回调必须定义
-// 在 script 中，而不能内联在模板里。
-const onPopupContainerRef = (el: HTMLDivElement | undefined) => {
-  popupRef.value = el
-}
-
-defineExpose({
-  get nativeElement() {
-    return selectorRef.value?.nativeElement
-  },
-  focus: (options?: FocusOptions) => {
-    selectorRef.value?.focus(options)
-  },
-  blur: () => {
-    selectorRef.value?.blur()
-  },
-})
-
-// ========================= Util =========================
-function pickerParam<T>(values: T | T[]) {
-  if (values === null) return null
-  return multiple.value ? values : (values as T[])[0]
-}
-
-const toValueByFormat = (values: any[] | null) => {
-  const parsed = pickerParam(values as any)
-  const config = {
-    generateConfig: generateConfig.value,
-    locale: locale.value,
-    valueFormat: valueFormat.value,
+  const onInternalOk = (dates: any[]) => {
+    onOk.value?.(toValueByFormat(dates))
   }
 
-  if (Array.isArray(parsed)) return formatValuesByValueFormat(parsed, config)
-  return formatByValueFormat(parsed, config)
-}
+  // ======================== Values ========================
+  const [
+    mergedValue,
+    setInnerValue,
+    getCalendarValue,
+    triggerCalendarChange,
+    triggerOk,
+  ] = useInnerValue(
+    generateConfig,
+    locale,
+    formatList,
+    ref(false), // rangeValue
+    order,
+    defaultValue,
+    value,
+    onInternalCalendarChange,
+    onInternalOk,
+  )
 
-const toggleDates = useToggleDates(generateConfig, locale, internalPicker)
+  const calendarValue = computed(() => getCalendarValue.value)
 
-// ======================= Semantic =======================
-const semanticCtx = useSemantic(classNames, styles)
+  // ======================== Focus =========================
+  const isInternalPickerElement = (element: EventTarget | null) =>
+    isTargetInContainers(element, [
+      selectorRef.value?.nativeElement,
+      popupRef.value,
+    ])
 
-// ========================= Open =========================
-const [mergedOpen, triggerOpen] = useOpen(
-  open,
-  defaultOpen,
-  computed(() => [disabled.value]),
-  open => {
-    onOpenChange.value?.(open)
-  },
-)
+  const [focused, onFieldFocus, onFieldBlur] = useFocusEvents(
+    isInternalPickerElement,
+    (_index, event) => {
+      onFocus.value?.(event, {})
+    },
+    (_index, event) => {
+      onBlur.value?.(event, {})
+    },
+    () => {
+      triggerOpen(false)
+    },
+  )
 
-// ======================= Calendar =======================
-const onInternalCalendarChange = (
-  dates: any[],
-  dateStrings: string[],
-  info: BaseInfo,
-) => {
-  if (onCalendarChange.value) {
-    const filteredInfo = { ...info }
-    delete filteredInfo.range
-    onCalendarChange.value(
-      toValueByFormat(dates),
-      pickerParam(dateStrings)!,
-      filteredInfo,
+  // ========================= Mode =========================
+  const mergedMode = ref<PanelMode>(picker.value ?? mode.value)
+  watch(picker, () => {
+    mergedMode.value = picker.value
+  })
+  const setMode = (val: PanelMode) => {
+    mergedMode.value = val
+  }
+
+  /** Extends from `mergedMode` to patch `datetime` mode */
+  const internalMode = computed<InternalMode>(() =>
+    mergedMode.value === 'date' && showTime.value
+      ? 'datetime'
+      : mergedMode.value,
+  )
+
+  // ======================= Show Now =======================
+  const mergedShowNow = useShowNow(
+    picker as any,
+    mergedMode,
+    showNow,
+    showToday,
+  )
+
+  // ======================== Value =========================
+  const onInternalChange = (
+    dates: any[] | null,
+    dateStrings: string[] | null,
+  ) => {
+    if (props?.onChange) {
+      props?.onChange?.(
+        toValueByFormat(dates),
+        pickerParam(dateStrings as any)!,
+      )
+    }
+  }
+
+  const rangeValueInfo = computed(() => ({
+    ...fp.value,
+    onChange: onInternalChange,
+  }))
+
+  const [, triggerSubmitChange, resetValue] = useRangeValue(
+    // @ts-expect-error: FIXME
+    rangeValueInfo,
+    mergedValue,
+    setInnerValue,
+    () => getCalendarValue.value,
+    triggerCalendarChange,
+    computed(() => []), // disabled
+    formatList,
+    isInvalidateDate,
+  )
+
+  // Treat the complete SinglePicker value list as one field value. This keeps
+  // multiple dates inside field `0` instead of exposing them as extra fields.
+  // 将 SinglePicker 的整组值视为一个 field value；multiple 日期仍属于 field `0`
+  // 内部，不会被当成额外的 field。
+  const getFieldCalendarValue = () => {
+    const values = getCalendarValue.value
+    return [values.length ? values : null]
+  }
+
+  const triggerFieldCalendarChange = (_index: number, nextValues: any[]) => {
+    triggerCalendarChange(nextValues)
+  }
+
+  const flushFieldSubmit = (_index: number, needTriggerChange: boolean) => {
+    if (needTriggerChange) {
+      triggerSubmitChange(getCalendarValue.value)
+      triggerOpen(false, { force: true })
+    }
+  }
+
+  const resetFieldValue = () => {
+    resetValue()
+  }
+
+  const [, activeIndex, , , triggerSingleValueChange, resetSingleValueChange] =
+    useRangeValueChange<any[]>(
+      ref(1),
+      needConfirm as any,
+      ref([false]),
+      getFieldCalendarValue,
+      triggerFieldCalendarChange,
+      flushFieldSubmit,
+      resetFieldValue,
+    )
+
+  // Finalize the current interaction only after the popup is actually closed.
+  // 仅在 popup 实际关闭后，统一收口当前交互。
+  watch(mergedOpen, isOpen => {
+    if (!isOpen) triggerSingleValueChange(0, 'popupClose')
+  })
+
+  // ======================= Validate =======================
+  const [submitInvalidates, onSelectorInvalid] = useFieldsInvalidate(
+    calendarValue,
+    isInvalidateDate,
+  )
+
+  const submitInvalidate = computed(() =>
+    submitInvalidates.value.some(invalidated => invalidated),
+  )
+
+  // ===================== Picker Value =====================
+  // Proxy to single pickerValue
+  const onInternalPickerValueChange = (
+    dates: any[],
+    info: BaseInfo & {
+      source: 'reset' | 'panel'
+      mode: [PanelMode, PanelMode]
+    },
+  ) => {
+    if (onPickerValueChange.value) {
+      const cleanInfo = { ...info, mode: info.mode[0] }
+      delete cleanInfo.range
+      onPickerValueChange.value(dates[0], cleanInfo)
+    }
+  }
+
+  const [currentPickerValue, setCurrentPickerValue] = useRangePickerValue(
+    generateConfig,
+    locale,
+    calendarValue,
+    computed(() => [mergedMode.value]),
+    mergedOpen,
+    ref(false), // preserveOnFieldChange — SinglePicker has a single field
+    activeIndex,
+    internalPicker,
+    ref(false), // multiplePanel
+    defaultPickerValue,
+    pickerValue,
+    computed(() => toArray(showTime.value?.defaultOpenValue)),
+    onInternalPickerValueChange,
+    minDate,
+    maxDate,
+  )
+
+  // >>> Mode need wait for `pickerValue`
+  const triggerModeChange = (
+    nextPickerValue: any,
+    nextMode: PanelMode,
+    triggerEvent?: boolean,
+  ) => {
+    setMode(nextMode)
+    // Compatible with `onPanelChange`
+    if (onPanelChange.value && triggerEvent !== false) {
+      const lastPickerValue =
+        nextPickerValue || calendarValue.value[calendarValue.value.length - 1]
+      onPanelChange.value(lastPickerValue, nextMode)
+    }
+  }
+
+  // ======================== Submit ========================
+  /** Submit the complete value list stored in SinglePicker field `0`. */
+  const triggerConfirm = (source: RangeValueChangeSource = 'confirm') => {
+    triggerSingleValueChange(0, source)
+    resetSingleValueChange()
+  }
+
+  // ======================== Click =========================
+  const onSelectorClick = (event: MouseEvent) => {
+    if (
+      !disabled.value &&
+      !selectorRef.value?.nativeElement?.contains(document.activeElement)
+    ) {
+      // Click to focus the enabled input
+      selectorRef.value?.focus()
+    }
+
+    triggerOpen(true)
+
+    onClick.value?.(event as PointerEvent)
+  }
+
+  const onSelectorClear = () => {
+    triggerSubmitChange(null as any)
+    triggerOpen(false, { force: true })
+    fp.value.onClear?.()
+  }
+
+  // ======================== Hover =========================
+  const hoverSource = ref<'cell' | 'preset' | null>(null)
+  const internalHoverValue = ref<any>(null)
+
+  const hoverValues = computed(() => {
+    const values = [internalHoverValue.value, ...calendarValue.value].filter(
+      date => date,
+    )
+    return multiple.value ? values : values.slice(0, 1)
+  })
+
+  // Selector values is different with RangePicker, which can not use `hoverValue`
+  // directly.
+  const selectorValues = computed(() => {
+    if (!multiple.value && internalHoverValue.value) {
+      return [internalHoverValue.value]
+    }
+    return calendarValue.value.filter(date => date)
+  })
+
+  // Clean up `internalHoverValue` when closed
+  watch(mergedOpen, () => {
+    if (!mergedOpen.value) internalHoverValue.value = null
+  })
+
+  const onSetHover = (date: any | null, source: 'cell' | 'preset') => {
+    if (previewValue.value !== 'hover') return
+
+    internalHoverValue.value = date
+    hoverSource.value = source
+  }
+
+  // ======================= Presets ========================
+  const presetList = usePresets(presets)
+
+  const onPresetHover = (nextValue: any | null) => {
+    onSetHover(nextValue, 'preset')
+  }
+
+  const onPresetSubmit = (nextValue: any) => {
+    const nextCalendarValues = multiple.value
+      ? toggleDates(getCalendarValue.value, nextValue)
+      : [nextValue]
+    const passed = triggerSubmitChange(nextCalendarValues)
+
+    if (passed && !multiple.value) {
+      triggerOpen(false, { force: true })
+    }
+  }
+
+  const onNow = (now: any) => {
+    onPresetSubmit(now)
+  }
+
+  // ======================== Panel =========================
+  const onPanelHover = (date: any | null) => {
+    onSetHover(date, 'cell')
+  }
+
+  const onPanelFocus = (event: FocusEvent) => {
+    triggerOpen(true)
+    onFieldFocus(0, 'panel', event)
+  }
+
+  const onPanelSelect = (date: any) => {
+    // Not change values if multiple and current panel is to match with picker
+    if (multiple.value && internalMode.value !== picker.value) return
+
+    const nextValues = multiple.value
+      ? toggleDates(getCalendarValue.value, date)
+      : [date]
+
+    const panelFinished =
+      !complexPicker.value && internalPicker.value === internalMode.value
+
+    triggerSingleValueChange(
+      0,
+      panelFinished ? 'panel-final' : 'panel-intermediate',
+      nextValues,
     )
   }
-}
 
-const onInternalOk = (dates: any[]) => {
-  onOk.value?.(toValueByFormat(dates))
-}
-
-// ======================== Values ========================
-const [
-  mergedValue,
-  setInnerValue,
-  getCalendarValue,
-  triggerCalendarChange,
-  triggerOk,
-] = useInnerValue(
-  generateConfig,
-  locale,
-  formatList,
-  ref(false), // rangeValue
-  order,
-  defaultValue,
-  value,
-  onInternalCalendarChange,
-  onInternalOk,
-)
-
-const calendarValue = computed(() => getCalendarValue.value)
-
-// ======================== Focus =========================
-const isInternalPickerElement = (element: EventTarget | null) =>
-  isTargetInContainers(
-    element,
-    [selectorRef.value?.nativeElement, popupRef.value],
-  )
-
-const [focused, onFieldFocus, onFieldBlur] = useFocusEvents(
-  isInternalPickerElement,
-  (_index, event) => {
-    onFocus.value?.(event, {})
-  },
-  (_index, event) => {
-    onBlur.value?.(event, {})
-  },
-  () => {
-    triggerOpen(false)
-  },
-)
-
-// ========================= Mode =========================
-const mergedMode = ref<PanelMode>(picker.value ?? mode.value)
-watch(picker, () => {
-  mergedMode.value = picker.value
-})
-const setMode = (val: PanelMode) => {
-  mergedMode.value = val
-}
-
-/** Extends from `mergedMode` to patch `datetime` mode */
-const internalMode = computed<InternalMode>(() =>
-  mergedMode.value === 'date' && showTime.value
-    ? 'datetime'
-    : mergedMode.value,
-)
-
-// ======================= Show Now =======================
-const mergedShowNow = useShowNow(picker as any, mergedMode, showNow, showToday)
-
-// ======================== Value =========================
-const onInternalChange = (dates: any[] | null, dateStrings: string[] | null) => {
-  if (props?.onChange) {
-    props?.onChange?.(toValueByFormat(dates), pickerParam(dateStrings as any)!)
-  }
-}
-
-const rangeValueInfo = computed(() => ({
-  ...fp.value,
-  onChange: onInternalChange,
-}))
-
-const [, triggerSubmitChange, resetValue] = useRangeValue(
-  // @ts-expect-error: FIXME
-  rangeValueInfo,
-  mergedValue,
-  setInnerValue,
-  () => getCalendarValue.value,
-  triggerCalendarChange,
-  computed(() => []), // disabled
-  formatList,
-  isInvalidateDate,
-)
-
-// Treat the complete SinglePicker value list as one field value. This keeps
-// multiple dates inside field `0` instead of exposing them as extra fields.
-// 将 SinglePicker 的整组值视为一个 field value；multiple 日期仍属于 field `0`
-// 内部，不会被当成额外的 field。
-const getFieldCalendarValue = () => {
-  const values = getCalendarValue.value
-  return [values.length ? values : null]
-}
-
-const triggerFieldCalendarChange = (_index: number, nextValues: any[]) => {
-  triggerCalendarChange(nextValues)
-}
-
-const flushFieldSubmit = (_index: number, needTriggerChange: boolean) => {
-  if (needTriggerChange) {
-    triggerSubmitChange(getCalendarValue.value)
-    triggerOpen(false, { force: true })
-  }
-}
-
-const resetFieldValue = () => {
-  resetValue()
-}
-
-const [, activeIndex, , , triggerSingleValueChange, resetSingleValueChange]
-  = useRangeValueChange<any[]>(
-    ref(1),
-    needConfirm as any,
-    ref([false]),
-    getFieldCalendarValue,
-    triggerFieldCalendarChange,
-    flushFieldSubmit,
-    resetFieldValue,
-  )
-
-// Finalize the current interaction only after the popup is actually closed.
-// 仅在 popup 实际关闭后，统一收口当前交互。
-watch(mergedOpen, isOpen => {
-  if (!isOpen) triggerSingleValueChange(0, 'popupClose')
-})
-
-// ======================= Validate =======================
-const [submitInvalidates, onSelectorInvalid] = useFieldsInvalidate(
-  calendarValue,
-  isInvalidateDate,
-)
-
-const submitInvalidate = computed(() =>
-  submitInvalidates.value.some(invalidated => invalidated),
-)
-
-// ===================== Picker Value =====================
-// Proxy to single pickerValue
-const onInternalPickerValueChange = (
-  dates: any[],
-  info: BaseInfo & {
-    source: 'reset' | 'panel'
-    mode: [PanelMode, PanelMode]
-  },
-) => {
-  if (onPickerValueChange.value) {
-    const cleanInfo = { ...info, mode: info.mode[0] }
-    delete cleanInfo.range
-    onPickerValueChange.value(dates[0], cleanInfo)
-  }
-}
-
-const [currentPickerValue, setCurrentPickerValue] = useRangePickerValue(
-  generateConfig,
-  locale,
-  calendarValue,
-  computed(() => [mergedMode.value]),
-  mergedOpen,
-  ref(false), // preserveOnFieldChange — SinglePicker has a single field
-  activeIndex,
-  internalPicker,
-  ref(false), // multiplePanel
-  defaultPickerValue,
-  pickerValue,
-  computed(() => toArray(showTime.value?.defaultOpenValue)),
-  onInternalPickerValueChange,
-  minDate,
-  maxDate,
-)
-
-// >>> Mode need wait for `pickerValue`
-const triggerModeChange = (
-  nextPickerValue: any,
-  nextMode: PanelMode,
-  triggerEvent?: boolean,
-) => {
-  setMode(nextMode)
-  // Compatible with `onPanelChange`
-  if (onPanelChange.value && triggerEvent !== false) {
-    const lastPickerValue
-      = nextPickerValue || calendarValue.value[calendarValue.value.length - 1]
-    onPanelChange.value(lastPickerValue, nextMode)
-  }
-}
-
-// ======================== Submit ========================
-/** Submit the complete value list stored in SinglePicker field `0`. */
-const triggerConfirm = (source: RangeValueChangeSource = 'confirm') => {
-  triggerSingleValueChange(0, source)
-  resetSingleValueChange()
-}
-
-// ======================== Click =========================
-const onSelectorClick = (event: MouseEvent) => {
-  if (
-    !disabled.value
-    && !selectorRef.value?.nativeElement?.contains(document.activeElement)
-  ) {
-    // Click to focus the enabled input
-    selectorRef.value?.focus()
-  }
-
-  triggerOpen(true)
-
-  onClick.value?.(event as PointerEvent)
-}
-
-const onSelectorClear = () => {
-  triggerSubmitChange(null as any)
-  triggerOpen(false, { force: true })
-  fp.value.onClear?.()
-}
-
-// ======================== Hover =========================
-const hoverSource = ref<'cell' | 'preset' | null>(null)
-const internalHoverValue = ref<any>(null)
-
-const hoverValues = computed(() => {
-  const values = [internalHoverValue.value, ...calendarValue.value].filter(
-    date => date,
-  )
-  return multiple.value ? values : values.slice(0, 1)
-})
-
-// Selector values is different with RangePicker, which can not use `hoverValue`
-// directly.
-const selectorValues = computed(() => {
-  if (!multiple.value && internalHoverValue.value) {
-    return [internalHoverValue.value]
-  }
-  return calendarValue.value.filter(date => date)
-})
-
-// Clean up `internalHoverValue` when closed
-watch(mergedOpen, () => {
-  if (!mergedOpen.value) internalHoverValue.value = null
-})
-
-const onSetHover = (date: any | null, source: 'cell' | 'preset') => {
-  if (previewValue.value !== 'hover') return
-
-  internalHoverValue.value = date
-  hoverSource.value = source
-}
-
-// ======================= Presets ========================
-const presetList = usePresets(presets)
-
-const onPresetHover = (nextValue: any | null) => {
-  onSetHover(nextValue, 'preset')
-}
-
-const onPresetSubmit = (nextValue: any) => {
-  const nextCalendarValues = multiple.value
-    ? toggleDates(getCalendarValue.value, nextValue)
-    : [nextValue]
-  const passed = triggerSubmitChange(nextCalendarValues)
-
-  if (passed && !multiple.value) {
-    triggerOpen(false, { force: true })
-  }
-}
-
-const onNow = (now: any) => {
-  onPresetSubmit(now)
-}
-
-// ======================== Panel =========================
-const onPanelHover = (date: any | null) => {
-  onSetHover(date, 'cell')
-}
-
-const onPanelFocus = (event: FocusEvent) => {
-  triggerOpen(true)
-  onFieldFocus(0, 'panel', event)
-}
-
-const onPanelSelect = (date: any) => {
-  // Not change values if multiple and current panel is to match with picker
-  if (multiple.value && internalMode.value !== picker.value) return
-
-  const nextValues = multiple.value
-    ? toggleDates(getCalendarValue.value, date)
-    : [date]
-
-  const panelFinished
-    = !complexPicker.value && internalPicker.value === internalMode.value
-
-  triggerSingleValueChange(
-    0,
-    panelFinished ? 'panel-final' : 'panel-intermediate',
-    nextValues,
-  )
-}
-
-const onPopupClose = () => {
-  // Close popup
-  triggerOpen(false)
-}
-
-const onInternalCellRender = useCellRender(cellRender, dateRender, monthCellRender)
-
-const panelProps = computed(() => {
-  const domProps = pickAttrs(fp.value, false)
-  const restProps = omit(fp.value, [
-    ...(Object.keys(domProps) as any[]),
-    'onChange',
-    'onCalendarChange',
-    'onClear',
-    'style',
-    'className',
-    'onPanelChange',
-    'classNames',
-    'styles',
-  ])
-  return {
-    ...restProps,
-    multiple: fp.value.multiple,
-  }
-})
-
-// ======================= Selector =======================
-const onSelectorChange = (date: any[], source: 'input' | 'remove' = 'input') => {
-  triggerSingleValueChange(0, source, date)
-}
-
-const onSelectorInputChange = () => {
-  triggerSingleValueChange(0, 'input')
-}
-
-const onSelectorFocus: SelectorProps['onFocus'] = event => {
-  triggerSingleValueChange(0, 'field-switch')
-
-  triggerOpen(true, { inherit: true })
-
-  onFieldFocus(0, 'input', event)
-}
-
-const onSelectorBlur: SelectorProps['onBlur'] = event => {
-  onFieldBlur(0, 'input', event)
-}
-
-const onSelectorKeyDown: SelectorProps['onKeyDown'] = (event, preventDefault) => {
-  if (event.key === 'Tab') {
-    triggerConfirm('keyboard-submit-weak')
-  }
-  else if (event.key === 'Escape') {
-    triggerSingleValueChange(0, 'esc')
+  const onPopupClose = () => {
+    // Close popup
     triggerOpen(false)
   }
 
-  onKeyDown.value?.(event, preventDefault)
-}
+  const onInternalCellRender = useCellRender(
+    cellRender,
+    dateRender,
+    monthCellRender,
+  )
 
-// ======================= Context ========================
-const context = computed(() => {
-  const [mergedClassNames, mergedStyles] = semanticCtx.value
-  return {
-    prefixCls: prefixCls.value,
-    locale: locale.value,
-    generateConfig: generateConfig.value,
-    button: components.value?.button,
-    input: components.value?.input,
-    classNames: mergedClassNames,
-    styles: mergedStyles,
-  }
-})
-
-providePickerContext(context)
-
-// ======================== Effect ========================
-// Reset for every active
-watch(
-  [mergedOpen, activeIndex, picker],
-  () => {
-    if (mergedOpen.value && activeIndex.value !== undefined) {
-      // Legacy compatible. This effect update should not trigger `onPanelChange`
-      triggerModeChange(null, picker.value, false)
+  const panelProps = computed(() => {
+    const domProps = pickAttrs(fp.value, false)
+    const restProps = omit(fp.value, [
+      ...(Object.keys(domProps) as any[]),
+      'onChange',
+      'onCalendarChange',
+      'onClear',
+      'style',
+      'className',
+      'onPanelChange',
+      'classNames',
+      'styles',
+    ])
+    return {
+      ...restProps,
+      multiple: fp.value.multiple,
     }
-  },
-  { flush: 'post' },
-)
-
-const popupProps = computed(() => {
-  const [mergedClassNames, mergedStyles] = semanticCtx.value
-
-  return {
-    ...panelProps.value,
-    showNow: mergedShowNow.value,
-    showTime: showTime.value,
-    disabledDate: disabledDate.value!,
-    onFocus: onPanelFocus,
-    onBlur: (event: FocusEvent) => onFieldBlur(0, 'panel', event),
-    picker: picker.value as any,
-    mode: mergedMode.value,
-    internalMode: internalMode.value,
-    onPanelChange: triggerModeChange,
-    format: maskFormat.value,
-    value: calendarValue.value,
-    isInvalid: isInvalidateDate,
-    onChange: null as any,
-    onSelect: onPanelSelect,
-    pickerValue: currentPickerValue.value,
-    defaultOpenValue: showTime.value?.defaultOpenValue,
-    onPickerValueChange: setCurrentPickerValue,
-    hoverValue: hoverValues.value,
-    onHover: onPanelHover,
-    needConfirm: needConfirm.value!,
-    onSubmit: () => triggerConfirm('confirm'),
-    onOk: triggerOk,
-    presets: presetList.value,
-    onPresetHover,
-    onPresetSubmit,
-    onNow,
-    cellRender: onInternalCellRender,
-    classNames: mergedClassNames,
-    styles: mergedStyles,
-  }
-})
-
-// ========================= Render ========================
-const triggerProps = computed(() => pickTriggerProps(fp.value as any))
-
-const popupStyle = computed(() => styles.value?.popup?.root)
-
-const popupClassName = computed(() => {
-  const [mergedClassNames] = semanticCtx.value
-  return clsx(rootClassName.value, mergedClassNames?.popup?.root)
-})
-
-// `Record<string, any>` return type: `{...baseProps}` narrows the inferred
-// type to the literal keys below, hiding the props forwarded from `cloneProps`
-// (`onChange` / `internalPicker` / `picker`, …).
-// `Record<string, any>` 返回类型：`{...baseProps}` 会把推断类型收窄为下方
-// 字面量 key，掩盖从 `cloneProps` 转发的 props。
-const singleSelectorProps = computed<Record<string, any>>(() => {
-  const [mergedClassNames, mergedStyles] = semanticCtx.value
-  const baseProps = cloneProps(fp.value as any, [
-    'autoFocus',
-    'autofocus',
-    'tabIndex',
-    'tabindex',
-    'onClick',
-    'onMouseDown',
-    'onMousedown',
-  ])
-  const result: Record<string, any> = {
-    ...baseProps,
-    class: clsx(fp.value.className, rootClassName.value, mergedClassNames.root),
-    style: { ...mergedStyles.root, ...fp.value.style },
-    suffixIcon: suffixIcon.value,
-    removeIcon: removeIcon.value,
-    activeHelp: !!internalHoverValue.value,
-    allHelp: !!internalHoverValue.value && hoverSource.value === 'preset',
-    focused: focused.value,
-    onFocus: onSelectorFocus,
-    onBlur: onSelectorBlur,
-    onKeyDown: onSelectorKeyDown,
-    onSubmit: () => triggerConfirm('keyboard-submit'),
-    value: selectorValues.value,
-    maskFormat: maskFormat.value,
-    onChange: onSelectorChange,
-    onInputChange: onSelectorInputChange,
-    internalPicker: internalPicker.value,
-    onMouseDown: onMouseDown.value,
-    // Format
-    format: formatList.value,
-    inputReadOnly: inputReadOnly.value,
-    // Disabled
-    disabled: disabled.value,
-    // Open
-    open: mergedOpen.value,
-    onOpenChange: triggerOpen,
-    // Click
-    onClick: onSelectorClick,
-    onClear: onSelectorClear,
-    // Invalid
-    invalid: submitInvalidate.value,
-    onInvalid: (invalid: boolean) => {
-      // Only `single` mode support type date. `multiple` mode can not typing.
-      onSelectorInvalid(invalid, 0)
-    },
-  }
-  if (autoFocus.value !== undefined) result.autoFocus = autoFocus.value
-  if (tabIndex.value !== undefined) result.tabIndex = tabIndex.value
-
-  Object.keys(result).forEach(key => {
-    if (result[key] === undefined) delete result[key]
   })
-  return result
-})
 
+  // ======================= Selector =======================
+  const onSelectorChange = (
+    date: any[],
+    source: 'input' | 'remove' = 'input',
+  ) => {
+    triggerSingleValueChange(0, source, date)
+  }
+
+  const onSelectorInputChange = () => {
+    triggerSingleValueChange(0, 'input')
+  }
+
+  const onSelectorFocus: SelectorProps['onFocus'] = event => {
+    triggerSingleValueChange(0, 'field-switch')
+
+    triggerOpen(true, { inherit: true })
+
+    onFieldFocus(0, 'input', event)
+  }
+
+  const onSelectorBlur: SelectorProps['onBlur'] = event => {
+    onFieldBlur(0, 'input', event)
+  }
+
+  const onSelectorKeyDown: SelectorProps['onKeyDown'] = (
+    event,
+    preventDefault,
+  ) => {
+    if (event.key === 'Tab') {
+      triggerConfirm('keyboard-submit-weak')
+    } else if (event.key === 'Escape') {
+      triggerSingleValueChange(0, 'esc')
+      triggerOpen(false)
+    }
+
+    onKeyDown.value?.(event, preventDefault)
+  }
+
+  // ======================= Context ========================
+  const context = computed(() => {
+    const [mergedClassNames, mergedStyles] = semanticCtx.value
+    return {
+      prefixCls: prefixCls.value,
+      locale: locale.value,
+      generateConfig: generateConfig.value,
+      button: components.value?.button,
+      input: components.value?.input,
+      classNames: mergedClassNames,
+      styles: mergedStyles,
+    }
+  })
+
+  providePickerContext(context)
+
+  // ======================== Effect ========================
+  // Reset for every active
+  watch(
+    [mergedOpen, activeIndex, picker],
+    () => {
+      if (mergedOpen.value && activeIndex.value !== undefined) {
+        // Legacy compatible. This effect update should not trigger `onPanelChange`
+        triggerModeChange(null, picker.value, false)
+      }
+    },
+    { flush: 'post' },
+  )
+
+  const popupProps = computed(() => {
+    const [mergedClassNames, mergedStyles] = semanticCtx.value
+
+    return {
+      ...panelProps.value,
+      showNow: mergedShowNow.value,
+      showTime: showTime.value,
+      disabledDate: disabledDate.value!,
+      onFocus: onPanelFocus,
+      onBlur: (event: FocusEvent) => onFieldBlur(0, 'panel', event),
+      picker: picker.value as any,
+      mode: mergedMode.value,
+      internalMode: internalMode.value,
+      onPanelChange: triggerModeChange,
+      format: maskFormat.value,
+      value: calendarValue.value,
+      isInvalid: isInvalidateDate,
+      onChange: null as any,
+      onSelect: onPanelSelect,
+      pickerValue: currentPickerValue.value,
+      defaultOpenValue: showTime.value?.defaultOpenValue,
+      onPickerValueChange: setCurrentPickerValue,
+      hoverValue: hoverValues.value,
+      onHover: onPanelHover,
+      needConfirm: needConfirm.value!,
+      onSubmit: () => triggerConfirm('confirm'),
+      onOk: triggerOk,
+      presets: presetList.value,
+      onPresetHover,
+      onPresetSubmit,
+      onNow,
+      cellRender: onInternalCellRender,
+      classNames: mergedClassNames,
+      styles: mergedStyles,
+    }
+  })
+
+  // ========================= Render ========================
+  const triggerProps = computed(() => pickTriggerProps(fp.value as any))
+
+  const popupStyle = computed(() => styles.value?.popup?.root)
+
+  const popupClassName = computed(() => {
+    const [mergedClassNames] = semanticCtx.value
+    return clsx(rootClassName.value, mergedClassNames?.popup?.root)
+  })
+
+  // `Record<string, any>` return type: `{...baseProps}` narrows the inferred
+  // type to the literal keys below, hiding the props forwarded from `cloneProps`
+  // (`onChange` / `internalPicker` / `picker`, …).
+  // `Record<string, any>` 返回类型：`{...baseProps}` 会把推断类型收窄为下方
+  // 字面量 key，掩盖从 `cloneProps` 转发的 props。
+  const singleSelectorProps = computed<Record<string, any>>(() => {
+    const [mergedClassNames, mergedStyles] = semanticCtx.value
+    const baseProps = cloneProps(fp.value as any, [
+      'autoFocus',
+      'autofocus',
+      'tabIndex',
+      'tabindex',
+      'onClick',
+      'onMouseDown',
+      'onMousedown',
+    ])
+    const result: Record<string, any> = {
+      ...baseProps,
+      class: clsx(
+        fp.value.className,
+        rootClassName.value,
+        mergedClassNames.root,
+      ),
+      style: { ...mergedStyles.root, ...fp.value.style },
+      suffixIcon: suffixIcon.value,
+      removeIcon: removeIcon.value,
+      activeHelp: !!internalHoverValue.value,
+      allHelp: !!internalHoverValue.value && hoverSource.value === 'preset',
+      focused: focused.value,
+      onFocus: onSelectorFocus,
+      onBlur: onSelectorBlur,
+      onKeyDown: onSelectorKeyDown,
+      onSubmit: () => triggerConfirm('keyboard-submit'),
+      value: selectorValues.value,
+      maskFormat: maskFormat.value,
+      onChange: onSelectorChange,
+      onInputChange: onSelectorInputChange,
+      internalPicker: internalPicker.value,
+      onMouseDown: onMouseDown.value,
+      // Format
+      format: formatList.value,
+      inputReadOnly: inputReadOnly.value,
+      // Disabled
+      disabled: disabled.value,
+      // Open
+      open: mergedOpen.value,
+      onOpenChange: triggerOpen,
+      // Click
+      onClick: onSelectorClick,
+      onClear: onSelectorClear,
+      // Invalid
+      invalid: submitInvalidate.value,
+      onInvalid: (invalid: boolean) => {
+        // Only `single` mode support type date. `multiple` mode can not typing.
+        onSelectorInvalid(invalid, 0)
+      },
+    }
+    if (autoFocus.value !== undefined) result.autoFocus = autoFocus.value
+    if (tabIndex.value !== undefined) result.tabIndex = tabIndex.value
+
+    Object.keys(result).forEach(key => {
+      if (result[key] === undefined) delete result[key]
+    })
+    return result
+  })
 </script>
 
 <template>

@@ -1,0 +1,18 @@
+import { getDOM } from '@v-c/util/dist/Dom/findDOMNode'
+
+export function getOffset(node: HTMLElement | Window) {
+  const element = getDOM(node) as HTMLElement
+  const box = element.getBoundingClientRect()
+  const docElem = document.documentElement
+
+  return {
+    left:
+      box.left +
+      (window.pageXOffset || docElem.scrollLeft) -
+      (docElem.clientLeft || document.body.clientLeft || 0),
+    top:
+      box.top +
+      (window.pageYOffset || docElem.scrollTop) -
+      (docElem.clientTop || document.body.clientTop || 0),
+  }
+}

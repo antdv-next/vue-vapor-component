@@ -1,5 +1,5 @@
 <script setup vapor lang="ts">
-  import type { ResizeObserverProps } from '../interface'
+  import type { ResizeObserverProps, SizeInfo } from '../interface'
 
   import findDOMNode from '@v-c/util/dist/Dom/findDOMNode'
   import { computed, inject, shallowRef, onMounted, useSlots } from 'vue'
@@ -8,9 +8,11 @@
   import useResizeObserver from '../useResizeObserver'
   import DomWrapper from './DomWrapper.vue'
 
-  defineOptions({ name: 'SingleObserver' })
+  defineOptions({ name: 'SingleObserver', inheritAttrs: false })
   const props = defineProps<ResizeObserverProps>()
-  const emit = defineEmits(['resize'])
+  const emit = defineEmits<{
+    resize: [size: SizeInfo, element: HTMLElement]
+  }>()
   const wrapperRef = shallowRef()
 
   function getDom(el: any): any {

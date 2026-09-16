@@ -1,42 +1,45 @@
 <script setup vapor lang="ts">
-import type { ValueDate } from '../../interface'
-import { computed } from 'vue'
+  import type { ValueDate } from '../../interface'
 
-defineOptions({ name: 'PresetPanel', inheritAttrs: false })
+  import { computed } from 'vue'
 
-const props = defineProps<{
-  prefixCls?: string
-  presets: ValueDate<any>[]
-  onClick: (value: any) => void
-  onHover: (value: any | null) => void
-}>()
+  defineOptions({ name: 'PresetPanel', inheritAttrs: false })
 
-function executeValue<ValueType>(value: ValueDate<ValueType>['value']): ValueType {
-  // `typeof x === 'function'` narrows against the `Function` interface, so the
-  // callable branch is narrowed to `() => ValueType` and the other to
-  // `Exclude<ValueType, Function>` (which is assignable to `ValueType`).
-  // `typeof x === 'function'` 按 `Function` 接口收窄，可调用分支被收窄为
-  // `() => ValueType`，另一分支为 `Exclude<ValueType, Function>`。
-  return typeof value === 'function'
-    ? (value as unknown as () => ValueType)()
-    : value
-}
+  const props = defineProps<{
+    prefixCls?: string
+    presets: ValueDate<any>[]
+    onClick: (value: any) => void
+    onHover: (value: any | null) => void
+  }>()
 
-const prefixCls = computed(() => props.prefixCls || 'vc-picker')
-const panelPrefixCls = computed(() => `${prefixCls.value}-presets`)
-const hasPresets = computed(() => (props.presets || []).length > 0)
+  function executeValue<ValueType>(
+    value: ValueDate<ValueType>['value'],
+  ): ValueType {
+    // `typeof x === 'function'` narrows against the `Function` interface, so the
+    // callable branch is narrowed to `() => ValueType` and the other to
+    // `Exclude<ValueType, Function>` (which is assignable to `ValueType`).
+    // `typeof x === 'function'` 按 `Function` 接口收窄，可调用分支被收窄为
+    // `() => ValueType`，另一分支为 `Exclude<ValueType, Function>`。
+    return typeof value === 'function'
+      ? (value as unknown as () => ValueType)()
+      : value
+  }
 
-const onItemClick = (value: any) => {
-  props.onClick(executeValue(value))
-}
+  const prefixCls = computed(() => props.prefixCls || 'vc-picker')
+  const panelPrefixCls = computed(() => `${prefixCls.value}-presets`)
+  const hasPresets = computed(() => (props.presets || []).length > 0)
 
-const onItemEnter = (value: any) => {
-  props.onHover(executeValue(value))
-}
+  const onItemClick = (value: any) => {
+    props.onClick(executeValue(value))
+  }
 
-const onItemLeave = () => {
-  props.onHover(null)
-}
+  const onItemEnter = (value: any) => {
+    props.onHover(executeValue(value))
+  }
+
+  const onItemLeave = () => {
+    props.onHover(null)
+  }
 </script>
 
 <template>

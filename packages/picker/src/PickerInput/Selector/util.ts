@@ -1,6 +1,8 @@
 import type { FormatKey } from './MaskFormat'
 
-export function getMaskRange(key: string): [startVal: number, endVal: number, defaultVal?: number] {
+export function getMaskRange(
+  key: string,
+): [startVal: number, endVal: number, defaultVal?: number] {
   const PresetRange: Record<FormatKey, [number, number, number?]> = {
     YYYY: [0, 9999, new Date().getFullYear()],
     MM: [1, 12],
@@ -22,8 +24,7 @@ export function raf(callback: () => void, delayFrames = 1) {
     remainingFrames -= 1
     if (remainingFrames <= 0) {
       callback()
-    }
-    else {
+    } else {
       id = requestAnimationFrame(internalCallback)
     }
   }

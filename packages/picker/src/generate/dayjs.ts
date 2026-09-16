@@ -1,7 +1,8 @@
 import type { Dayjs } from 'dayjs'
-import type { GenerateConfig } from '.'
-import dayjs from 'dayjs'
 
+import type { GenerateConfig } from '.'
+
+import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localeData from 'dayjs/plugin/localeData'
@@ -121,7 +122,7 @@ const generateConfig: GenerateConfig<Dayjs> = {
   },
   getFixedDate: string => dayjs(string, ['YYYY-M-DD', 'YYYY-MM-DD']),
   getEndDate: date => date.endOf('month'),
-  getWeekDay: (date) => {
+  getWeekDay: date => {
     const clone: any = date.locale('en')
     return clone.weekday() + clone.localeData().firstDayOfWeek()
   },
@@ -150,12 +151,17 @@ const generateConfig: GenerateConfig<Dayjs> = {
   isValidate: date => date.isValid(),
 
   locale: {
-    getWeekFirstDay: locale => dayjs().locale(parseLocale(locale)).localeData().firstDayOfWeek(),
-    getWeekFirstDate: (locale, date: any) => date.locale(parseLocale(locale)).weekday(0),
+    getWeekFirstDay: locale =>
+      dayjs().locale(parseLocale(locale)).localeData().firstDayOfWeek(),
+    getWeekFirstDate: (locale, date: any) =>
+      date.locale(parseLocale(locale)).weekday(0),
     getWeek: (locale, date: any) => date.locale(parseLocale(locale)).week(),
-    getShortWeekDays: locale => dayjs().locale(parseLocale(locale)).localeData().weekdaysMin(),
-    getShortMonths: locale => dayjs().locale(parseLocale(locale)).localeData().monthsShort(),
-    format: (locale, date, format) => date.locale(parseLocale(locale)).format(format),
+    getShortWeekDays: locale =>
+      dayjs().locale(parseLocale(locale)).localeData().weekdaysMin(),
+    getShortMonths: locale =>
+      dayjs().locale(parseLocale(locale)).localeData().monthsShort(),
+    format: (locale, date, format) =>
+      date.locale(parseLocale(locale)).format(format),
     parse: (locale, text, formats) => {
       const localeStr = parseLocale(locale)
       for (let i = 0; i < formats.length; i += 1) {
@@ -165,7 +171,9 @@ const generateConfig: GenerateConfig<Dayjs> = {
           // parse Wo
           const year = formatText.split('-')[0]
           const weekStr = formatText.split('-')[1]
-          const firstWeek = dayjs(year, 'YYYY').startOf('year').locale(localeStr)
+          const firstWeek = dayjs(year, 'YYYY')
+            .startOf('year')
+            .locale(localeStr)
           for (let j = 0; j <= 52; j += 1) {
             const nextWeek = firstWeek.add(j, 'week')
             if (nextWeek.format('Wo') === weekStr) {

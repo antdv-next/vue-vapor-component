@@ -1,4 +1,5 @@
 import type { VueNode } from '@v-c/util/dist/type'
+
 import { warning } from '@v-c/util'
 
 /**
@@ -18,7 +19,10 @@ export function fillClearIcon(
   clearIcon?: VueNode,
 ): VueNode {
   if (process.env.NODE_ENV !== 'production' && clearIcon) {
-    warning(false, '`clearIcon` will be removed in future. Please use `allowClear` instead.')
+    warning(
+      false,
+      '`clearIcon` will be removed in future. Please use `allowClear` instead.',
+    )
   }
 
   // Vapor note (skill rule 7/28): `allowClear?: boolean | {...}` makes vapor

@@ -5,7 +5,7 @@
 
   import { CollectionContext } from './context'
 
-  defineOptions({ name: 'Collection' })
+  defineOptions({ name: 'Collection', inheritAttrs: false })
 
   const props = defineProps<CollectionProps>()
 

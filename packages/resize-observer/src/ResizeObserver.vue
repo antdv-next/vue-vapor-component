@@ -1,11 +1,13 @@
 <script setup vapor lang="ts">
-  import type { ResizeObserverProps } from './interface'
+  import type { ResizeObserverProps, SizeInfo } from './interface'
 
   import SingleObserver from './SingleObserver/index.vue'
 
-  defineOptions({ name: 'ResizeObserver' })
+  defineOptions({ name: 'ResizeObserver', inheritAttrs: false })
   const props = defineProps<ResizeObserverProps>()
-  const emit = defineEmits(['resize'])
+  const emit = defineEmits<{
+    resize: [size: SizeInfo, element: HTMLElement]
+  }>()
 </script>
 
 <template>

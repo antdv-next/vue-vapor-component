@@ -1,6 +1,12 @@
-import type { AlignType, BuildInPlacements } from '@vapor-component/trigger'
 import type { VueNode } from '@v-c/util/dist/type'
-import type { Component, CSSProperties, DefineComponent, InputHTMLAttributes } from 'vue'
+import type { AlignType, BuildInPlacements } from '@vapor-component/trigger'
+import type {
+  Component,
+  CSSProperties,
+  DefineComponent,
+  InputHTMLAttributes,
+} from 'vue'
+
 import type { GenerateConfig } from './generate'
 
 export type NullableDateType<DateType> = DateType | null | undefined
@@ -85,7 +91,14 @@ export interface Locale {
   shortMonths?: string[]
 }
 
-export type PanelMode = 'time' | 'date' | 'week' | 'month' | 'quarter' | 'year' | 'decade'
+export type PanelMode =
+  | 'time'
+  | 'date'
+  | 'week'
+  | 'month'
+  | 'quarter'
+  | 'year'
+  | 'decade'
 
 export type InternalMode = PanelMode | 'datetime'
 
@@ -150,7 +163,11 @@ export interface DisabledTimes {
   disabledHours?: () => number[]
   disabledMinutes?: (hour: number) => number[]
   disabledSeconds?: (hour: number, minute: number) => number[]
-  disabledMilliseconds?: (hour: number, minute: number, second: number) => number[]
+  disabledMilliseconds?: (
+    hour: number,
+    minute: number,
+    second: number,
+  ) => number[]
 }
 
 export interface SharedTimeProps<DateType extends object = any> {
@@ -220,13 +237,13 @@ export type RangeTimeProps<DateType extends object = any> = Omit<
 // ======================= Components =======================
 export type OnPanelChange<DateType> = (value: DateType, mode: PanelMode) => void
 
-export type LimitDate<DateType extends object = any>
-  = | DateType
-    | ((info: {
-    /**
-     * Tell the first date user selected on this range selection.
-     * This is not care about what field user click.
-     */
+export type LimitDate<DateType extends object = any> =
+  | DateType
+  | ((info: {
+      /**
+       * Tell the first date user selected on this range selection.
+       * This is not care about what field user click.
+       */
       from?: DateType
     }) => DateType | null | undefined)
 
@@ -345,14 +362,14 @@ export type SemanticName = 'root' | 'prefix' | 'input' | 'suffix'
 
 export type PreviewValueType = 'hover'
 
-export type PanelSemanticName
-  = | 'root'
-    | 'header'
-    | 'body'
-    | 'content'
-    | 'item'
-    | 'footer'
-    | 'container'
+export type PanelSemanticName =
+  | 'root'
+  | 'header'
+  | 'body'
+  | 'content'
+  | 'item'
+  | 'footer'
+  | 'container'
 
 type SharedPickerPanelIcons = Pick<
   SharedPanelProps<any>,
@@ -360,8 +377,7 @@ type SharedPickerPanelIcons = Pick<
 >
 
 export interface SharedPickerProps<DateType extends object = any>
-  extends SharedHTMLAttrs,
-  SharedPickerPanelIcons {
+  extends SharedHTMLAttrs, SharedPickerPanelIcons {
   // MISC
   direction?: 'ltr' | 'rtl'
 
@@ -398,9 +414,9 @@ export interface SharedPickerProps<DateType extends object = any>
     | FormatType<DateType>
     | FormatType<DateType>[]
     | {
-      format: string
-      type?: 'mask'
-    }
+        format: string
+        type?: 'mask'
+      }
   /**
    * Use this format to parse incoming string value and format outgoing callback value.
    * This only affects the first argument in `onChange` / `onCalendarChange` / `onOk`.
@@ -413,8 +429,8 @@ export interface SharedPickerProps<DateType extends object = any>
   allowClear?:
     | boolean
     | {
-      clearIcon?: VueNode
-    }
+        clearIcon?: VueNode
+      }
 
   /** @deprecated Please use `allowClear.clearIcon` instead */
   clearIcon?: VueNode
@@ -601,12 +617,18 @@ export interface SelectorProps<DateType = any> extends SelectorHTMLAttrs {
 
 // ========================== MISC ==========================
 // https://stackoverflow.com/a/39495173; need TypeScript >= 4.5
-type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N
+type Enumerate<
+  N extends number,
+  Acc extends number[] = [],
+> = Acc['length'] extends N
   ? Acc[number]
   : Enumerate<N, [...Acc, Acc['length']]>
 
-export type IntRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>
+export type IntRange<F extends number, T extends number> = Exclude<
+  Enumerate<T>,
+  Enumerate<F>
+>
 
 export type ReplaceListType<List, Type> = {
-  [P in keyof List]: Type;
+  [P in keyof List]: Type
 }

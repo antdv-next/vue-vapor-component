@@ -3,10 +3,7 @@ import { ref, unref } from 'vue'
 
 const SPEED_PTG = 1 / 3
 
-export default function useScrollTo(
-  ulRef: any,
-  value: any,
-) {
+export default function useScrollTo(ulRef: any, value: any) {
   const scrollingRef = ref(false)
   const scrollRafRef = ref<number | null>(null)
   const scrollDistRef = ref<number | null>(null)
@@ -29,7 +26,9 @@ export default function useScrollTo(
     scrollRafTimesRef.value = 0
 
     if (ul) {
-      const targetLi = ul.querySelector(`[data-value="${val}"]`) as HTMLLIElement
+      const targetLi = ul.querySelector(
+        `[data-value="${val}"]`,
+      ) as HTMLLIElement
       const firstLi = ul.querySelector(`li`) as HTMLLIElement
 
       const doScroll = () => {

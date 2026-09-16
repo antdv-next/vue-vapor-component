@@ -1,6 +1,8 @@
 import type { Ref } from 'vue'
+
 import type { GenerateConfig } from '../../generate'
 import type { DisabledDate, InternalMode, Locale } from '../../interface'
+
 import { isSame } from '../../utils/dateUtil'
 
 export type IsInvalidBoundary<DateType> = (
@@ -25,17 +27,29 @@ export default function useDisabledBoundary<DateType extends object = any>(
     }
 
     if (
-      minDate.value
-      && generateConfig.value.isAfter(minDate.value, date)
-      && !isSame(generateConfig.value, locale.value, minDate.value, date, info.type)
+      minDate.value &&
+      generateConfig.value.isAfter(minDate.value, date) &&
+      !isSame(
+        generateConfig.value,
+        locale.value,
+        minDate.value,
+        date,
+        info.type,
+      )
     ) {
       return true
     }
 
     if (
-      maxDate.value
-      && generateConfig.value.isAfter(date, maxDate.value)
-      && !isSame(generateConfig.value, locale.value, maxDate.value, date, info.type)
+      maxDate.value &&
+      generateConfig.value.isAfter(date, maxDate.value) &&
+      !isSame(
+        generateConfig.value,
+        locale.value,
+        maxDate.value,
+        date,
+        info.type,
+      )
     ) {
       return true
     }

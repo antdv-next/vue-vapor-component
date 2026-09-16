@@ -1,4 +1,5 @@
 import type { VueNode } from '@v-c/util/dist/type'
+
 import type { GenerateConfig } from '../../generate'
 import type {
   DisabledDate,
@@ -16,7 +17,8 @@ import type { PickerPanelProps } from '../../PickerPanel/interface'
 export type PopupShowTimeConfig<DateType extends object = any> = Omit<
   RangeTimeProps<DateType>,
   'defaultValue' | 'defaultOpenValue' | 'disabledTime'
-> & Pick<SharedTimeProps<DateType>, 'disabledTime'>
+> &
+  Pick<SharedTimeProps<DateType>, 'disabledTime'>
 
 export interface FooterProps<DateType extends object = any> {
   mode: PanelMode
@@ -43,13 +45,14 @@ export type MustProp<DateType extends object> = Required<
   Pick<PickerPanelProps<DateType>, 'mode' | 'onPanelChange'>
 >
 
-type PopupPanelPropsWrapper<DateType extends object = any>
-  = MustProp<DateType>
-    & Omit<PickerPanelProps<DateType>, 'onPickerValueChange' | 'showTime'>
-    & FooterProps<DateType>
+type PopupPanelPropsWrapper<DateType extends object = any> =
+  MustProp<DateType> &
+    Omit<PickerPanelProps<DateType>, 'onPickerValueChange' | 'showTime'> &
+    FooterProps<DateType>
 
-export interface PopupPanelProps<DateType extends object = any>
-  extends PopupPanelPropsWrapper<DateType> {
+export interface PopupPanelProps<
+  DateType extends object = any,
+> extends PopupPanelPropsWrapper<DateType> {
   multiplePanel?: boolean
   range?: boolean
   onPickerValueChange: (date: DateType) => void

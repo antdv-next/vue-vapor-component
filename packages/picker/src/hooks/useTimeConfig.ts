@@ -1,4 +1,10 @@
-import type { InternalMode, Locale, SharedPickerProps, SharedTimeProps } from '../interface'
+import type {
+  InternalMode,
+  Locale,
+  SharedPickerProps,
+  SharedTimeProps,
+} from '../interface'
+
 import { getRowFormat, pickProps, toArray } from '../utils/miscUtil'
 import { fillTimeFormat } from './useLocale'
 
@@ -73,7 +79,9 @@ function existShowConfig(
   showSecond: boolean | undefined,
   showMillisecond: boolean | undefined,
 ) {
-  return [showHour, showMinute, showSecond, showMillisecond].some(show => show !== undefined)
+  return [showHour, showMinute, showSecond, showMillisecond].some(
+    show => show !== undefined,
+  )
 }
 
 /** Fill the showXXX if needed */
@@ -83,29 +91,37 @@ function fillShowConfig(
   showMinute: boolean | undefined,
   showSecond: boolean | undefined,
   showMillisecond: boolean | undefined,
-): [showHour: boolean | undefined, showMinute: boolean | undefined, showSecond: boolean | undefined, showMillisecond: boolean | undefined] {
+): [
+  showHour: boolean | undefined,
+  showMinute: boolean | undefined,
+  showSecond: boolean | undefined,
+  showMillisecond: boolean | undefined,
+] {
   let parsedShowHour = showHour
   let parsedShowMinute = showMinute
   let parsedShowSecond = showSecond
 
   if (
-    !hasShowConfig
-    && !parsedShowHour
-    && !parsedShowMinute
-    && !parsedShowSecond
-    && !showMillisecond
+    !hasShowConfig &&
+    !parsedShowHour &&
+    !parsedShowMinute &&
+    !parsedShowSecond &&
+    !showMillisecond
   ) {
     parsedShowHour = true
     parsedShowMinute = true
     parsedShowSecond = true
-  }
-  else if (hasShowConfig) {
-    const existFalse = [parsedShowHour, parsedShowMinute, parsedShowSecond].includes(
-      false,
-    )
-    const existTrue = [parsedShowHour, parsedShowMinute, parsedShowSecond].includes(
-      true,
-    )
+  } else if (hasShowConfig) {
+    const existFalse = [
+      parsedShowHour,
+      parsedShowMinute,
+      parsedShowSecond,
+    ].includes(false)
+    const existTrue = [
+      parsedShowHour,
+      parsedShowMinute,
+      parsedShowSecond,
+    ].includes(true)
     const defaultShow = existFalse ? true : !existTrue
 
     parsedShowHour = parsedShowHour ?? defaultShow
@@ -123,16 +139,17 @@ function fillShowConfig(
 export function getTimeProps<DateType extends object>(
   componentProps: ComponentProps<DateType>,
 ): [
-    showTimeProps: SharedTimeProps<DateType>,
-    showTimePropsForLocale: SharedTimeProps<DateType>,
-    showTimeFormat: string | undefined,
-    propFormat: string,
+  showTimeProps: SharedTimeProps<DateType>,
+  showTimePropsForLocale: SharedTimeProps<DateType>,
+  showTimeFormat: string | undefined,
+  propFormat: string,
 ] {
   const { showTime, picker } = componentProps
 
   const [pickedProps, propFormat] = pickTimeProps(componentProps)
 
-  const showTimeConfig = showTime && typeof showTime === 'object' ? showTime : {}
+  const showTimeConfig =
+    showTime && typeof showTime === 'object' ? showTime : {}
 
   // Vapor's props proxy coerces non-declared boolean props to `false` instead of
   // `undefined`. `pickProps(props, showTimeKeys)` reads `props.showHour` etc.
@@ -148,14 +165,20 @@ export function getTimeProps<DateType extends object>(
   // 填充 `showHour: true`。仅对 TimePicker 使用顶层 picked props（那里这些 key
   // 是已声明的 prop）。
   const timeConfig = {
-    defaultOpenValue: showTimeConfig.defaultOpenValue || showTimeConfig.defaultValue,
+    defaultOpenValue:
+      showTimeConfig.defaultOpenValue || showTimeConfig.defaultValue,
     ...(picker === 'time' ? pickedProps : {}),
     ...showTimeConfig,
   }
 
   const { showMillisecond } = timeConfig
   let { showHour, showMinute, showSecond } = timeConfig
-  const hasShowConfig = existShowConfig(showHour, showMinute, showSecond, showMillisecond)
+  const hasShowConfig = existShowConfig(
+    showHour,
+    showMinute,
+    showSecond,
+    showMillisecond,
+  )
 
   ;[showHour, showMinute, showSecond] = fillShowConfig(
     hasShowConfig,
@@ -210,9 +233,18 @@ export function fillShowTimeConfig<DateType extends object>(
     let { showHour, showMinute, showSecond, showMillisecond } = pickedProps
     const { use12Hours } = pickedProps
 
-    const showMeridiem = checkShow(baselineFormat, ['a', 'A', 'LT', 'LLL', 'LTS'], use12Hours)
+    const showMeridiem = checkShow(
+      baselineFormat,
+      ['a', 'A', 'LT', 'LLL', 'LTS'],
+      use12Hours,
+    )
 
-    const hasShowConfig = existShowConfig(showHour, showMinute, showSecond, showMillisecond)
+    const hasShowConfig = existShowConfig(
+      showHour,
+      showMinute,
+      showSecond,
+      showMillisecond,
+    )
 
     // Fill with format, if needed
     if (!hasShowConfig) {
@@ -232,9 +264,15 @@ export function fillShowTimeConfig<DateType extends object>(
     )
 
     // ======================== Format ========================
-    const timeFormat
-      = showTimeFormat
-        || fillTimeFormat(showHour, showMinute, showSecond, showMillisecond, showMeridiem)
+    const timeFormat =
+      showTimeFormat ||
+      fillTimeFormat(
+        showHour,
+        showMinute,
+        showSecond,
+        showMillisecond,
+        showMeridiem,
+      )
 
     // ======================== Props =========================
     return {

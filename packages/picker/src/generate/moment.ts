@@ -1,5 +1,7 @@
 import type { Moment } from 'moment'
+
 import type { GenerateConfig } from '.'
+
 import { noteOnce } from '@v-c/util/dist/warning'
 import moment from 'moment'
 
@@ -7,11 +9,11 @@ const generateConfig: GenerateConfig<Moment> = {
   // get
   getNow: () => moment(),
   getFixedDate: string => moment(string, 'YYYY-MM-DD'),
-  getEndDate: (date) => {
+  getEndDate: date => {
     const clone = date.clone()
     return clone.endOf('month')
   },
-  getWeekDay: (date) => {
+  getWeekDay: date => {
     const clone = date.clone().locale('en_US')
     return clone.weekday() + clone.localeData().firstDayOfWeek()
   },
@@ -70,7 +72,7 @@ const generateConfig: GenerateConfig<Moment> = {
   isValidate: date => date.isValid(),
 
   locale: {
-    getWeekFirstDay: (locale) => {
+    getWeekFirstDay: locale => {
       const date = moment().locale(locale)
       return date.localeData().firstDayOfWeek()
     },
@@ -84,11 +86,11 @@ const generateConfig: GenerateConfig<Moment> = {
       const result = clone.locale(locale)
       return result.week()
     },
-    getShortWeekDays: (locale) => {
+    getShortWeekDays: locale => {
       const date = moment().locale(locale)
       return date.localeData().weekdaysMin()
     },
-    getShortMonths: (locale) => {
+    getShortMonths: locale => {
       const date = moment().locale(locale)
       return date.localeData().monthsShort()
     },
@@ -112,8 +114,7 @@ const generateConfig: GenerateConfig<Moment> = {
           if (matchFormat && matchText) {
             format = matchFormat.join('')
             formatText = matchText.join('')
-          }
-          else {
+          } else {
             fallbackFormatList.push(format.replace(/o/g, ''))
           }
         }

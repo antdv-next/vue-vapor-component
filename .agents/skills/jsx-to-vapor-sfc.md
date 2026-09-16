@@ -473,7 +473,7 @@ const [activeKey, setActiveKey] = useMergedState<Key[], Ref<Key[]>>([], {
 // ✅ vapor SFC 模式 — onChange 用 emit('update:xxx', v) 通知父组件
 const [activeKey, setActiveKey] = useMergedState<Key[], Ref<Key[]>>([], {
   value: toRef(props, 'activeKey') as Ref<Key | Key[]>,
-  onChange: v => emit('update:active-key', v as Key[]),  // ← v-model 的生命线
+  onChange: v => emit('update:active-key', v as Key[]), // ← v-model 的生命线
   defaultValue: props.defaultActiveKey,
   postState: normalizeToArray,
 })
@@ -1399,7 +1399,12 @@ const forwardProps = computed(() => {
   )
 </script>
 <template>
-  <div ref="rootRef" :class="nodeCls" :aria-hidden="!open" :tabindex="open ? 0 : -1" />
+  <div
+    ref="rootRef"
+    :class="nodeCls"
+    :aria-hidden="!open"
+    :tabindex="open ? 0 : -1"
+  />
 </template>
 ```
 
@@ -1786,23 +1791,25 @@ triggerChange(key) → innerValue.value = key
 
 ```ts
 // ❌ 缺少 onChange → triggerChange 后 mergedValue 永远不更新
-const [mergedActiveKey, setMergedActiveKey] = useMergedState<string, Ref<string | undefined>>(
-  props.activeKey ?? defaultKey.value,
-  { value: toRef(props, 'activeKey') as Ref<string> },
-)
+const [mergedActiveKey, setMergedActiveKey] = useMergedState<
+  string,
+  Ref<string | undefined>
+>(props.activeKey ?? defaultKey.value, {
+  value: toRef(props, 'activeKey') as Ref<string>,
+})
 ```
 
 **✅ 正确写法**（vapor SFC 模式，必须 emit('update:xxx') 通知父组件）：
 
 ```ts
 // ✅ onChange 触发 v-model 更新 → 父组件更新 prop → watchEffect 重算 → mergedValue 更新
-const [mergedActiveKey, setMergedActiveKey] = useMergedState<string, Ref<string | undefined>>(
-  props.activeKey ?? defaultKey.value,
-  {
-    value: toRef(props, 'activeKey') as Ref<string>,
-    onChange: v => emit('update:active-key', v),  // ← 关键：v-model 的生命线
-  },
-)
+const [mergedActiveKey, setMergedActiveKey] = useMergedState<
+  string,
+  Ref<string | undefined>
+>(props.activeKey ?? defaultKey.value, {
+  value: toRef(props, 'activeKey') as Ref<string>,
+  onChange: v => emit('update:active-key', v), // ← 关键：v-model 的生命线
+})
 ```
 
 **配套**：`defineEmits` 中必须声明 `'update:xxx'`：
@@ -1810,7 +1817,7 @@ const [mergedActiveKey, setMergedActiveKey] = useMergedState<string, Ref<string 
 ```ts
 const emit = defineEmits<{
   change: [activeKey: string]
-  'update:active-key': [activeKey: string]  // ← v-model:active-key 需要
+  'update:active-key': [activeKey: string] // ← v-model:active-key 需要
 }>()
 ```
 
@@ -1834,7 +1841,7 @@ const emit = defineEmits<{
         tab,
         active: tab.key === activeKey,
         onClick: () => onTabClick(tab),
-      })
+      }),
     ),
   })
 }
@@ -1866,15 +1873,21 @@ const emit = defineEmits<{
 
 ```tsx
 const overlay = computed(() =>
-  h(Menu, { selectedKeys: selectedKeys.value },
+  h(
+    Menu,
+    { selectedKeys: selectedKeys.value },
     tabs.value.map(tab =>
-      h(Menu.Item, {
-        key: tab.key,
-        eventKey: tab.key,
-        disabled: tab.disabled,
-      }, [h('span', tab.label)])
-    )
-  )
+      h(
+        Menu.Item,
+        {
+          key: tab.key,
+          eventKey: tab.key,
+          disabled: tab.disabled,
+        },
+        [h('span', tab.label)],
+      ),
+    ),
+  ),
 )
 ```
 
@@ -1962,15 +1975,28 @@ Wrapper 组件（如 `TabNavListWrapper`）包装子组件并转发事件时，�
   const emit = defineEmits<{
     'tab-click': [key: string, e: MouseEvent | KeyboardEvent]
     'tab-scroll': [info: { direction: 'left' | 'right' | 'top' | 'bottom' }]
-    edit: [type: 'add' | 'remove', info: { key?: string, event: MouseEvent | KeyboardEvent }]
+    edit: [
+      type: 'add' | 'remove',
+      info: { key?: string; event: MouseEvent | KeyboardEvent },
+    ]
   }>()
 </script>
 <template>
   <TabNavList
     v-bind="props"
-    @tab-click="(key: string, e: MouseEvent | KeyboardEvent) => emit('tab-click', key, e)"
-    @tab-scroll="(info: { direction: 'left' | 'right' | 'top' | 'bottom' }) => emit('tab-scroll', info)"
-    @edit="(type: 'add' | 'remove', info: { key?: string, event: MouseEvent | KeyboardEvent }) => emit('edit', type, info)"
+    @tab-click="
+      (key: string, e: MouseEvent | KeyboardEvent) => emit('tab-click', key, e)
+    "
+    @tab-scroll="
+      (info: { direction: 'left' | 'right' | 'top' | 'bottom' }) =>
+        emit('tab-scroll', info)
+    "
+    @edit="
+      (
+        type: 'add' | 'remove',
+        info: { key?: string; event: MouseEvent | KeyboardEvent },
+      ) => emit('edit', type, info)
+    "
   />
 </template>
 ```
@@ -2041,30 +2067,30 @@ checkbox, switch, rate, segmented, qrcode 等无需 `workspace:^` 依赖。
 
 ### 已迁移组件（@vapor-component/\*）
 
-| 包              | 模式                                      | 特点                                                                                                                                                                                                                       |
-| --------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| switch          | 简单 UI                                   | defineEmits 用法                                                                                                                                                                                                           |
-| checkbox        | 简单 UI                                   | useTemplateRef                                                                                                                                                                                                             |
-| rate            | 简单 UI                                   | useRefs hook                                                                                                                                                                                                               |
-| segmented       | 简单 UI                                   | 无内部依赖                                                                                                                                                                                                                 |
-| qrcode          | 简单 UI                                   | useQRCode hook                                                                                                                                                                                                             |
-| input           | 表单组件                                  | useCount hook                                                                                                                                                                                                              |
-| input-number    | 表单组件                                  | useCursor, useFrame                                                                                                                                                                                                        |
-| textarea        | 表单组件                                  | resize-observer 依赖；`attrs.style` 必须 `for...in` 拷贝（规则 16）                                                                                                                                                        |
-| collapse        | 父子组件                                  | SemanticName, mergeSemantic                                                                                                                                                                                                |
-| dialog          | Portal 组件                               | RefContext, animatedVisible；`omit(props, ...)` 快照不响应式更新（规则 16）                                                                                                                                                |
-| drawer          | Portal 组件                               | useDrag, useFocusable, 双 context                                                                                                                                                                                          |
-| image           | Portal 组件                               | PreviewGroup, useRegisterImage                                                                                                                                                                                             |
-| portal          | 基础设施                                  | useScrollLocker, useEscKeyDown                                                                                                                                                                                             |
-| resize-observer | Observer                                  | Collection 子组件, 双导出                                                                                                                                                                                                  |
-| mutate-observer | Observer                                  | useMutateObserver hook                                                                                                                                                                                                     |
-| overflow        | 父子 + Context Provider                   | useEffectState batcher；`attrs.style` 必须 `for...in` 拷贝（规则 16）                                                                                                                                                      |
-| tour            | Portal + Trigger 组合                     | useTarget hook, 布尔 prop 强制转换坑                                                                                                                                                                                       |
-| listy           | Portal + VirtualList 组合                 | slot 转发模式（`#default="slotProps"` 中转）、Portal `:open="true"` 必传、`onVisibleChange` 回调                                                                                                                           |
-| select          | Trigger + VirtualList 组合 + 多层 context | `{...props}` 展开丢事件（规则 18）；回调 ref 不触发（规则 19）；computed class 不更新（规则 20）；triggerProps 剥离 onClick（规则 21）；SSR 安全打开状态（规则 22）；useOptions 双数据源；useOpen MessageChannel macroTask |
-| tree            | Context + VirtualList + 递归子节点        | `@click`→`@mousedown`（vapor virtual-list 内 @click 不触发）；`reactive`+getter（规则 11）；`switcherIcon` 强制转换（规则 12）；无 CSSTransition 跳过 placeholder（规则 13）                                               |
-| tree-select     | BaseSelect 包装 + 双层 context + Tree     | `@vue-ignore` Omit（规则 24）；`internalValue` 初始化（规则 25）；popup mousedown 误关（规则 26）；命名 slot 注入子组件（规则 27）                                                                                         |
-| tabs            | 父子 + Context + RenderComponent + Menu    | `useMergedState`+`v-model` 必须配 `onChange`（规则 31）；ARIA 属性需 `watch` 兜底（规则 20）；`RenderComponent`→`template v-for`（规则 32）；`h(Menu)`→模板 Menu+`#overlay`（规则 33）；`v-if`+`v-show` 懒渲染（规则 34）；Wrapper 转发需 `defineEmits`（规则 35） |
+| 包              | 模式                                      | 特点                                                                                                                                                                                                                                                               |
+| --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| switch          | 简单 UI                                   | defineEmits 用法                                                                                                                                                                                                                                                   |
+| checkbox        | 简单 UI                                   | useTemplateRef                                                                                                                                                                                                                                                     |
+| rate            | 简单 UI                                   | useRefs hook                                                                                                                                                                                                                                                       |
+| segmented       | 简单 UI                                   | 无内部依赖                                                                                                                                                                                                                                                         |
+| qrcode          | 简单 UI                                   | useQRCode hook                                                                                                                                                                                                                                                     |
+| input           | 表单组件                                  | useCount hook                                                                                                                                                                                                                                                      |
+| input-number    | 表单组件                                  | useCursor, useFrame                                                                                                                                                                                                                                                |
+| textarea        | 表单组件                                  | resize-observer 依赖；`attrs.style` 必须 `for...in` 拷贝（规则 16）                                                                                                                                                                                                |
+| collapse        | 父子组件                                  | SemanticName, mergeSemantic                                                                                                                                                                                                                                        |
+| dialog          | Portal 组件                               | RefContext, animatedVisible；`omit(props, ...)` 快照不响应式更新（规则 16）                                                                                                                                                                                        |
+| drawer          | Portal 组件                               | useDrag, useFocusable, 双 context                                                                                                                                                                                                                                  |
+| image           | Portal 组件                               | PreviewGroup, useRegisterImage                                                                                                                                                                                                                                     |
+| portal          | 基础设施                                  | useScrollLocker, useEscKeyDown                                                                                                                                                                                                                                     |
+| resize-observer | Observer                                  | Collection 子组件, 双导出                                                                                                                                                                                                                                          |
+| mutate-observer | Observer                                  | useMutateObserver hook                                                                                                                                                                                                                                             |
+| overflow        | 父子 + Context Provider                   | useEffectState batcher；`attrs.style` 必须 `for...in` 拷贝（规则 16）                                                                                                                                                                                              |
+| tour            | Portal + Trigger 组合                     | useTarget hook, 布尔 prop 强制转换坑                                                                                                                                                                                                                               |
+| listy           | Portal + VirtualList 组合                 | slot 转发模式（`#default="slotProps"` 中转）、Portal `:open="true"` 必传、`onVisibleChange` 回调                                                                                                                                                                   |
+| select          | Trigger + VirtualList 组合 + 多层 context | `{...props}` 展开丢事件（规则 18）；回调 ref 不触发（规则 19）；computed class 不更新（规则 20）；triggerProps 剥离 onClick（规则 21）；SSR 安全打开状态（规则 22）；useOptions 双数据源；useOpen MessageChannel macroTask                                         |
+| tree            | Context + VirtualList + 递归子节点        | `@click`→`@mousedown`（vapor virtual-list 内 @click 不触发）；`reactive`+getter（规则 11）；`switcherIcon` 强制转换（规则 12）；无 CSSTransition 跳过 placeholder（规则 13）                                                                                       |
+| tree-select     | BaseSelect 包装 + 双层 context + Tree     | `@vue-ignore` Omit（规则 24）；`internalValue` 初始化（规则 25）；popup mousedown 误关（规则 26）；命名 slot 注入子组件（规则 27）                                                                                                                                 |
+| tabs            | 父子 + Context + RenderComponent + Menu   | `useMergedState`+`v-model` 必须配 `onChange`（规则 31）；ARIA 属性需 `watch` 兜底（规则 20）；`RenderComponent`→`template v-for`（规则 32）；`h(Menu)`→模板 Menu+`#overlay`（规则 33）；`v-if`+`v-show` 懒渲染（规则 34）；Wrapper 转发需 `defineEmits`（规则 35） |
 
 ### 工程文件参考
 

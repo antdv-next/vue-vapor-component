@@ -1,31 +1,32 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import { computed, shallowRef } from 'vue'
 
 // ============================= Types =============================
 
 /** Change source of a field. / Field 的变更来源。 */
-export type RangeValueChangeSource
-  = | 'input'
-    | 'remove'
-    | 'keyboard-submit'
-    | 'keyboard-submit-weak'
-    | 'esc'
-    | 'panel-intermediate'
-    | 'panel-final'
-    | 'popupClose'
-    | 'field-switch'
-    | 'confirm'
+export type RangeValueChangeSource =
+  | 'input'
+  | 'remove'
+  | 'keyboard-submit'
+  | 'keyboard-submit-weak'
+  | 'esc'
+  | 'panel-intermediate'
+  | 'panel-final'
+  | 'popupClose'
+  | 'field-switch'
+  | 'confirm'
 
 /** Resolved operation for one field interaction. / 一次 field 交互最终执行的操作。 */
-export type RangeValueChangeAction
-  = | 'modify'
-    | 'submitCurrent'
-    | 'switchNext'
-    | 'finish'
-    | 'abort'
-    | 'resetCurrent'
-    | 'resetCurrentAndSwitchNext'
-    | 'resetAll'
+export type RangeValueChangeAction =
+  | 'modify'
+  | 'submitCurrent'
+  | 'switchNext'
+  | 'finish'
+  | 'abort'
+  | 'resetCurrent'
+  | 'resetCurrentAndSwitchNext'
+  | 'resetAll'
 
 /** Receive a field interaction and its optional value. / 接收 field 交互及可选变更值。 */
 export type TriggerChange<FieldValue> = (
@@ -35,10 +36,17 @@ export type TriggerChange<FieldValue> = (
 ) => void
 
 /** Read the latest temporary CalendarValue. / 读取最新的临时 CalendarValue。 */
-export type GetCalendarValue<FieldValue> = () => readonly (FieldValue | null | undefined)[]
+export type GetCalendarValue<FieldValue> = () => readonly (
+  | FieldValue
+  | null
+  | undefined
+)[]
 
 /** Update one field in CalendarValue. / 更新 CalendarValue 中的一个 field。 */
-export type TriggerCalendarChange<FieldValue> = (index: number, value: FieldValue) => void
+export type TriggerCalendarChange<FieldValue> = (
+  index: number,
+  value: FieldValue,
+) => void
 
 /**
  * Flush one field and optionally emit the final change.
@@ -225,8 +233,7 @@ export default function useRangeValueChange<FieldValue = unknown>(
       if (modified !== undefined) {
         field.modified = modified
       }
-    }
-    else {
+    } else {
       triggeredFieldsRef.value = [
         ...triggeredFieldsRef.value,
         { index, modified: modified ?? false },
@@ -245,7 +252,8 @@ export default function useRangeValueChange<FieldValue = unknown>(
 
     // Trigger final change after every field has participated once.
     // 所有 field 都参与过一次后，触发最终 change。
-    const allFieldsTriggered = triggeredFieldsRef.value.length >= fieldCount.value
+    const allFieldsTriggered =
+      triggeredFieldsRef.value.length >= fieldCount.value
     flushSubmit(index, allFieldsTriggered)
 
     if (allFieldsTriggered) {
@@ -277,7 +285,8 @@ export default function useRangeValueChange<FieldValue = unknown>(
       return source === 'popupClose' ? 'resetAll' : 'abort'
     }
 
-    const currentValue = value === undefined ? getCalendarValue()[current] : value
+    const currentValue =
+      value === undefined ? getCalendarValue()[current] : value
     const currentEmpty = currentValue === null || currentValue === undefined
     const canSwitch = !currentEmpty || allowEmpty.value[current]
     const canSubmit = source === 'remove' || canSwitch
@@ -324,7 +333,9 @@ export default function useRangeValueChange<FieldValue = unknown>(
     }
 
     if (source === 'popupClose') {
-      const interactionModified = triggeredFieldsRef.value.some(field => field.modified)
+      const interactionModified = triggeredFieldsRef.value.some(
+        field => field.modified,
+      )
 
       if (!interactionModified) {
         return 'finish'
@@ -334,7 +345,8 @@ export default function useRangeValueChange<FieldValue = unknown>(
         const currentModified = triggeredFieldsRef.value.some(
           field => field.index === current && field.modified,
         )
-        const allFieldsTriggered = triggeredFieldsRef.value.length >= fieldCount.value
+        const allFieldsTriggered =
+          triggeredFieldsRef.value.length >= fieldCount.value
 
         // Closing the popup ends the interaction instead of advancing to an
         // unvisited field. When the current field allows empty, discard its
@@ -346,7 +358,9 @@ export default function useRangeValueChange<FieldValue = unknown>(
         }
 
         if (currentModified) {
-          return allowEmpty.value[current] ? 'resetCurrentAndSwitchNext' : 'resetAll'
+          return allowEmpty.value[current]
+            ? 'resetCurrentAndSwitchNext'
+            : 'resetAll'
         }
 
         return 'switchNext'
@@ -371,7 +385,11 @@ export default function useRangeValueChange<FieldValue = unknown>(
       return canSubmit ? 'submitCurrent' : 'abort'
     }
 
-    if (source === 'keyboard-submit' || source === 'confirm' || source === 'remove') {
+    if (
+      source === 'keyboard-submit' ||
+      source === 'confirm' ||
+      source === 'remove'
+    ) {
       return canSubmit ? 'switchNext' : 'abort'
     }
 
@@ -394,7 +412,11 @@ export default function useRangeValueChange<FieldValue = unknown>(
     // popup may clean temporary values but must not create an active field.
     // 第一条非关闭事件用于建立新一轮交互；关闭 popup 可以清理临时值，
     // 但不应因此创建 currentIndex。
-    if (currentIndex.value === null && source !== 'popupClose' && source !== 'esc') {
+    if (
+      currentIndex.value === null &&
+      source !== 'popupClose' &&
+      source !== 'esc'
+    ) {
       setCurrentIndex(index)
       forceFocus.value = false
       recordTriggeredField(index, false)
@@ -428,7 +450,10 @@ export default function useRangeValueChange<FieldValue = unknown>(
         if (value !== undefined) {
           triggerCalendarChange(actionIndex, value)
         }
-        if (needConfirm.value && (source === 'keyboard-submit' || source === 'confirm')) {
+        if (
+          needConfirm.value &&
+          (source === 'keyboard-submit' || source === 'confirm')
+        ) {
           confirmedIndex = actionIndex
         }
 
@@ -436,11 +461,11 @@ export default function useRangeValueChange<FieldValue = unknown>(
         // move focus to the next field. Input-originated closes remain weak.
         // 确认类操作和面板操作后的 popup 关闭必须主动聚焦下一个 field；
         // input 操作后的关闭仍保持弱切换。
-        const nextForceFocus
-          = source === 'confirm'
-            || source === 'keyboard-submit'
-            || source === 'panel-final'
-            || (source === 'popupClose' && !isLastInput)
+        const nextForceFocus =
+          source === 'confirm' ||
+          source === 'keyboard-submit' ||
+          source === 'panel-final' ||
+          (source === 'popupClose' && !isLastInput)
 
         const allFieldsTriggered = submitField(actionIndex)
 
@@ -450,8 +475,7 @@ export default function useRangeValueChange<FieldValue = unknown>(
           // 本次 focus 切换既结束上一轮，也以目标 field 开始新一轮。
           setCurrentIndex(index)
           forceFocus.value = false
-        }
-        else if (!allFieldsTriggered) {
+        } else if (!allFieldsTriggered) {
           setCurrentIndex((actionIndex + 1) % fieldCount.value)
           forceFocus.value = nextForceFocus
         }
@@ -499,8 +523,7 @@ export default function useRangeValueChange<FieldValue = unknown>(
           setCurrentIndex(index)
           forceFocus.value = false
           recordTriggeredField(index, false)
-        }
-        else {
+        } else {
           // Closing the popup ends the whole Picker interaction instead of
           // focusing the next field.
           // 关闭 popup 表示结束整个 Picker 交互，因此不再聚焦下一个 field。
@@ -522,7 +545,16 @@ export default function useRangeValueChange<FieldValue = unknown>(
     }
   }
 
-  const triggeredFields = computed(() => triggeredFieldsRef.value.map(field => field.index))
+  const triggeredFields = computed(() =>
+    triggeredFieldsRef.value.map(field => field.index),
+  )
 
-  return [currentIndex, activeIndex, forceFocus, triggeredFields, triggerChange, reset]
+  return [
+    currentIndex,
+    activeIndex,
+    forceFocus,
+    triggeredFields,
+    triggerChange,
+    reset,
+  ]
 }

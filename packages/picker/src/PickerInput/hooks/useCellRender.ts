@@ -1,16 +1,27 @@
 import type { Ref } from 'vue'
-import type { CellRender, CellRenderInfo, SharedPickerProps } from '../../interface'
+
+import type {
+  CellRender,
+  CellRenderInfo,
+  SharedPickerProps,
+} from '../../interface'
+
 import { warning } from '@v-c/util'
 
 export default function useCellRender<DateType extends object = any>(
   cellRender: Ref<SharedPickerProps<DateType>['cellRender'] | undefined>,
   dateRender?: Ref<SharedPickerProps<DateType>['dateRender'] | undefined>,
-  monthCellRender?: Ref<SharedPickerProps<DateType>['monthCellRender'] | undefined>,
+  monthCellRender?: Ref<
+    SharedPickerProps<DateType>['monthCellRender'] | undefined
+  >,
   range?: Ref<CellRenderInfo<DateType>['range'] | undefined>,
 ) {
   // ========================= Warn =========================
   if (process.env.NODE_ENV !== 'production') {
-    warning(!dateRender?.value, `'dateRender' is deprecated. Please use 'cellRender' instead.`)
+    warning(
+      !dateRender?.value,
+      `'dateRender' is deprecated. Please use 'cellRender' instead.`,
+    )
     warning(
       !monthCellRender?.value,
       `'monthCellRender' is deprecated. Please use 'cellRender' instead.`,
@@ -19,7 +30,10 @@ export default function useCellRender<DateType extends object = any>(
 
   // ======================== Render ========================
   // Merged render
-  const mergedCellRender = (current: string | DateType | number, info: CellRenderInfo<DateType>) => {
+  const mergedCellRender = (
+    current: string | DateType | number,
+    info: CellRenderInfo<DateType>,
+  ) => {
     if (cellRender.value) {
       return cellRender.value(current, info)
     }

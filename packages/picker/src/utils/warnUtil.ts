@@ -1,4 +1,5 @@
 import type { DisabledTimes, PickerMode } from '../interface'
+
 import { warning } from '@v-c/util'
 
 export interface WarningProps extends DisabledTimes {
@@ -8,7 +9,10 @@ export interface WarningProps extends DisabledTimes {
 export function legacyPropsWarning(props: WarningProps) {
   const { picker, disabledHours, disabledMinutes, disabledSeconds } = props
 
-  if (picker === 'time' && (disabledHours || disabledMinutes || disabledSeconds)) {
+  if (
+    picker === 'time' &&
+    (disabledHours || disabledMinutes || disabledSeconds)
+  ) {
     warning(
       false,
       `'disabledHours', 'disabledMinutes', 'disabledSeconds' will be removed in the next major version, please use 'disabledTime' instead.`,

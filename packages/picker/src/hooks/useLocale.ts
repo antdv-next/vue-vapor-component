@@ -1,6 +1,9 @@
 import type { ComputedRef, Ref } from 'vue'
+
 import type { Locale, SharedTimeProps } from '../interface'
+
 import { computed } from 'vue'
+
 import defaultLocale from '../locale/en_US'
 
 export function fillTimeFormat(
@@ -77,7 +80,13 @@ function fillLocale(
     // cellMeridiemFormat,
   } = mergedLocale
 
-  const timeFormat = fillTimeFormat(showHour, showMinute, showSecond, showMillisecond, use12Hours)
+  const timeFormat = fillTimeFormat(
+    showHour,
+    showMinute,
+    showSecond,
+    showMillisecond,
+    use12Hours,
+  )
 
   return {
     ...mergedLocale,
@@ -104,20 +113,22 @@ function fillLocale(
 
 type ShowProps<DateType extends object> = Pick<
   SharedTimeProps<DateType>,
-    'showHour' | 'showMinute' | 'showSecond' | 'showMillisecond' | 'use12Hours'
+  'showHour' | 'showMinute' | 'showSecond' | 'showMillisecond' | 'use12Hours'
 >
 export default function useLocale<DateType extends object>(
   locale: ComputedRef<Locale | undefined>,
   showProps: ComputedRef<ShowProps<DateType>> | Ref<ShowProps<DateType>>,
 ): ComputedRef<Locale> {
   return computed<Locale>(() => {
-    const {
+    const { showHour, showMinute, showSecond, showMillisecond, use12Hours } =
+      showProps.value || {}
+    return fillLocale(
+      locale.value,
       showHour,
       showMinute,
       showSecond,
       showMillisecond,
       use12Hours,
-    } = showProps.value || {}
-    return fillLocale(locale.value, showHour, showMinute, showSecond, showMillisecond, use12Hours)
+    )
   })
 }

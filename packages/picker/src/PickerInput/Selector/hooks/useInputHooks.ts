@@ -1,43 +1,45 @@
 import type { VueNode } from '@v-c/util'
 import type { ComputedRef } from 'vue'
+
 import type { GenerateConfig } from '../../../generate'
 import type { Locale, SelectorProps } from '../../../interface'
+
 import { warning } from '@v-c/util'
 import { computed } from 'vue'
 
 export interface InputProps {
-  'readOnly'?: boolean
-  'required'?: boolean
+  readOnly?: boolean
+  required?: boolean
   'aria-required'?: boolean
-  'name'?: string
-  'autoComplete'?: string
-  'size'?: number
-  'id'?: string
-  'placeholder'?: string
-  'disabled'?: boolean
-  'onFocus'?: (e: FocusEvent) => void
-  'onBlur'?: (e: FocusEvent) => void
-  'onKeyDown'?: (e: KeyboardEvent) => void
-  'format'?: string
-  'validateFormat': (value: string) => boolean
-  'active'?: boolean
+  name?: string
+  autoComplete?: string
+  size?: number
+  id?: string
+  placeholder?: string
+  disabled?: boolean
+  onFocus?: (e: FocusEvent) => void
+  onBlur?: (e: FocusEvent) => void
+  onKeyDown?: (e: KeyboardEvent) => void
+  format?: string
+  validateFormat: (value: string) => boolean
+  active?: boolean
   /** Used for single picker only */
-  'showActiveCls'?: boolean
-  'suffixIcon'?: VueNode
-  'value'?: string
-  'onChange': (value: string) => void
-  'onSubmit': VoidFunction
+  showActiveCls?: boolean
+  suffixIcon?: VueNode
+  value?: string
+  onChange: (value: string) => void
+  onSubmit: VoidFunction
   /** Meaning current is from the hover cell getting the placeholder text */
-  'helped'?: boolean
+  helped?: boolean
   /**
    * Trigger when input need additional help.
    * Like open the popup for interactive.
    */
-  'onHelp': () => void
-  'preserveInvalidOnBlur'?: boolean
-  'invalid'?: boolean
+  onHelp: () => void
+  preserveInvalidOnBlur?: boolean
+  invalid?: boolean
 
-  'clearIcon'?: VueNode
+  clearIcon?: VueNode
   [key: string]: any
 }
 
@@ -53,19 +55,23 @@ function formatValue<DateType>(
     format: string | ((value: DateType) => string)
   },
 ): string {
-  if (!value)
-    return ''
+  if (!value) return ''
 
   if (typeof format === 'function') {
     return format(value)
   }
 
-  return generateConfig.locale.format(locale.locale, value, format) || String(value)
+  return (
+    generateConfig.locale.format(locale.locale, value, format) || String(value)
+  )
 }
 
-function pickAttrs(props: Record<string, any>, { aria, data }: { aria?: boolean, data?: boolean }) {
+function pickAttrs(
+  props: Record<string, any>,
+  { aria, data }: { aria?: boolean; data?: boolean },
+) {
   const result: Record<string, any> = {}
-  Object.keys(props).forEach((key) => {
+  Object.keys(props).forEach(key => {
     if (aria && (key.startsWith('aria-') || key === 'role')) {
       result[key] = props[key]
     }
@@ -95,22 +101,22 @@ export type UseInputProps<DateType extends object = any> = Pick<
   | 'open'
   | 'picker'
 > & {
-  'id'?: string | string[]
-  'value'?: DateType[]
-  'invalid'?: boolean | [boolean, boolean]
-  'placeholder'?: string | [string, string]
-  'disabled'?: boolean | [boolean, boolean]
-  'onChange': (value: DateType | null, index?: number) => void
+  id?: string | string[]
+  value?: DateType[]
+  invalid?: boolean | [boolean, boolean]
+  placeholder?: string | [string, string]
+  disabled?: boolean | [boolean, boolean]
+  onChange: (value: DateType | null, index?: number) => void
 
   // Attributes not in SelectorProps directly or omitted
-  'required'?: boolean
+  required?: boolean
   'aria-required'?: boolean
-  'name'?: string
-  'autoComplete'?: string
+  name?: string
+  autoComplete?: string
 
   // RangePicker only
-  'allHelp': boolean
-  'activeIndex'?: number | null
+  allHelp: boolean
+  activeIndex?: number | null
 }
 
 export default function useInputProps<DateType extends object = any>(
@@ -130,7 +136,11 @@ export default function useInputProps<DateType extends object = any>(
 
   const getText = (date: DateType) => {
     const { locale, generateConfig } = props.value
-    return formatValue(date, { locale, format: firstFormat.value, generateConfig })
+    return formatValue(date, {
+      locale,
+      format: firstFormat.value,
+      generateConfig,
+    })
   }
 
   const valueTexts = computed(() => (props.value.value || []).map(getText))
@@ -139,8 +149,8 @@ export default function useInputProps<DateType extends object = any>(
   const size = computed(() => {
     const { picker, generateConfig } = props.value
     const defaultSize = picker === 'time' ? 8 : 10
-    const length
-      = typeof firstFormat.value === 'function'
+    const length =
+      typeof firstFormat.value === 'function'
         ? firstFormat.value(generateConfig.getNow()).length
         : firstFormat.value.length
     return Math.max(defaultSize, length) + 2
@@ -203,11 +213,11 @@ export default function useInputProps<DateType extends object = any>(
       ...pickedAttrs,
 
       // ============== Shared ==============
-      'format': maskFormat,
-      'validateFormat': (text: string) => !!validateFormat(text),
+      format: maskFormat,
+      validateFormat: (text: string) => !!validateFormat(text),
       preserveInvalidOnBlur,
 
-      'readOnly': inputReadOnly,
+      readOnly: inputReadOnly,
 
       required,
       'aria-required': ariaRequired,
@@ -216,27 +226,27 @@ export default function useInputProps<DateType extends object = any>(
 
       autoComplete,
 
-      'size': size.value,
+      size: size.value,
 
       // ============= By Index =============
-      'id': getProp(id),
+      id: getProp(id),
 
-      'value': getProp(valueTexts.value) || '',
+      value: getProp(valueTexts.value) || '',
 
-      'invalid': getProp(invalid),
+      invalid: getProp(invalid),
 
-      'placeholder': getProp(placeholder),
+      placeholder: getProp(placeholder),
 
-      'active': activeIndex === index,
+      active: activeIndex === index,
 
-      'helped': allHelp || (activeHelp && activeIndex === index),
+      helped: allHelp || (activeHelp && activeIndex === index),
 
-      'disabled': getProp(disabled),
+      disabled: getProp(disabled),
 
-      'onFocus': (event) => {
+      onFocus: event => {
         onFocus(event, index)
       },
-      'onBlur': (event) => {
+      onBlur: event => {
         // Blur do not trigger close
         // Since it may focus to the popup panel
         onBlur(event, index)
@@ -245,7 +255,7 @@ export default function useInputProps<DateType extends object = any>(
       onSubmit,
 
       // Get validate text value
-      'onChange': (text: string) => {
+      onChange: (text: string) => {
         onInputChange()
 
         const parsed = validateFormat(text)
@@ -260,10 +270,10 @@ export default function useInputProps<DateType extends object = any>(
         // If text is empty, it means valid.
         onInvalid(!!text, index)
       },
-      'onHelp': () => {
+      onHelp: () => {
         onOpenChange(true, { index })
       },
-      'onKeyDown': (event: KeyboardEvent) => {
+      onKeyDown: (event: KeyboardEvent) => {
         let prevented = false
 
         onKeyDown?.(event, () => {
@@ -295,7 +305,7 @@ export default function useInputProps<DateType extends object = any>(
     }
 
     // ============== Clean Up ==============
-    Object.keys(inputProps).forEach((key) => {
+    Object.keys(inputProps).forEach(key => {
       if (inputProps[key] === undefined) {
         delete inputProps[key]
       }

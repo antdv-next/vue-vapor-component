@@ -1,58 +1,63 @@
 <script setup vapor lang="ts">
-import type { CSSProperties } from 'vue'
+  import type { CSSProperties } from 'vue'
 
-import type { CellRender, CellRenderInfo } from '../interface'
-import { computed, isVNode } from 'vue'
+  import type { CellRender, CellRenderInfo } from '../interface'
 
-defineOptions({ name: 'CellItem', inheritAttrs: false })
+  import { computed, isVNode } from 'vue'
 
-const props = defineProps<{
-  date: any
-  label: any
-  title?: string
-  /** `clsx` returns a `string`; callers may also pass a class object. */
-  cls: string | Record<string, any>
-  style?: CSSProperties
-  /** Vapor deviation: the cell inner class, e.g. `vc-picker-cell-inner` */
-  innerCls: string
-  cellRender?: CellRender<any>
-  info: CellRenderInfo<any>
-}>()
+  defineOptions({ name: 'CellItem', inheritAttrs: false })
 
-const emit = defineEmits<{
-  click: []
-  dblclick: []
-  mouseenter: []
-  mouseleave: []
-}>()
+  const props = defineProps<{
+    date: any
+    label: any
+    title?: string
+    /** `clsx` returns a `string`; callers may also pass a class object. */
+    cls: string | Record<string, any>
+    style?: CSSProperties
+    /** Vapor deviation: the cell inner class, e.g. `vc-picker-cell-inner` */
+    innerCls: string
+    cellRender?: CellRender<any>
+    info: CellRenderInfo<any>
+  }>()
 
-// Rule 12: `cellRender` may be coerced to `false` by vapor, so guard with `typeof`.
-const customNode = computed(() => {
-  if (typeof props.cellRender !== 'function') return null
-  return props.cellRender(props.date, props.info)
-})
+  const emit = defineEmits<{
+    click: []
+    dblclick: []
+    mouseenter: []
+    mouseleave: []
+  }>()
 
-const isCustomComponent = computed<boolean>(() => {
-  const node = customNode.value
-  return node != null && typeof node !== 'string' && !isVNode(node)
-})
+  // Rule 12: `cellRender` may be coerced to `false` by vapor, so guard with `typeof`.
+  const customNode = computed(() => {
+    if (typeof props.cellRender !== 'function') return null
+    return props.cellRender(props.date, props.info)
+  })
 
-const isCustomString = computed<boolean>(() => typeof customNode.value === 'string')
+  const isCustomComponent = computed<boolean>(() => {
+    const node = customNode.value
+    return node != null && typeof node !== 'string' && !isVNode(node)
+  })
 
-// Deprecated `dateRender` / `monthCellRender` return a vdom `VNode`. Vapor cannot
-// render it inline, so we fall back to its text children.
-const isCustomVNode = computed<boolean>(() => isVNode(customNode.value))
-const vnodeText = computed<string>(() => {
-  const node = customNode.value as any
-  if (!node || typeof node !== 'object') return ''
-  if (typeof node.children === 'string') return node.children
-  if (Array.isArray(node.children)) {
-    return node.children
-      .map((child: any) => (typeof child === 'string' ? child : child?.children ?? ''))
-      .join('')
-  }
-  return ''
-})
+  const isCustomString = computed<boolean>(
+    () => typeof customNode.value === 'string',
+  )
+
+  // Deprecated `dateRender` / `monthCellRender` return a vdom `VNode`. Vapor cannot
+  // render it inline, so we fall back to its text children.
+  const isCustomVNode = computed<boolean>(() => isVNode(customNode.value))
+  const vnodeText = computed<string>(() => {
+    const node = customNode.value as any
+    if (!node || typeof node !== 'object') return ''
+    if (typeof node.children === 'string') return node.children
+    if (Array.isArray(node.children)) {
+      return node.children
+        .map((child: any) =>
+          typeof child === 'string' ? child : (child?.children ?? ''),
+        )
+        .join('')
+    }
+    return ''
+  })
 </script>
 
 <template>
@@ -68,7 +73,9 @@ const vnodeText = computed<string>(() => {
     <div :class="innerCls">
       <component v-if="isCustomComponent" :is="customNode" />
       <template v-else-if="isCustomString">{{ customNode }}</template>
-      <template v-else-if="isCustomVNode && vnodeText">{{ vnodeText }}</template>
+      <template v-else-if="isCustomVNode && vnodeText">{{
+        vnodeText
+      }}</template>
       <template v-else>{{ label }}</template>
     </div>
   </td>

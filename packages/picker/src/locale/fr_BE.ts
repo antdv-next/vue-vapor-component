@@ -1,19 +1,20 @@
 import type { Locale } from '../interface'
+
 import { commonLocale } from './common'
 
 const locale: Locale = {
   ...commonLocale,
   locale: 'fr_BE',
-  today: 'Aujourd\'hui',
+  today: "Aujourd'hui",
   now: 'Maintenant',
-  backToToday: 'Aujourd\'hui',
+  backToToday: "Aujourd'hui",
   ok: 'OK',
   clear: 'Rétablir',
   week: 'Semaine',
   month: 'Mois',
   year: 'Année',
-  timeSelect: 'Sélectionner l\'heure',
-  dateSelect: 'Sélectionner l\'heure',
+  timeSelect: "Sélectionner l'heure",
+  dateSelect: "Sélectionner l'heure",
   monthSelect: 'Choisissez un mois',
   yearSelect: 'Choisissez une année',
   decadeSelect: 'Choisissez une décennie',

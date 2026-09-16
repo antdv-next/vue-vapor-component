@@ -43,7 +43,10 @@
   const allowClearFlag = ref(true)
 
   const disabledDate = (date: any) =>
-    generateConfig.isAfter(date, generateConfig.addMonth(generateConfig.getNow(), 1))
+    generateConfig.isAfter(
+      date,
+      generateConfig.addMonth(generateConfig.getNow(), 1),
+    )
 
   function onSingleChange(val: any, str: any) {
     singleValue.value = val
@@ -91,7 +94,9 @@
           @open-change="open => console.log('open:', open)"
           @calendar-change="(_, str) => console.log('calendar change:', str)"
         />
-        <p>Current value: <code>{{ String(singleValue) }}</code></p>
+        <p>
+          Current value: <code>{{ String(singleValue) }}</code>
+        </p>
       </div>
 
       <div class="demo-section">
@@ -146,7 +151,9 @@
           @change="onRangeChange"
           @calendar-change="(_, str) => console.log('range calendar:', str)"
         />
-        <p>Current value: <code>{{ String(rangeValue) }}</code></p>
+        <p>
+          Current value: <code>{{ String(rangeValue) }}</code>
+        </p>
       </div>
 
       <div class="demo-section">

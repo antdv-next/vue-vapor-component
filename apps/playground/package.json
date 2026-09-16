@@ -43,6 +43,7 @@
     "@vapor-component/slider": "workspace:*",
     "@vapor-component/steps": "workspace:*",
     "@vapor-component/switch": "workspace:*",
+    "@vapor-component/table": "workspace:*",
     "@vapor-component/tabs": "workspace:*",
     "@vapor-component/textarea": "workspace:*",
     "@vapor-component/tooltip": "workspace:*",

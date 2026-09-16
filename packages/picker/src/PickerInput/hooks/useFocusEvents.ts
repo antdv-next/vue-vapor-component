@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+
 import { computed, shallowRef } from 'vue'
 
 // ============================= Types =============================
@@ -38,8 +39,10 @@ export function isTargetInContainers(
   containers: readonly (Element | null | undefined)[],
 ) {
   return containers.some(
-    container => !!container && container instanceof Node
-      && (container === target || container.contains(target as Node)),
+    container =>
+      !!container &&
+      container instanceof Node &&
+      (container === target || container.contains(target as Node)),
   )
 }
 
@@ -77,5 +80,9 @@ export default function useFocusEvents(
     onBlur?.(index, event)
   }
 
-  return [computed(() => focusedIndex.value !== null), onFieldFocus, onFieldBlur]
+  return [
+    computed(() => focusedIndex.value !== null),
+    onFieldFocus,
+    onFieldBlur,
+  ]
 }

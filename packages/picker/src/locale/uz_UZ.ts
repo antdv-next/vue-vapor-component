@@ -1,4 +1,5 @@
 import type { Locale } from '../interface'
+
 import { commonLocale } from './common'
 
 const locale: Locale = {
@@ -17,14 +18,14 @@ const locale: Locale = {
   weekSelect: 'Haftani tanlang',
   monthSelect: 'Oyni tanlang',
   yearSelect: 'Yilni tanlang',
-  decadeSelect: 'O\'n yilni tanlang',
+  decadeSelect: "O'n yilni tanlang",
   previousMonth: 'Oldingi oy',
   nextMonth: 'Keyingi oy',
-  previousYear: 'O\'tgan yili',
+  previousYear: "O'tgan yili",
   nextYear: 'Keyingi yil',
-  previousDecade: 'Oxirgi o\'n yil',
-  nextDecade: 'Keyingi o\'n yil',
-  previousCentury: 'O\'tgan asr',
+  previousDecade: "Oxirgi o'n yil",
+  nextDecade: "Keyingi o'n yil",
+  previousCentury: "O'tgan asr",
   nextCentury: 'Keyingi asr',
 }
 
