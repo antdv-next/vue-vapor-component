@@ -1,12 +1,13 @@
 <script setup vapor lang="ts">
   import type { CheckboxChangeEvent, CheckboxProps } from './interface'
 
-  import { computed, useTemplateRef } from 'vue'
+  import { computed, useTemplateRef, useAttrs } from 'vue'
 
-  defineOptions({ name: 'Checkbox' })
+  defineOptions({ name: 'Checkbox', inheritAttrs: false })
   const {
     prefixCls = 'vc-checkbox',
     checked,
+    defaultChecked,
     disabled,
     type = 'checkbox',
     title,
@@ -15,12 +16,14 @@
     change: [e: CheckboxChangeEvent]
     'update:checked': [checked: boolean]
   }>()
+  const attrs = useAttrs()
   const holderRef = useTemplateRef('holder')
   const inputRef = useTemplateRef('input')
+  const rawValue = computed(() => !!checked || !!defaultChecked)
   const classNames = computed(() => [
     prefixCls,
     {
-      [`${prefixCls}-checked`]: checked,
+      [`${prefixCls}-checked`]: rawValue.value,
       [`${prefixCls}-disabled`]: disabled,
     },
   ])
@@ -56,10 +59,11 @@
 </script>
 
 <template>
-  <span ref="holder" :class="classNames" :title="title">
+  <span ref="holder" :class="classNames" :title="title" :style="attrs.style">
     <input
       ref="input"
       :class="`${prefixCls}-input`"
+      :checked="!!rawValue"
       :disabled="disabled"
       :type="type"
       @change="handleChange"

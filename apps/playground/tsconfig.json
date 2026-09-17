@@ -7,5 +7,10 @@
     "src/**/*.jsx",
     "src/**/*.vue",
     "env.d.ts"
-  ]
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+  }
 }
