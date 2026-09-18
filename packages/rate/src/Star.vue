@@ -2,21 +2,14 @@
   import type { StarProps } from './interface'
 
   import KeyCode from '@v-c/util/dist/KeyCode'
-  import { cloneVNode, computed, isVNode } from 'vue'
+  import { computed } from 'vue'
   defineOptions({ name: 'Star' })
   const props = defineProps<StarProps>()
   const emit = defineEmits<{
     hover: [e: MouseEvent, index: number]
-    click: [e: MouseEvent, index: number]
+    click: [e: MouseEvent | KeyboardEvent, index: number]
   }>()
 
-  function cloneCharacterNode(node: any): any {
-    if (Array.isArray(node)) {
-      return node.map(item => (isVNode(item) ? cloneVNode(item) : item))
-    }
-
-    return isVNode(node) ? cloneVNode(node) : node
-  }
   const onHover = (e: MouseEvent) => {
     const { index } = props
     emit('hover', e, index)
@@ -28,7 +21,7 @@
   const onKeyDown = (e: KeyboardEvent) => {
     const { index } = props
     if (e.keyCode === KeyCode.ENTER) {
-      emit('click', e as MouseEvent, index)
+      emit('click', e, index)
     }
   }
 
@@ -55,10 +48,25 @@
     }
     return className
   })
+  const characterRenderSlotProps = computed(() => {
+    return {
+      ...props,
+    }
+  })
+  const characterSlotProps = computed(() => {
+    const { disabled, prefixCls, index, count, value } = props
+    return {
+      disabled,
+      prefixCls,
+      index,
+      count,
+      value,
+    }
+  })
 </script>
 
 <template>
-  <slot name="characterRender" ref="el">
+  <slot name="characterRender" v-bind="characterRenderSlotProps">
     <li :class="cls">
       <div
         @click="e => (disabled ? null : onClick(e))"
@@ -71,26 +79,12 @@
         :tabindex="disabled ? -1 : 0"
       >
         <div :class="`${prefixCls}-first`">
-          <slot
-            name="firstCharacterNode"
-            :disabled="disabled"
-            :prefixCls="prefixCls"
-            :index="index"
-            :count="count"
-            :value="value"
-          >
+          <slot name="character" v-bind="characterSlotProps">
             {{ character }}
           </slot>
         </div>
         <div :class="`${prefixCls}-second`">
-          <slot
-            name="secondCharacterNode"
-            :disabled="disabled"
-            :prefixCls="prefixCls"
-            :index="index"
-            :count="count"
-            :value="value"
-          >
+          <slot name="character" v-bind="characterSlotProps">
             {{ character }}
           </slot>
         </div>

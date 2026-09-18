@@ -106,7 +106,7 @@ import App from './App.vue'
 | notification    | ✅   |      | 受限 SFC，多了 configRef 与 onReady |
 | overflow        | ✅   |      |                                     |
 | pagination      | ✅   |      |                                     |
-| picker          | ⭕   |      |                                     |
+| picker          | ✅   |      |                                     |
 | portal          | ✅   |      |                                     |
 | progress        | ✅   |      |                                     |
 | qrcode          | ✅   |      |                                     |
@@ -118,7 +118,7 @@ import App from './App.vue'
 | slider          | ✅   |      |                                     |
 | steps           | ✅   |      |                                     |
 | switch          | ✅   |      |                                     |
-| table           | ⭕   |      |                                     |
+| table           | ✅   |      |                                     |
 | tabs            | ✅   |      |                                     |
 | textarea        | ✅   |      |                                     |
 | tooltip         | ✅   |      |                                     |

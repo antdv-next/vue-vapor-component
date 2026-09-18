@@ -9,7 +9,11 @@
 <template>
   <label>
     checkbox:
-    <Checkbox :checked="checked" @change="e => (checked = e.target.checked)" :disabled="disabled" />
+    <Checkbox
+      :checked="checked"
+      @change="e => (checked = e.target.checked)"
+      :disabled="disabled"
+    />
     <Checkbox v-model:checked="checked" :disabled="disabled" />
     <button @click="toggleDisabled">toggle</button>
   </label>

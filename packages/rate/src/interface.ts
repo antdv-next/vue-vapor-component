@@ -33,3 +33,8 @@ export interface RateProps extends Pick<
   'onUpdate:value'?: (value: number) => void
   id?: string
 }
+
+export interface RateSlots {
+  characterRender?: (node: any, props: StarProps) => any
+  character?: (props: StarProps) => any
+}

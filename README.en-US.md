@@ -106,7 +106,7 @@ Pure vapor mode mixing in vdom components also requires `vaporInteropPlugin`, wh
 | notification    | ✅     |          | Limited by SFC, added configRef and onReady |
 | overflow        | ✅     |          |                                             |
 | pagination      | ✅     |          |                                             |
-| picker          | ⭕     |          |                                             |
+| picker          | ✅     |          |                                             |
 | portal          | ✅     |          |                                             |
 | progress        | ✅     |          |                                             |
 | qrcode          | ✅     |          |                                             |
@@ -118,7 +118,7 @@ Pure vapor mode mixing in vdom components also requires `vaporInteropPlugin`, wh
 | slider          | ✅     |          |                                             |
 | steps           | ✅     |          |                                             |
 | switch          | ✅     |          |                                             |
-| table           | ⭕     |          |                                             |
+| table           | ✅     |          |                                             |
 | tabs            | ✅     |          |                                             |
 | textarea        | ✅     |          |                                             |
 | tooltip         | ✅     |          |                                             |

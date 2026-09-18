@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import type { KeyboardEventHandler } from '@v-c/util/dist/EventInterface'
 
-  import type { RateProps } from './interface'
+  import type { RateProps, RateSlots } from './interface'
 
   import { clsx } from '@v-c/util'
   import useMergedState from '@v-c/util/dist/hooks/useMergedState'
@@ -13,7 +13,9 @@
   import Star from './Star.vue'
   import useRefs from './useRefs'
   import { getOffsetLeft } from './util'
+
   defineOptions({ name: 'Rate' })
+  defineSlots<RateSlots>()
   const props = withDefaults(defineProps<RateProps>(), {
     prefixCls: 'vc-rate',
     count: 5,
@@ -54,9 +56,10 @@
     blur: triggerBlur,
   })
 
-  const [state, setStateValue] = useMergedState(props.defaultValue || 0, {
-    value: computed(() => props.value),
-  })
+  // const [state, setStateValue] = useMergedState(props.defaultValue || 0, {
+  //   value: computed(() => props.value),
+  // })
+  const state = ref((props.value || props.defaultValue) ?? 0)
 
   const [cleanedValue, setCleanedValue] = useMergedState<number | null>(null)
 
@@ -79,7 +82,7 @@
   }
 
   const changeValue = (nextValue: number) => {
-    setStateValue(nextValue)
+    state.value = nextValue
     emit('change', nextValue)
   }
 
@@ -168,32 +171,6 @@
     [`${props.prefixCls}-disabled`]: props.disabled,
     [`${props.prefixCls}-rtl`]: props.direction === 'rtl',
   })
-  const cls = (index: number) => {
-    const { prefixCls: prefix, allowHalf, disabled } = props
-    const prefixCls = `${prefix}-star`
-    const value = hoverValue.value === null ? state.value : hoverValue.value
-    const focused = disabled ? null : onInternalFocus()
-    const starValue = index + 1
-    let className = prefixCls
-    if (value === 0 && index === 0 && focused) {
-      className += ` ${prefixCls}-focused`
-    } else if (allowHalf && value + 0.5 >= starValue && value < starValue) {
-      className += ` ${prefixCls}-star-half ${prefixCls}-active`
-      if (focused) {
-        className += ` ${prefixCls}-focused`
-      }
-    } else {
-      if (starValue <= value) {
-        className += ` ${prefixCls}-full`
-      } else {
-        className += ` ${prefixCls}-zero`
-      }
-      if (starValue === value && focused) {
-        className += ` ${prefixCls}-focused`
-      }
-    }
-    return className
-  }
 </script>
 
 <template>
@@ -210,8 +187,8 @@
     v-bind="{ ...pickAttrs(restAttrs, { aria: true, data: true, attr: true }) }"
   >
     <template v-for="(item, index) in count" :key="item">
-      <!-- <Star
-        :ref="el => setStarRef(el, index)"
+      <Star
+        :ref="el => setStarRef(el)"
         :index="index"
         :count="count"
         :disabled="disabled"
@@ -223,57 +200,13 @@
         :character="character"
         :focused="focused"
       >
-        <template #characterRender>
-          <slot name="characterRender"></slot>
+        <template #characterRender="ctx">
+          <slot name="characterRender" v-bind="ctx"></slot>
         </template>
-        <template #firstCharacterNode="ctx">
-          <slot name="firstCharacterNode" v-bind="ctx"></slot>
+        <template #character="ctx">
+          <slot name="character" v-bind="ctx">{{ character }}</slot>
         </template>
-        <template #secondCharacterNode="ctx">
-          <slot name="secondCharacterNode" v-bind="ctx"></slot>
-        </template>
-      </Star> -->
-      <li :class="cls(index)" :ref="setStarRef(index)">
-        <div
-          @click="e => (disabled ? null : onClick(e, index))"
-          @keydown="e => (disabled ? null : onInternalKeyDown(e))"
-          @mousemove="e => (disabled ? null : onHover(e, index))"
-          role="radio"
-          :aria-checked="
-            (hoverValue === null ? state : hoverValue) > index
-              ? 'true'
-              : 'false'
-          "
-          :aria-posinset="index + 1"
-          :aria-setsize="count"
-          :tabindex="disabled ? -1 : 0"
-        >
-          <div :class="`${prefixCls}-star-first`">
-            <slot
-              name="firstCharacterNode"
-              :disabled="disabled"
-              :prefixCls="prefixCls"
-              :index="index"
-              :count="count"
-              :value="value"
-            >
-              {{ character }}
-            </slot>
-          </div>
-          <div :class="`${prefixCls}-star-second`">
-            <slot
-              name="secondCharacterNode"
-              :disabled="disabled"
-              :prefixCls="prefixCls"
-              :index="index"
-              :count="count"
-              :value="value"
-            >
-              {{ character }}
-            </slot>
-          </div>
-        </div>
-      </li>
+      </Star>
     </template>
   </ul>
 </template>
