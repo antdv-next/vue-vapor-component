@@ -1,5 +1,5 @@
 <script setup vapor lang="ts">
-  import type { SwitchProps } from './interface'
+  import type { SwitchProps, SwitchSlots, SwitchEmits } from './interface'
 
   import KeyCode from '@v-c/util/dist/KeyCode'
   import { computed, useTemplateRef } from 'vue'
@@ -15,14 +15,9 @@
     styles,
     checkedChildren,
     unCheckedChildren,
-    loadingIcon = undefined,
   } = defineProps<SwitchProps>()
-  const emit = defineEmits<{
-    change: [checked: boolean, e: Event]
-    'update:checked': [checked: boolean]
-    keydown: [e: Event]
-    click: [checked: boolean, e: Event]
-  }>()
+  const emit = defineEmits<SwitchEmits>()
+  defineSlots<SwitchSlots>()
   const btnRef = useTemplateRef('btn')
 
   const switchClassName = computed(() => [
@@ -77,16 +72,13 @@
     @keydown="onInternalKeydown"
     @click="onInternalClick"
   >
-    <template v-if="loadingIcon && typeof loadingIcon === 'function'">
-      <component :is="loadingIcon" />
-    </template>
-    <template v-else>{{ loadingIcon }}</template>
+    <slot name="loadingIcon"></slot>
     <span :class="`${prefixCls}-inner`">
       <span :class="[`${prefixCls}-inner-checked`, cls]" :style="sty">
-        {{ checkedChildren }}
+        <slot name="checkedChildren">{{ checkedChildren }}</slot>
       </span>
       <span :class="[`${prefixCls}-inner-unchecked`, cls]" :style="sty">
-        {{ unCheckedChildren }}
+        <slot name="unCheckedChildren">{{ unCheckedChildren }}</slot>
       </span>
     </span>
   </button>

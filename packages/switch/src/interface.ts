@@ -1,5 +1,5 @@
 import type { KeyboardEventHandler } from '@v-c/util/dist/EventInterface'
-import type { CSSProperties, VNodeChild } from 'vue'
+import type { CSSProperties } from 'vue'
 
 export type SwitchChangeEventHandler = (
   checked: boolean,
@@ -10,14 +10,26 @@ export interface SwitchProps {
   className?: string
   prefixCls?: string
   disabled?: boolean
-  checkedChildren?: VNodeChild | (() => VNodeChild)
-  unCheckedChildren?: VNodeChild | (() => VNodeChild)
+  checkedChildren?: string
+  unCheckedChildren?: string
   'onUpdate:checked'?: (value: boolean) => void
   tabIndex?: number
   checked?: boolean
   defaultChecked?: boolean
-  loadingIcon?: VNodeChild | (() => VNodeChild)
   title?: string
   styles?: { content?: CSSProperties }
   classNames?: { content?: string }
+}
+
+export interface SwitchSlots {
+  loadingIcon?: () => any
+  checkedChildren?: () => any
+  unCheckedChildren?: () => any
+}
+
+export interface SwitchEmits {
+  change: [checked: boolean, e: Event]
+  'update:checked': [checked: boolean]
+  keydown: [e: Event]
+  click: [checked: boolean, e: Event]
 }
