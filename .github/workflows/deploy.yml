@@ -35,12 +35,14 @@ jobs:
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1.21.1
         with:
-          version: latest
+          version: 0.3.1
           node-version: '24'
           cache: true
           run-install: false
       - name: Install dependencies
-        run: vp install
+        run: |
+          rm -rf node_modules
+          vp install
       - name: Toolchain versions
         run: |
           vp --version
