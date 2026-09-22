@@ -30,19 +30,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      # setup-vp 负责 Node.js、pnpm 和 vp 的安装与依赖缓存，
+      # 因此不再需要 pnpm/action-setup 与 actions/setup-node。
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1.21.1
         with:
-          version: 10.26.2 # 指定 pnpm 版本
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: 'pnpm'
+          version: latest
+          node-version: '24'
+          cache: true
+          run-install: false
       - name: Install dependencies
-        run: pnpm install
+        run: vp install
+      - name: Toolchain versions
+        run: |
+          vp --version
+          node -v
       - name: Build
-        run: pnpm build
+        run: vp run -r build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
