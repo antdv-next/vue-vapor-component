@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import type { QRProps } from './interface.ts'
 
-  import { shallowRef, useTemplateRef, watchEffect } from 'vue'
+  import { computed, shallowRef, useTemplateRef, watchEffect } from 'vue'
 
   import { useQRCode } from './hooks/useQRCode'
   import {
@@ -15,7 +15,7 @@
     generatePath,
   } from './utils'
 
-  defineOptions({ name: 'QRCodeSVG' })
+  defineOptions({ name: 'QRCodeSVG', inheritAttrs: false })
   const {
     value,
     size = DEFAULT_SIZE,
@@ -29,20 +29,14 @@
     fgColor = DEFAULT_FRONT_COLOR,
   } = defineProps<QRProps>()
 
-  const svgRef = useTemplateRef('_svg')
-  let fgPath: string = ''
-  let numCells: number = 0
+  const svgRef = useTemplateRef<SVGSVGElement>('_svg')
+  const fgPath = shallowRef('')
+  const numCells = shallowRef(0)
   const calcSettings =
     shallowRef<ReturnType<typeof useQRCode>['calculatedImageSettings']>()
   const marginValue = shallowRef(0)
-
-  watchEffect(() => {
-    const {
-      margin,
-      cells,
-      numCells: getNumCells,
-      calculatedImageSettings,
-    } = useQRCode({
+  const qrcode = computed(() => {
+    return useQRCode({
       value,
       level,
       minVersion,
@@ -52,16 +46,25 @@
       size,
       boostLevel,
     })
+  })
+
+  watchEffect(() => {
+    const {
+      margin,
+      cells,
+      numCells: getNumCells,
+      calculatedImageSettings,
+    } = qrcode.value
 
     let cellsToDraw = cells
-    numCells = getNumCells
+    numCells.value = getNumCells
     if (imageSettings != null && calculatedImageSettings != null) {
       if (calculatedImageSettings.excavation != null) {
         cellsToDraw = excavateModules(cells, calculatedImageSettings.excavation)
-        calcSettings.value = calculatedImageSettings
       }
+      calcSettings.value = calculatedImageSettings
     }
-    fgPath = generatePath(cellsToDraw, margin)
+    fgPath.value = generatePath(cellsToDraw, margin)
     marginValue.value = margin
   })
   defineExpose({

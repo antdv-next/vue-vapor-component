@@ -1,14 +1,5 @@
 import type { Ecc, QrCode } from './libs/qrcodegen'
 
-import {
-  DEFAULT_BACKGROUND_COLOR,
-  DEFAULT_FRONT_COLOR,
-  DEFAULT_LEVEL,
-  DEFAULT_MINVERSION,
-  DEFAULT_NEED_MARGIN,
-  DEFAULT_SIZE,
-} from './utils'
-
 export type Modules = ReturnType<QrCode['getModules']>
 export interface Excavation {
   x: number
@@ -101,12 +92,3 @@ export interface QRProps {
 }
 export type QRPropsCanvas = QRProps
 export type QRPropsSVG = QRProps
-
-export const defaults = {
-  size: DEFAULT_SIZE,
-  level: DEFAULT_LEVEL,
-  bgColor: DEFAULT_BACKGROUND_COLOR,
-  fgColor: DEFAULT_FRONT_COLOR,
-  includeMargin: DEFAULT_NEED_MARGIN,
-  minVersion: DEFAULT_MINVERSION,
-} as any

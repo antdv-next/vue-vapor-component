@@ -1,7 +1,5 @@
 import type { ErrorCorrectionLevel, ImageSettings } from '../interface'
 
-import { computed } from 'vue'
-
 import { QrCode, QrSegment } from '../libs/qrcodegen'
 import { ERROR_LEVEL_MAP, getImageSettings, getMarginSize } from '../utils'
 
@@ -17,7 +15,7 @@ interface Options {
 }
 
 export function useQRCode(ctx: Options) {
-  const memoizedQrcode = computed(() => {
+  const memoizedQrcode = () => {
     const { value, level, minVersion, boostLevel } = ctx
     const values = Array.isArray(value) ? value : [value]
     const segments = values.reduce<QrSegment[]>((acc, val) => {
@@ -32,10 +30,11 @@ export function useQRCode(ctx: Options) {
       undefined,
       boostLevel,
     )
-  })
+  }
 
   const { includeMargin, marginSize, size, imageSettings } = ctx
-  const cs = memoizedQrcode.value.getModules()
+  const qr = memoizedQrcode()
+  const cs = qr.getModules()
   const mg = getMarginSize(includeMargin, marginSize)
   const ncs = cs.length + mg * 2
   const cis = getImageSettings(cs, size, mg, imageSettings)
@@ -44,6 +43,6 @@ export function useQRCode(ctx: Options) {
     margin: mg,
     numCells: ncs,
     calculatedImageSettings: cis,
-    qrcode: memoizedQrcode.value,
+    qrcode: qr,
   }
 }

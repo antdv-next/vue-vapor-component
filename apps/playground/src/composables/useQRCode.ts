@@ -1,4 +1,6 @@
+import { ref } from 'vue'
+
 export function useQRCode() {
-  const value = 'https://www.baidu.com'
+  const value = ref('https://www.baidu.com')
   return { value }
 }

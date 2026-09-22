@@ -1,4 +1,6 @@
 <script setup vapor lang="ts">
+  import type { CSSProperties } from 'vue'
+
   import type { QRProps } from './interface'
 
   import { computed, shallowRef, useAttrs, watch, watchEffect } from 'vue'
@@ -16,7 +18,7 @@
     isSupportPath2d,
   } from './utils'
 
-  defineOptions({ name: 'QRCodeCanvas' })
+  defineOptions({ name: 'QRCodeCanvas', inheritAttrs: false })
   const {
     value,
     level = DEFAULT_LEVEL,
@@ -36,19 +38,22 @@
   const isImgLoaded = shallowRef(false)
   const calcSettings =
     shallowRef<ReturnType<typeof useQRCode>['calculatedImageSettings']>()
+  const qrcode = computed(() => {
+    return useQRCode({
+      value,
+      level,
+      minVersion,
+      includeMargin,
+      marginSize,
+      imageSettings,
+      size,
+      boostLevel,
+    })
+  })
 
   watchEffect(
     () => {
-      const { margin, cells, numCells, calculatedImageSettings } = useQRCode({
-        value,
-        level,
-        minVersion,
-        includeMargin,
-        marginSize,
-        imageSettings,
-        size,
-        boostLevel,
-      })
+      const { margin, cells, numCells, calculatedImageSettings } = qrcode.value
       if (_canvas.value != null) {
         const canvas = _canvas.value
 
@@ -118,17 +123,20 @@
         calcSettings.value = calculatedImageSettings
       }
     },
-    { flush: 'sync' },
+    { flush: 'post' },
   )
 
   watch(imgSrc, () => {
     isImgLoaded.value = false
   })
 
-  const canvasStyle = computed(() => ({
-    height: `${size}px`,
-    width: `${size}px`,
-  }))
+  const canvasStyle = computed(() => [
+    {
+      height: `${size}px`,
+      width: `${size}px`,
+    },
+    attrs?.style as CSSProperties,
+  ])
 
   defineExpose({
     toDataURL: (type?: string, quality?: any) => {
@@ -140,10 +148,12 @@
 <template>
   <canvas
     ref="_canvas"
+    v-bind="attrs"
     :style="canvasStyle"
     role="img"
     :title="title"
-    v-bind="attrs"
+    :height="size"
+    :width="size"
   />
   <img
     v-if="imgSrc"
@@ -152,7 +162,7 @@
     :src="imgSrc"
     style="display: none"
     :crossorigin="calcSettings?.crossOrigin"
-    alt=""
+    alt="QR-Code"
     @load="isImgLoaded = true"
   />
 </template>

@@ -4,23 +4,23 @@
 
 ## Props
 
-| 名称            | 类型                                     | 默认值      | 说明                                                        |
-| --------------- | ---------------------------------------- | ----------- | ----------------------------------------------------------- |
-| prefixCls       | `string`                                 | `'vc-rate'` | 样式类前缀                                                  |
-| count           | `number`                                 | `5`         | 星级数量                                                    |
-| value           | `number`                                 | `—`         | 当前值（受控）                                              |
-| defaultValue    | `number`                                 | `—`         | 初始值（非受控）                                            |
-| allowHalf       | `boolean`                                | `false`     | 是否允许半星                                                |
-| allowClear      | `boolean`                                | `true`      | 是否允许点击当前值时清空评分                                |
-| keyboard        | `boolean`                                | `true`      | 是否启用左右方向键响应                                      |
-| character       | `string`                                 | `'★'`       | 星形元素 也可使用插槽                                       |
-| disabled        | `boolean`                                | `—`         | 是否禁用                                                    |
-| direction       | `Direction`                              | `'ltr'`     | 方向，支持 `'ltr'` 与 `'rtl'`                               |
-| tabIndex        | `number \| string`                       | `0`         | 键盘导航序号                                                |
-| autoFocus       | `boolean`                                | `—`         | 是否自动聚焦                                                |
-| id              | `string`                                 | `—`         | 外层 `ul` 的 `id`                                           |
-| onUpdate:value  | `(value: number) => void`                | `—`         | v-model 更新回调                                            |
-| characterRender | `(origin: any, props: StarProps) => any` | `—`         | 已由 `#characterRender` 插槽替代，见「与 @v-c 差异」        |
+| 名称            | 类型                                     | 默认值      | 说明                                                 |
+| --------------- | ---------------------------------------- | ----------- | ---------------------------------------------------- |
+| prefixCls       | `string`                                 | `'vc-rate'` | 样式类前缀                                           |
+| count           | `number`                                 | `5`         | 星级数量                                             |
+| value           | `number`                                 | `—`         | 当前值（受控）                                       |
+| defaultValue    | `number`                                 | `—`         | 初始值（非受控）                                     |
+| allowHalf       | `boolean`                                | `false`     | 是否允许半星                                         |
+| allowClear      | `boolean`                                | `true`      | 是否允许点击当前值时清空评分                         |
+| keyboard        | `boolean`                                | `true`      | 是否启用左右方向键响应                               |
+| character       | `string`                                 | `'★'`       | 星形元素 也可使用插槽                                |
+| disabled        | `boolean`                                | `—`         | 是否禁用                                             |
+| direction       | `Direction`                              | `'ltr'`     | 方向，支持 `'ltr'` 与 `'rtl'`                        |
+| tabIndex        | `number \| string`                       | `0`         | 键盘导航序号                                         |
+| autoFocus       | `boolean`                                | `—`         | 是否自动聚焦                                         |
+| id              | `string`                                 | `—`         | 外层 `ul` 的 `id`                                    |
+| onUpdate:value  | `(value: number) => void`                | `—`         | v-model 更新回调                                     |
+| characterRender | `(origin: any, props: StarProps) => any` | `—`         | 已由 `#characterRender` 插槽替代，见「与 @v-c 差异」 |
 
 > `type Direction = 'ltr' | 'rtl'`
 
