@@ -30,9 +30,8 @@
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",
-    "vitest": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:"
   },
-  "packageManager": "pnpm@10.26.2"
+  "packageManager": "pnpm@12.5.1"
 }

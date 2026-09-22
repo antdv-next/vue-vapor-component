@@ -26,16 +26,13 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plugin-vue-devtools: latest
   vite-plus: latest
-  vitest: npm:@voidzero-dev/vite-plus-test@latest
   vue: 3.6.0-rc.8
   vue-tsc: latest
 
-onlyBuiltDependencies:
-  - esbuild
-  - less
-  - simple-git-hooks
 overrides:
   make-dir: ^5.1.0
   semver: ^7.0.0
   vite@*: 'catalog:'
-  vitest@*: 'catalog:'
+  # vitest@*: 'catalog:'
+allowBuilds:
+  esbuild: false
