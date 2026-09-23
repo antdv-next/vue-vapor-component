@@ -1,10 +1,8 @@
 <script setup lang="ts" vapor>
   import type { ChangeEvent } from '@v-c/util/dist/EventInterface'
-  import type { VueNode } from '@v-c/util/dist/type'
   import type { CSSProperties } from 'vue'
 
   import type {
-    ItemRender,
     SegmentedLabeledOption,
     SegmentedRawOption,
     SemanticName,
@@ -12,7 +10,7 @@
 
   import { clsx } from '@v-c/util'
   import { useAttrs } from 'vue'
-  defineOptions({ name: 'InternalSegmentedOption' })
+  defineOptions({ name: 'InternalSegmentedOption', inheritAttrs: false })
   const props = defineProps<{
     prefixCls: string
     classNames?: Partial<Record<SemanticName, string>>
@@ -20,11 +18,10 @@
     data: SegmentedLabeledOption
     disabled?: boolean
     checked: boolean
-    label: VueNode
+    label: string
     title?: string
     value: SegmentedRawOption
     name?: string
-    itemRender?: ItemRender
   }>()
   const emit = defineEmits<{
     change: [e: ChangeEvent, value: SegmentedRawOption]
@@ -44,7 +41,7 @@
 </script>
 
 <template>
-  <slot name="itemRender">
+  <slot name="itemRender" :item="data">
     <label
       :class="
         clsx(attrs.class, {
@@ -71,7 +68,7 @@
         :title="title"
         :style="styles?.label"
       >
-        {{ typeof label === 'function' ? (label as any)?.() : label }}
+        <slot name="label" />
       </div>
     </label>
   </slot>

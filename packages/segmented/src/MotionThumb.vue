@@ -219,7 +219,7 @@
 </script>
 
 <template>
-  <Transition v-bind="{ ...transitionProps }">
+  <Transition v-if="prevStyle || nextStyle" v-bind="{ ...transitionProps }">
     <div
       :key="motionKey"
       :data-motion-key="motionKey"

@@ -9,11 +9,11 @@
   } from './interface'
 
   import omit from '@v-c/util/dist/omit'
-  import { computed, useAttrs, ref, shallowRef, watch } from 'vue'
+  import { computed, useAttrs, ref, shallowRef, watch, nextTick } from 'vue'
 
   import InternalSegmentedOption from './InternalSegmentedOption.vue'
   import MotionThumb from './MotionThumb.vue'
-  defineOptions({ name: 'Segmented' })
+  defineOptions({ name: 'Segmented', inheritAttrs: false })
   const props = withDefaults(defineProps<SegmentedProps>(), {
     prefixCls: 'vc-segmented',
     options: [],
@@ -22,6 +22,7 @@
   const emit = defineEmits<{
     change: [val: SegmentedRawOption]
   }>()
+  const attrs = useAttrs()
   function getValidTitle(option: SegmentedLabeledOption) {
     if (typeof option.title !== 'undefined') {
       return option.title
@@ -56,22 +57,34 @@
     return normalizeOptions(props?.options ?? [])
   })
 
-  // Note: We should not auto switch value when value not exist in options
-  // which may break single source of truth.
-  const rawValue = shallowRef(
-    props?.value ?? props?.defaultValue ?? (props?.options?.[0] as any)?.value,
+  const internalValue = shallowRef<SegmentedRawOption | undefined>(
+    props?.defaultValue ?? segmentedOptions.value[0]?.value,
   )
+  const mergedValue = computed(() => props?.value ?? internalValue.value)
+  const controlRerender = shallowRef(0)
   watch(
     () => props.value,
-    () => {
-      rawValue.value = props.value as any
+    value => {
+      if (value === undefined) {
+        return (internalValue.value = value)
+      }
     },
   )
   // ======================= Change ========================
   const thumbShow = shallowRef(false)
   const handleChange = (_event: ChangeEvent, val: SegmentedRawOption) => {
-    rawValue.value = val
+    const prevControlledValue = props.value
+    if (prevControlledValue === undefined) {
+      internalValue.value = val
+    }
     emit('change', val)
+    if (prevControlledValue !== undefined) {
+      nextTick(() => {
+        if (props.value === prevControlledValue && props.value !== val) {
+          controlRerender.value += 1
+        }
+      })
+    }
   }
 
   // ======================= Focus ========================
@@ -95,16 +108,19 @@
   }
   // ======================= Keyboard ========================
   const onOffset = (offset: number) => {
-    const currentIndex = segmentedOptions.value.findIndex(
-      option => option?.value === rawValue.value,
+    const validOptions = segmentedOptions.value.filter(
+      option => option.value === mergedValue.value || !option.disabled,
+    )
+
+    const currentIndex = validOptions.findIndex(
+      option => option?.value === mergedValue.value,
     )
 
     const total = segmentedOptions.value.length
     const nextIndex = (currentIndex + offset + total) % total
     const nextOption = segmentedOptions.value[nextIndex]
-    if (nextOption) {
-      rawValue.value = nextOption.value
-      emit('change', nextOption.value)
+    if (nextOption && nextOption.value !== mergedValue.value) {
+      handleChange(null as any, nextOption.value)
     }
   }
 
@@ -120,7 +136,7 @@
         break
     }
   }
-  const divProps = omit(useAttrs(), ['class', 'style'])
+  const divProps = omit(attrs, ['class', 'style'])
   const divClass = computed(() => {
     const { prefixCls, direction, disabled, vertical } = props
     return {
@@ -138,14 +154,15 @@
     :tabindex="disabled ? undefined : 0"
     :aria-orientation="vertical ? 'vertical' : 'horizontal'"
     v-bind="divProps"
-    :class="[prefixCls, divClass]"
+    :class="[prefixCls, divClass, attrs.class]"
+    :style="attrs.style"
     ref="containerRef"
   >
     <div :class="`${prefixCls}-group`">
       <MotionThumb
         :vertical="vertical"
-        :prefixCls="prefixCls!"
-        :value="rawValue"
+        :prefixCls="prefixCls"
+        :value="mergedValue"
         :containerRef="containerRef!"
         :motionName="`${prefixCls}-${motionName}`"
         :direction="direction"
@@ -161,12 +178,14 @@
           }
         "
       />
-      <template v-for="item in segmentedOptions" :key="item.value">
+      <template
+        v-for="item in segmentedOptions"
+        :key="`${item.value}-${controlRerender}`"
+      >
         <InternalSegmentedOption
           v-bind="item"
           :name="name"
           :data="item"
-          :itemRender="itemRender"
           :prefixCls="prefixCls!"
           :class="[
             item.class,
@@ -174,15 +193,16 @@
             classNames?.item,
             {
               [`${prefixCls}-item-selected`]:
-                item.value === rawValue && !thumbShow,
+                item.value === mergedValue && !thumbShow,
+              [`${prefixCls}-item-selected-text`]: item.value === mergedValue,
               [`${prefixCls}-item-focused`]:
-                isFocused && isKeyboard && item.value === rawValue,
+                isFocused && isKeyboard && item.value === mergedValue,
             },
           ]"
           :style="styles?.item"
           :classNames="classNames"
           :styles="styles"
-          :checked="item.value === rawValue"
+          :checked="item.value === mergedValue"
           @change="handleChange"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -191,8 +211,11 @@
           @mousedown="handleMouseDown"
           :disabled="!!disabled || !!item.disabled"
         >
-          <template #itemRender>
-            <slot name="itemRender"></slot>
+          <template #itemRender="ctx">
+            <slot name="itemRender" v-bind="ctx"></slot>
+          </template>
+          <template #label>
+            <slot name="label">{{ item.label }}</slot>
           </template>
         </InternalSegmentedOption>
       </template>

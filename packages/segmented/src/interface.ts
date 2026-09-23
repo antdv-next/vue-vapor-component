@@ -19,17 +19,14 @@ export type SegmentedRawOption = SegmentedValue
 export interface SegmentedLabeledOption<ValueType = SegmentedRawOption> {
   class?: string
   disabled?: boolean
-  label: VueNode
+  label: string
   value: ValueType
   /**
    * html `title` property for label
    */
   title?: string
 }
-export type ItemRender = (
-  node: VueNode,
-  info: { item: SegmentedLabeledOption },
-) => VueNode
+export type ItemRender = (item: SegmentedLabeledOption) => VueNode
 
 export type SegmentedOptions<T = SegmentedRawOption> = (
   | T
@@ -48,5 +45,9 @@ export interface SegmentedProps {
   name?: string
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>
+}
+
+export interface SegmentedSlots {
   itemRender?: ItemRender
+  label?: () => any
 }
