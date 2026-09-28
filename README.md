@@ -83,49 +83,49 @@ import App from './App.vue'
 - ⭕ 未开始
 - 🪒 进行中
 
-| 组件            | 状态 | 验证 | 备注                                |
-| --------------- | ---- | ---- | ----------------------------------- |
-| async-validator | ⭐️   | 🚀   |                                     |
-| cascader        | ✅   |      |                                     |
-| checkbox        | ✅   |      |                                     |
-| collapse        | ✅   |      |                                     |
-| color-picker    | ✅   |      |                                     |
-| dialog          | ✅   |      |                                     |
-| drawer          | ✅   |      |                                     |
-| dropdown        | ✅   |      |                                     |
-| fast-color      | ⭐️   | 🚀   |                                     |
-| field-form      | ⭕   |      |                                     |
-| image           | ✅   |      |                                     |
-| input           | ✅   |      |                                     |
-| input-number    | ✅   |      |                                     |
-| listy           | ✅   |      |                                     |
-| mentions        | ✅   |      |                                     |
-| menu            | ✅   |      |                                     |
-| mini-decimal    | ⭐️   | 🚀   |                                     |
-| mutate-observer | ✅   |      |                                     |
-| notification    | ✅   |      | 受限 SFC，多了 configRef 与 onReady |
-| overflow        | ✅   |      |                                     |
-| pagination      | ✅   |      |                                     |
-| picker          | ✅   |      |                                     |
-| portal          | ✅   |      |                                     |
-| progress        | ✅   |      |                                     |
-| qrcode          | ✅   |      |                                     |
-| rate            | ✅   |      |                                     |
-| resize-observer | ✅   |      |                                     |
-| segmented       | ✅   |      |                                     |
-| select          | ✅   |      |                                     |
-| slick           | ✅   |      |                                     |
-| slider          | ✅   |      |                                     |
-| steps           | ✅   |      |                                     |
-| switch          | ✅   |      |                                     |
-| table           | ✅   |      |                                     |
-| tabs            | ✅   |      |                                     |
-| textarea        | ✅   |      |                                     |
-| tooltip         | ✅   |      |                                     |
-| tour            | ✅   |      |                                     |
-| tree            | ✅   |      |                                     |
-| tree-select     | ✅   |      |                                     |
-| trigger         | ✅   |      |                                     |
-| upload          | ✅   |      |                                     |
-| util            | ⭐️   | 🚀   | 部分涉及 VDom 的需兼容 vapor        |
-| virtual-list    | ✅   |      |                                     |
+| 组件            | 状态 | 验证 | 备注                                                 |
+| --------------- | ---- | ---- | ---------------------------------------------------- |
+| async-validator | ⭐️   | 🚀   |                                                      |
+| cascader        | ✅   |      |                                                      |
+| checkbox        | ✅   |      | [差异可见组件README](./packages/checkbox/README.md)  |
+| collapse        | ✅   |      |                                                      |
+| color-picker    | ✅   |      |                                                      |
+| dialog          | ✅   |      |                                                      |
+| drawer          | ✅   |      |                                                      |
+| dropdown        | ✅   |      |                                                      |
+| fast-color      | ⭐️   | 🚀   |                                                      |
+| field-form      | ⭕   |      |                                                      |
+| image           | ✅   |      |                                                      |
+| input           | ✅   |      | [差异可见组件README](./packages/input/README.md)     |
+| input-number    | ✅   |      |                                                      |
+| listy           | ✅   |      |                                                      |
+| mentions        | ✅   |      |                                                      |
+| menu            | ✅   |      |                                                      |
+| mini-decimal    | ⭐️   | 🚀   |                                                      |
+| mutate-observer | ✅   |      |                                                      |
+| notification    | ✅   |      | 受限 SFC，多了 configRef 与 onReady                  |
+| overflow        | ✅   |      |                                                      |
+| pagination      | ✅   |      |                                                      |
+| picker          | ✅   |      |                                                      |
+| portal          | ✅   |      |                                                      |
+| progress        | ✅   |      |                                                      |
+| qrcode          | ✅   |      | [差异可见组件README](./packages/qrcode/README.md)    |
+| rate            | ✅   |      | [差异可见组件README](./packages/rate/README.md)      |
+| resize-observer | ✅   |      |                                                      |
+| segmented       | ✅   |      | [差异可见组件README](./packages/segmented/README.md) |
+| select          | ✅   |      |                                                      |
+| slick           | ✅   |      |                                                      |
+| slider          | ✅   |      |                                                      |
+| steps           | ✅   |      |                                                      |
+| switch          | ✅   |      | [差异可见组件README](./packages/switch/README.md)    |
+| table           | ✅   |      |                                                      |
+| tabs            | ✅   |      |                                                      |
+| textarea        | ✅   |      |                                                      |
+| tooltip         | ✅   |      |                                                      |
+| tour            | ✅   |      |                                                      |
+| tree            | ✅   |      |                                                      |
+| tree-select     | ✅   |      |                                                      |
+| trigger         | ✅   |      |                                                      |
+| upload          | ✅   |      |                                                      |
+| util            | ⭐️   | 🚀   | 部分涉及 VDom 的需兼容 vapor                         |
+| virtual-list    | ✅   |      |                                                      |

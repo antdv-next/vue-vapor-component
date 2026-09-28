@@ -1,7 +1,5 @@
 <script setup vapor lang="ts">
-  import type { CommonInputProps } from '@vapor-component/input'
-
-  import type { MentionsRef, MentionsProps } from './interface'
+  import type { MentionsRef, MentionsProps, MentionsSlots } from './interface'
 
   import { clsx } from '@v-c/util'
   import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
@@ -11,6 +9,7 @@
   import InternalMentions from './InternalMentions.vue'
 
   defineOptions({ name: 'VcMentions', inheritAttrs: false })
+  defineSlots<MentionsSlots>()
 
   const props = withDefaults(defineProps<MentionsProps>(), {
     prefixCls: 'vc-mentions',
@@ -137,5 +136,9 @@
       @press-enter="(e: KeyboardEvent) => emit('press-enter', e)"
       @popup-scroll="(e: UIEvent) => emit('popup-scroll', e)"
     />
+
+    <template #clearIcon>
+      <slot name="clearIcon" />
+    </template>
   </BaseInput>
 </template>

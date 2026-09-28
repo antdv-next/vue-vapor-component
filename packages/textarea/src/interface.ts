@@ -6,7 +6,6 @@ import type {
   KeyboardEventHandler,
   MouseEventHandler,
 } from '@v-c/util/dist/EventInterface'
-import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties, TextareaHTMLAttributes } from 'vue'
 
 export type ValueType = TextareaHTMLAttributes['value'] | bigint
@@ -35,11 +34,11 @@ export interface TextAreaProps {
   defaultValue?: any
   disabled?: boolean
   prefixCls?: string
-  prefix?: VueNode
-  suffix?: VueNode
-  addonBefore?: VueNode
-  addonAfter?: VueNode
-  allowClear?: boolean | { clearIcon?: VueNode }
+  prefix?: string | number
+  suffix?: string | number
+  addonBefore?: string | number
+  addonAfter?: string | number
+  allowClear?: boolean
   autoSize?: AutoSizeType
   showCount?:
     | boolean

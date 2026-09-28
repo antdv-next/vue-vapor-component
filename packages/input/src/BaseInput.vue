@@ -1,13 +1,13 @@
 <script setup vapor lang="ts">
-  import type { BaseInputProps } from './interface'
+  import type { BaseInputProps, InputSlots } from './interface'
 
   import { clsx } from '@v-c/util'
-  import { computed, shallowRef, useSlots, h, Fragment, Text } from 'vue'
+  import { computed, shallowRef, useSlots } from 'vue'
 
   import { hasAddon, hasPrefixSuffix } from './utils/commonUtils'
 
   defineOptions({ name: 'BaseInput', inheritAttrs: false })
-
+  defineSlots<InputSlots>()
   const props = defineProps<BaseInputProps>()
   const emit = defineEmits<{
     clear: [e: MouseEvent]
@@ -121,10 +121,6 @@
   const renderSuffix = computed(() => props.suffix || null)
   const renderAddonBefore = computed(() => props.addonBefore || null)
   const renderAddonAfter = computed(() => props.addonAfter || null)
-  const renderClearIcon = () =>
-    typeof props.allowClear === 'object' && props.allowClear?.clearIcon
-      ? props.allowClear.clearIcon
-      : '✖'
 
   defineExpose({
     nativeElement: computed(() => groupRef.value || containerRef.value),
@@ -172,17 +168,11 @@
           <button
             v-if="hasAllowClear"
             type="button"
-            :tabindex="-1"
             :class="clearBtnCls"
             @click="handleClearClick"
             @mousedown="onClearMouseDown"
           >
-            <slot name="clearIcon">
-              <template v-if="allowClear?.clearIcon">
-                {{ allowClear.clearIcon }}
-              </template>
-              <template v-else>✖</template>
-            </slot>
+            <slot name="clearIcon">✖</slot>
           </button>
           <slot name="suffix" v-if="hasSuffix">
             {{ renderSuffix }}
@@ -224,14 +214,11 @@
       <button
         v-if="hasAllowClear"
         type="button"
-        :tabindex="-1"
         :class="clearBtnCls"
         @click="handleClearClick"
         @mousedown="onClearMouseDown"
       >
-        <slot name="clearIcon">
-          <component :is="renderClearIcon" />
-        </slot>
+        <slot name="clearIcon">✖</slot>
       </button>
       <slot name="suffix" v-if="hasSuffix">
         {{ renderSuffix }}

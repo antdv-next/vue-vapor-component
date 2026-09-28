@@ -5,6 +5,7 @@ export type {
   DataDrivenOptionProps,
   MentionsProps,
   MentionsRef,
+  MentionsSlots,
   OptionProps,
   Placement,
   Direction,

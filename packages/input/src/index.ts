@@ -8,6 +8,7 @@ export type {
   CountConfig,
   InputProps,
   InputRef,
+  InputSlots,
   ShowCountFormatter,
 } from './interface'
 

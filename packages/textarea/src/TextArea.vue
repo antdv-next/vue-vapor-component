@@ -18,6 +18,7 @@
   const emit = defineEmits<{
     resize: [size: { width: number; height: number }]
     change: [e: any]
+    clear: [e: MouseEvent]
     focus: [e: any]
     blur: [e: any]
     keydown: [e: KeyboardEvent]
@@ -281,7 +282,7 @@
     }"
     :components="components"
     :hidden="hidden"
-    @clear="handleReset"
+    @clear="(e: MouseEvent) => emit('clear', e)"
     :class="[attrs.class, isOutOfRange && `${prefixCls}-out-of-range`]"
     :style="{
       ...attrs.style,

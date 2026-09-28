@@ -1,15 +1,19 @@
 <script setup vapor lang="ts">
   import type { InputFocusOptions } from '@v-c/util/dist/Dom/focus'
+  import type { CSSProperties } from 'vue'
 
-  import type { InputProps } from './interface'
+  import type { InputProps, InputSlots } from './interface'
 
   import { clsx } from '@v-c/util'
   import { triggerFocus } from '@v-c/util/dist/Dom/focus'
   import { KeyCodeStr } from '@v-c/util/dist/KeyCode'
+  import omit from '@v-c/util/dist/omit'
+  import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
   import {
     computed,
     shallowRef,
     toRef,
+    useAttrs,
     useSlots,
     useTemplateRef,
     watch,
@@ -19,14 +23,15 @@
   import useCount from './hooks/useCount'
   import { resolveOnChange } from './utils/commonUtils'
 
-  defineOptions({ name: 'Input' })
-
+  defineOptions({ name: 'Input', inheritAttrs: false })
+  defineSlots<Omit<InputSlots, 'default'>>()
   const props = withDefaults(defineProps<InputProps>(), {
     prefixCls: 'vc-input',
     type: 'text',
   })
   const emit = defineEmits<{
     change: [e: any]
+    clear: [e: MouseEvent]
     'press-enter': [e: KeyboardEvent]
     keydown: [e: KeyboardEvent]
     keyup: [e: KeyboardEvent]
@@ -37,6 +42,39 @@
   }>()
 
   const slots = useSlots()
+  const attrs = useAttrs()
+
+  // 非 props 的 HTML 属性（id / aria-* / name / inputmode / required …）要落到
+  // <input> 上，对齐 @v-c input.tsx:256 的 restAttrs 与 :298 的 otherProps。
+  // class / style 由 getAttrStyleAndClass 取出单独处理（vapor 下它们不进 props）。
+  const rootStyle = computed(() => attrs.style)
+  // vapor 下 onFocus/onChange 等不是 props、class/style 被提升到 attrs，
+  // 所以 omit 列表只列真实声明的组件 props。
+  const inputElementProps = computed(() => ({
+    ...getAttrStyleAndClass(attrs).restAttrs,
+    ...omit(props, [
+      'prefixCls',
+      'addonBefore',
+      'addonAfter',
+      'prefix',
+      'suffix',
+      'allowClear',
+      'defaultValue',
+      'showCount',
+      'count',
+      'classes',
+      'htmlSize',
+      'styles',
+      'classNames',
+      'dataAttrs',
+      'components',
+      'hidden',
+      'readOnly',
+      'value',
+      'type',
+      'changeOnComposing',
+    ]),
+  }))
 
   const focused = shallowRef(false)
   const compositionRef = shallowRef(false)
@@ -220,33 +258,6 @@
     }
   }
 
-  // mergedAllowClear: if user provides clearIcon slot, merge it into allowClear config
-  const mergedAllowClear = computed(() => {
-    if (!props.allowClear) {
-      return props.allowClear
-    }
-
-    const clearIcon = slots.clearIcon?.()
-    if (clearIcon) {
-      return {
-        ...(typeof props.allowClear === 'object' ? props.allowClear : {}),
-        clearIcon,
-      }
-    }
-
-    return props.allowClear
-  })
-
-  const inputClass = computed(() =>
-    clsx(
-      props.prefixCls,
-      {
-        [`${props.prefixCls}-disabled`]: props.disabled,
-      },
-      props.classNames?.input,
-    ),
-  )
-
   // Suffix render: count + user suffix
   const hasMaxLength = computed(() => Number(mergedMax.value) > 0)
   const dataCount = computed(() => {
@@ -272,6 +283,69 @@
       props.classNames?.count,
     ),
   )
+
+  // BaseInput 里 hasAffix / hasGroup / hasPrefix / hasSuffix / hasAddonBefore /
+  // hasAddonAfter 读取 !!slots.x 决定 wrapper 结构，所以只在消费者真的提供了
+  // 对应插槽时才转发；否则裸 <Input /> 也会渲染出完整的 group + affix 结构。
+  // （#clearIcon 无对应结构守卫，仍无条件转发，✖ 回退照常生效。）
+  const hasPrefixSlot = computed(() => !!slots.prefix)
+  const hasSuffixSlot = computed(() => !!slots.suffix || showCountSuffix.value)
+  const hasAddonBeforeSlot = computed(() => !!slots.addonBefore)
+  const hasAddonAfterSlot = computed(() => !!slots.addonAfter)
+
+  // BaseInput 的根节点在无 wrapper 时就是 <input> 本身，所以 root 的 class / style /
+  // hidden 还得同时挂到 input 上；有 wrapper 时由 BaseInput 落到 wrapper 上。
+  // hasAffix / hasGroup 的判定必须与 BaseInput 内部一致：prefix / suffix / addon 走
+  // props 转发，对应插槽由上面的 has*Slot 决定是否转发。
+  const hasAffix = computed(
+    () =>
+      !!props.prefix ||
+      !!props.suffix ||
+      !!props.allowClear ||
+      hasPrefixSlot.value ||
+      hasSuffixSlot.value,
+  )
+  const hasGroup = computed(
+    () =>
+      !!props.addonBefore ||
+      !!props.addonAfter ||
+      hasAddonBeforeSlot.value ||
+      hasAddonAfterSlot.value,
+  )
+  const isInputRoot = computed(() => !hasAffix.value && !hasGroup.value)
+
+  // BaseInput 收到的 :class，有无 wrapper 都先传过去
+  const rootClass = computed(() =>
+    clsx(attrs.class, isOutOfRange.value && `${props.prefixCls}-out-of-range`),
+  )
+
+  const inputClass = computed(() =>
+    clsx(
+      props.prefixCls,
+      {
+        [`${props.prefixCls}-disabled`]: props.disabled,
+      },
+      // @v-c BaseInput.tsx:64：无 affix 时 variant 挂到 input 元素上
+      !hasAffix.value && props.classNames?.variant,
+      props.classNames?.input,
+      isInputRoot.value && rootClass.value,
+    ),
+  )
+
+  const inputStyle = computed<CSSProperties | undefined>(() => {
+    if (!isInputRoot.value) return props.styles?.input
+    // attrs.style 是响应式 proxy，展开会带出非样式 key 让 patchStyle 崩，改用 for...in 拷贝
+    const merged: CSSProperties = { ...props.styles?.input }
+    const root = rootStyle.value
+    if (root && typeof root === 'object' && !Array.isArray(root)) {
+      const src = root as Record<string, unknown>
+      const dst = merged as Record<string, unknown>
+      for (const key in src) {
+        dst[key] = src[key]
+      }
+    }
+    return merged
+  })
 
   defineExpose({
     focus,
@@ -300,7 +374,7 @@
     ref="holder"
     :value="formatValue"
     :prefixCls="prefixCls"
-    :allowClear="mergedAllowClear"
+    :allowClear="allowClear"
     :handleReset="handleReset"
     :prefix="prefix"
     :suffix="suffix"
@@ -315,15 +389,16 @@
     :dataAttrs="dataAttrs"
     :components="components"
     :hidden="hidden"
-    @clear="handleReset"
+    @clear="(e: MouseEvent) => emit('clear', e)"
     :classes="classes"
-    :class="isOutOfRange && `${prefixCls}-out-of-range`"
+    :class="rootClass"
+    :style="rootStyle"
   >
-    <template #prefix>
+    <template v-if="hasPrefixSlot" #prefix>
       <slot name="prefix" />
     </template>
 
-    <template #suffix>
+    <template v-if="hasSuffixSlot" #suffix>
       <span
         v-if="showCountSuffix"
         :class="showCountSuffixCls"
@@ -333,11 +408,11 @@
       <slot name="suffix" />
     </template>
 
-    <template #addonBefore>
+    <template v-if="hasAddonBeforeSlot" #addonBefore>
       <slot name="addonBefore" />
     </template>
 
-    <template #addonAfter>
+    <template v-if="hasAddonAfterSlot" #addonAfter>
       <slot name="addonAfter" />
     </template>
 
@@ -347,17 +422,18 @@
 
     <input
       ref="input"
+      v-bind="inputElementProps"
       :autocomplete="autoComplete"
       :value="formatValue"
       :class="inputClass"
-      :style="styles?.input"
+      :style="inputStyle"
       :size="htmlSize"
       :type="type"
       :placeholder="placeholder"
       :maxlength="maxLength"
       :disabled="disabled || undefined"
       :readonly="readOnly || undefined"
-      :hidden="hidden || undefined"
+      :hidden="isInputRoot && hidden"
       @input="onInternalChange"
       @focus="handleFocus"
       @blur="handleBlur"

@@ -59,6 +59,8 @@ export interface MentionsProps extends BaseTextAreaAttrs {
   prefix?: string | string[]
   prefixCls?: string
   silent?: boolean
+  filterOption?: false | ((input: string, option: OptionProps) => boolean)
+  validateSearch?: (text: string, split: string) => boolean
   getPopupContainer?: () => HTMLElement
   popupClassName?: string
   options?: DataDrivenOptionProps[]
@@ -80,6 +82,10 @@ export interface MentionsRef {
   blur: () => void
   textarea: HTMLTextAreaElement | null
   nativeElement: HTMLElement
+}
+
+export interface MentionsSlots {
+  clearIcon?: () => any
 }
 
 export interface KeywordTriggerProps {

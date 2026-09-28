@@ -6,16 +6,15 @@ import type {
   KeyboardEventHandler,
   MouseEventHandler,
 } from '@v-c/util/dist/EventInterface'
-import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties, InputHTMLAttributes } from 'vue'
 
 import type { LiteralUnion } from './utils/types'
 
 export interface CommonInputProps {
-  prefix?: VueNode
-  suffix?: VueNode
-  addonBefore?: VueNode
-  addonAfter?: VueNode
+  prefix?: string | number
+  suffix?: string | number
+  addonBefore?: string | number
+  addonAfter?: string | number
   /** @deprecated Use `classNames` instead */
   classes?: {
     affixWrapper?: string
@@ -35,7 +34,7 @@ export interface CommonInputProps {
     prefix?: CSSProperties
     suffix?: CSSProperties
   }
-  allowClear?: boolean | { clearIcon?: VueNode }
+  allowClear?: boolean
 }
 
 type DataAttr = Record<`data-${string}`, string>
@@ -149,4 +148,13 @@ export interface InputRef {
   select: () => void
   input: HTMLInputElement | null
   nativeElement: HTMLElement | null
+}
+
+export interface InputSlots {
+  prefix?: () => any
+  suffix?: () => any
+  addonBefore?: () => any
+  addonAfter?: () => any
+  default?: () => any
+  clearIcon?: () => any
 }
