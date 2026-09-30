@@ -5,7 +5,7 @@
   import raf from '@v-c/util/dist/raf'
   import { computed, useAttrs, onUnmounted, ref } from 'vue'
 
-  defineOptions({ name: 'StepHandler' })
+  defineOptions({ name: 'StepHandler', inheritAttrs: false })
   const props = defineProps<StepHandlerProps>()
   const emit = defineEmits(['step'])
   const attrs = useAttrs()
@@ -47,14 +47,14 @@
   const isUpAction = computed(() => props.action === 'up')
   const actionClassName = computed(() => `${props.prefixCls}-action`)
   const mergedClassName = computed(() => {
-    const { action, disabled, className } = props
+    const { action, disabled } = props
     return clsx(
       actionClassName.value,
       `${actionClassName.value}-${action}`,
       {
         [`${actionClassName.value}-${action}-disabled`]: disabled,
       },
-      className,
+      attrs.class,
     )
   })
 

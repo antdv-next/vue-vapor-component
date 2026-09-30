@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import InputNumber from '@vapor-component/input-number'
 
-  import { useInputNumber } from '@/composables/useInputNumber.ts'
+  import { useInputNumber } from '@/composables/useInputNumber'
   import '@/styles/input-number.less'
 
   const { value } = useInputNumber()

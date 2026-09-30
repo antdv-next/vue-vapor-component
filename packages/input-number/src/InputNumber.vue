@@ -37,14 +37,15 @@
     stringMode: false,
   })
   const emit = defineEmits<{
-    'update:value': [value: any]
+    'update:value': [value: ValueType | null]
     input: [text: string]
-    change: [value: any]
+    change: [value: ValueType | null]
+    clear: []
     'press-enter': [e: KeyboardEvent]
     step: [
-      value: any,
+      value: ValueType,
       info: {
-        offset: any
+        offset: ValueType
         type: 'up' | 'down'
         emitter: 'handler' | 'keyboard' | 'wheel'
       },
@@ -69,6 +70,7 @@
 
   const prefixNode = computed(() => slots.prefix || props.prefix)
   const suffixNode = computed(() => slots.suffix || props.suffix)
+  const hasSuffix = computed(() => !!suffixNode)
   const upHandlerNode = computed(() => slots.upHandler || props.upHandler)
   const downHandlerNode = computed(() => slots.downHandler || props.downHandler)
 
@@ -499,6 +501,68 @@
     emit('mousedown', event)
   }
 
+  // ============================ Clear =============================
+  const clearConfig = computed(() => {
+    const { allowClear } = props
+    return allowClear && typeof allowClear === 'object'
+      ? allowClear
+      : { disabled: allowClear !== true }
+  })
+
+  const showClear = computed(
+    () =>
+      !props.disabled &&
+      !props.readOnly &&
+      clearConfig.value.disabled !== true &&
+      String(inputValue.value).length > 0,
+  )
+
+  const clearIconCls = computed(() => `${mergedPrefixCls.value}-clear-icon`)
+  const clearBtnCls = computed(() =>
+    clsx(
+      clearIconCls.value,
+      {
+        [`${clearIconCls.value}-hidden`]: !showClear.value,
+        [`${clearIconCls.value}-has-suffix`]: hasSuffix.value,
+      },
+      props.classNames?.clear,
+    ),
+  )
+
+  const onClearMouseDown = (event: MouseEvent) => {
+    // Do not blur the input when clearing
+    event.preventDefault()
+  }
+
+  const onClearKeyDown = (event: KeyboardEvent) => {
+    const isStepKey = ['Up', 'ArrowUp', 'Down', 'ArrowDown'].includes(event.key)
+    if (
+      event.key === KeyCodeStr.Enter ||
+      (props.keyboard !== false && isStepKey)
+    ) {
+      event.stopPropagation()
+    }
+  }
+
+  const onClearClick = () => {
+    userTypingRef.value = false
+    inputValueRef.value = ''
+
+    const emptyValue = getMiniDecimal(null as any)
+
+    // `triggerValueUpdate` only refreshes the display when the decimal value changes.
+    // Clear raw input such as `-`, or restore the source value in controlled mode.
+    if (props.value !== undefined) {
+      setInputValue(decimalValue.value, false)
+    } else if (decimalValue.value.isEmpty()) {
+      setInputValue(emptyValue, false)
+    }
+
+    inputRef.value?.focus()
+    triggerValueUpdate(emptyValue, false)
+    emit('clear')
+  }
+
   // ========================== Controlled ==========================
   watch(
     [
@@ -543,11 +607,19 @@
     },
   )
   const mergedPrefixCls = computed(() => props.prefixCls)
-  const mergedClassName = computed(() => props.className || attrs.class)
-  const mergedStyle = computed(() => ({
-    ...props.styles?.root,
-    ...(attrs.style as any),
-  }))
+  // `class` / `style` are not declared props: vapor surfaces them through
+  // `useAttrs()` as `attrs.class` / `attrs.style`, already merged into arrays.
+  const mergedClassName = computed(() => attrs.class)
+  const mergedStyle = computed(() => {
+    const attrStyle = attrs.style
+    const mergedAttrStyle = Array.isArray(attrStyle)
+      ? Object.assign({}, ...(attrStyle as Record<string, unknown>[]))
+      : attrStyle
+    return {
+      ...props.styles?.root,
+      ...(mergedAttrStyle as Record<string, unknown> | undefined),
+    }
+  })
   const inputAttrs = omit(
     {
       ...attrs,
@@ -560,6 +632,7 @@
       'value',
       'prefix',
       'suffix',
+      'allowClear',
       'upHandler',
       'downHandler',
       'keyboard',
@@ -580,14 +653,14 @@
     return clsx(
       mergedPrefixCls.value,
       `${mergedPrefixCls.value}-mode-${mode}`,
-      mergedClassName,
+      mergedClassName.value,
       classNames?.root,
       {
-        [`${mergedPrefixCls}-focused`]: focus.value,
-        [`${mergedPrefixCls}-disabled`]: disabled,
-        [`${mergedPrefixCls}-readonly`]: readOnly,
-        [`${mergedPrefixCls}-not-a-number`]: decimalValue.value?.isNaN(),
-        [`${mergedPrefixCls}-out-of-range`]:
+        [`${mergedPrefixCls.value}-focused`]: focus.value,
+        [`${mergedPrefixCls.value}-disabled`]: disabled,
+        [`${mergedPrefixCls.value}-readonly`]: readOnly,
+        [`${mergedPrefixCls.value}-not-a-number`]: decimalValue.value?.isNaN(),
+        [`${mergedPrefixCls.value}-out-of-range`]:
           !decimalValue.value?.isInvalidate() && !isInRange(decimalValue.value),
       },
     )
@@ -637,7 +710,7 @@
         action="down"
         :disabled="downDisabled"
         @Step="onInternalStep"
-        :className="classNames?.action"
+        :class="classNames?.action"
         :style="styles?.action"
       >
         <template v-if="downHandlerNode">
@@ -664,6 +737,7 @@
         decimalValue.isInvalidate() ? null : (decimalValue.toString() as any)
       "
       :step="step"
+      :tabindex="tabIndex"
       ref="inputRef"
       :class="clsx(`${mergedPrefixCls}-input`, classNames?.input)"
       :style="styles?.input"
@@ -681,11 +755,25 @@
       @beforeinput="onBeforeInput"
       v-bind="inputAttrs"
     />
-    <template v-if="!!suffixNode">
+    <template v-if="allowClear || hasSuffix">
       <div
         :class="clsx(`${mergedPrefixCls}-suffix`, classNames?.suffix)"
         :style="styles?.suffix"
       >
+        <template v-if="allowClear">
+          <button
+            type="button"
+            :aria-label="clearConfig.label ?? 'Clear'"
+            :disabled="!showClear"
+            :class="clearBtnCls"
+            :style="styles?.clear"
+            @mousedown="onClearMouseDown"
+            @keydown="onClearKeyDown"
+            @click="onClearClick"
+          >
+            <slot name="clearIcon">✖</slot>
+          </button>
+        </template>
         <slot name="suffix"> {{ suffix }}</slot>
       </div>
     </template>
@@ -696,7 +784,7 @@
         action="up"
         :disabled="upDisabled"
         @Step="onInternalStep"
-        :className="classNames?.action"
+        :class="classNames?.action"
         :style="styles?.action"
       >
         <template v-if="upHandlerNode">
@@ -715,7 +803,7 @@
           action="up"
           :disabled="upDisabled"
           @step="onInternalStep"
-          :className="classNames?.action"
+          :class="classNames?.action"
           :style="styles?.action"
         >
           <template v-if="upHandlerNode">
@@ -727,7 +815,7 @@
           action="down"
           :disabled="downDisabled"
           @step="onInternalStep"
-          :className="classNames?.action"
+          :class="classNames?.action"
           :style="styles?.action"
         >
           <template v-if="downHandlerNode">

@@ -5,9 +5,6 @@ export interface StepHandlerProps {
   prefixCls: string
   action: 'up' | 'down'
   disabled?: boolean
-  className?: string
-  style?: any
-  step: (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') => void
 }
 
 export type { ValueType, DecimalClass }
@@ -19,12 +16,11 @@ type SemanticName =
   | 'action'
   | 'prefix'
   | 'suffix'
+  | 'clear'
 
 export interface InputNumberProps<T extends ValueType = ValueType> {
   mode?: 'input' | 'spinner'
   prefixCls?: string
-  className?: string
-  style?: any
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, any>>
   min?: T
@@ -36,6 +32,12 @@ export interface InputNumberProps<T extends ValueType = ValueType> {
   readOnly?: boolean
   prefix?: any
   suffix?: any
+  allowClear?:
+    | boolean
+    | {
+        disabled?: boolean
+        label?: string
+      }
   upHandler?: any
   downHandler?: any
   keyboard?: boolean
