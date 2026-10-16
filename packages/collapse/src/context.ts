@@ -1,11 +1,6 @@
 import type { CSSProperties, InjectionKey, TransitionProps } from 'vue'
 
-import type {
-  CollapsibleType,
-  CollapseProps,
-  Key,
-  SemanticName,
-} from './interface'
+import type { CollapsibleType, Key, SemanticName } from './interface'
 
 import { inject, provide } from 'vue'
 
@@ -17,7 +12,6 @@ export interface CollapseContextValue {
   collapsible?: CollapsibleType
   openMotion?: TransitionProps
   destroyOnHidden?: boolean
-  expandIcon?: CollapseProps['expandIcon']
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>
   onItemClick: (key: Key) => void

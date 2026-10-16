@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import type { Ref } from 'vue'
 
-  import type { CollapseProps, Key } from './interface'
+  import type { CollapseProps, CollapseSlots, Key } from './interface'
 
   import { clsx } from '@v-c/util'
   import useMergedState from '@v-c/util/dist/hooks/useMergedState'
@@ -13,6 +13,8 @@
   import Panel from './Panel.vue'
 
   defineOptions({ name: 'VcCollapse', inheritAttrs: false })
+
+  defineSlots<CollapseSlots>()
 
   const props = withDefaults(defineProps<CollapseProps>(), {
     prefixCls: 'vc-collapse',
@@ -79,9 +81,6 @@
     get destroyOnHidden() {
       return props.destroyOnHidden
     },
-    get expandIcon() {
-      return props.expandIcon
-    },
     get classNames() {
       return props.classNames
     },
@@ -121,7 +120,14 @@
       :key="p.panelKey"
       v-bind="p.bind"
       @item-click="onItemClick"
-    />
+    >
+      <template #expandIcon="ctxProps">
+        <slot name="expandIcon" v-bind="ctxProps" />
+      </template>
+      <template #content>
+        <slot name="content" />
+      </template>
+    </Panel>
     <slot></slot>
   </div>
 </template>

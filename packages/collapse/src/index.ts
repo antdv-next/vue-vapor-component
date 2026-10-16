@@ -3,8 +3,11 @@ import Panel from './Panel.vue'
 
 export type {
   CollapsePanelProps,
+  CollapsePanelSlots,
   CollapseProps,
+  CollapseSlots,
   CollapsibleType,
+  ExpandIconSlotProps,
   ItemType,
   Key,
   SemanticName,

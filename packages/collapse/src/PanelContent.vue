@@ -4,7 +4,7 @@
   import { clsx } from '@v-c/util'
   import { computed, shallowRef, watch, useAttrs } from 'vue'
 
-  defineOptions({ name: 'PanelContent', inheritAttrs: false })
+  defineOptions({ name: 'VcPanelContent', inheritAttrs: false })
 
   const props = defineProps<CollapsePanelProps>()
   const attrs = useAttrs()
@@ -35,13 +35,9 @@
 </script>
 
 <template>
-  <div v-if="rendered" :class="panelCls" :style="style as any" :role="role">
+  <div v-if="rendered" :class="panelCls" :style="attrs.style" :role="role">
     <div :class="bodyCls" :style="styles?.body">
-      <component
-        v-if="children && typeof children === 'object'"
-        :is="children"
-      />
-      <slot v-else>{{ children }}</slot>
+      <slot />
     </div>
   </div>
 </template>

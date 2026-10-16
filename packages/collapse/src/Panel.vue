@@ -1,18 +1,20 @@
 <script setup vapor lang="ts">
   import type { TransitionProps } from 'vue'
 
-  import type { CollapsePanelProps, Key } from './interface'
+  import type { CollapsePanelProps, CollapsePanelSlots, Key } from './interface'
 
   import { clsx } from '@v-c/util'
   import KeyCode from '@v-c/util/dist/KeyCode'
   import omit from '@v-c/util/dist/omit'
-  import { computed, Transition, useAttrs } from 'vue'
+  import { computed, Transition, useAttrs, useSlots } from 'vue'
 
   import { useCollapseContext } from './context'
   import PanelContent from './PanelContent.vue'
   import { mergeSemanticClassNames, mergeSemanticStyles } from './utils'
 
-  defineOptions({ name: 'CollapsePanel', inheritAttrs: false })
+  defineOptions({ name: 'VcCollapsePanel', inheritAttrs: false })
+
+  defineSlots<CollapsePanelSlots>()
 
   const props = withDefaults(defineProps<CollapsePanelProps>(), {
     showArrow: true,
@@ -23,6 +25,7 @@
 
   const ctx = useCollapseContext()
   const attrs = useAttrs()
+  const slots = useSlots()
 
   // ===== Merge own props with the parent Collapse context =====
   const prefixCls = computed(
@@ -34,7 +37,6 @@
   const mergedCollapsible = computed(
     () => props.collapsible ?? ctx?.collapsible,
   )
-  const mergedExpandIcon = computed(() => props.expandIcon ?? ctx?.expandIcon)
   const mergedOpenMotion = computed(() => props.openMotion ?? ctx?.openMotion)
   const mergedDestroyOnHidden = computed(
     () => props.destroyOnHidden || ctx?.destroyOnHidden,
@@ -56,12 +58,9 @@
     return accordion.value ? keys[0] === key : keys.includes(key as Key)
   })
 
-  const ifExtraExist = computed(
-    () =>
-      props.extra !== null &&
-      props.extra !== undefined &&
-      typeof props.extra !== 'boolean',
-  )
+  // The `-extra` div carries `margin: 0 16px 0 auto`, so it must stay out of
+  // the DOM when both the `#extra` slot and the `extra` prop are absent.
+  const ifExtraExist = computed(() => !!slots.extra || props.extra != null)
 
   function handleItemClick() {
     if (mergedCollapsible.value === 'disabled') return
@@ -104,7 +103,7 @@
     isHeaderOrIcon.value ? collapsibleProps.value : {},
   )
 
-  const itemCls = computed(() =>
+  const collapsePanelClassNames = computed(() =>
     clsx(
       `${prefixCls.value}-item`,
       {
@@ -147,8 +146,7 @@
   <div
     v-bind="restAttrs"
     :id="id"
-    :class="itemCls"
-    :style="attrs.style"
+    :class="collapsePanelClassNames"
     :role="role"
   >
     <div
@@ -163,8 +161,9 @@
         :style="mergedStyles?.icon"
         v-bind="iconBindings"
       >
-        <component v-if="mergedExpandIcon" :is="mergedExpandIcon(iconProps)" />
-        <i v-else class="arrow" />
+        <slot name="expandIcon" v-bind="iconProps">
+          <i class="arrow" />
+        </slot>
       </div>
 
       <!-- Title -->
@@ -173,14 +172,12 @@
         :style="mergedStyles?.title"
         v-bind="titleBindings"
       >
-        <component v-if="header && typeof header === 'object'" :is="header" />
-        <template v-else>{{ header }}</template>
+        <slot name="header">{{ header }}</slot>
       </span>
 
       <!-- Extra -->
       <div v-if="ifExtraExist" :class="`${prefixCls}-extra`">
-        <component v-if="extra && typeof extra === 'object'" :is="extra" />
-        <template v-else>{{ extra }}</template>
+        <slot name="extra">{{ extra }}</slot>
       </div>
     </div>
 
@@ -194,9 +191,10 @@
         :isActive="isActive"
         :forceRender="forceRender"
         :role="accordion ? 'tabpanel' : undefined"
-        :children="children"
       >
-        <slot></slot>
+        <slot name="content">
+          <slot>{{ children || content }}</slot>
+        </slot>
       </PanelContent>
     </Transition>
   </div>
