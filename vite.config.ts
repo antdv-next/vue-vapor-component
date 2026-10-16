@@ -9,7 +9,9 @@ export default defineConfig({
           'vp run --filter "@vapor-component/*" build',
           'vp run --filter ./apps/playground dev',
         ].join(' && '),
-        input: [{ auto: true }, '!**/*.tsbuildinfo'],
+        cache: {
+          input: [{ auto: true }, '!**/*.tsbuildinfo'],
+        },
       },
     },
     cache: {
