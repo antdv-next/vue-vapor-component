@@ -452,9 +452,9 @@ import { createApp, createVaporApp, vaporInteropPlugin } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 import RouterApp from './RouterApp.vue'
-import VaporHost from './VaporHost.vue'
-import { currentComponent, currentCase } from './shared'
 import { allRoutes } from './routes'
+import { currentComponent, currentCase } from './shared'
+import VaporHost from './VaporHost.vue'
 
 // ---- vdom 侧：vue-router 驱动 ----
 const router = createRouter({

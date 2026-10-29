@@ -7,7 +7,7 @@
 
   import { useRefContext } from './context'
 
-  defineOptions({ name: 'DrawerPanel' })
+  defineOptions({ name: 'DrawerPanel', inheritAttrs: false })
   const props = defineProps<DrawerPanelProps>()
   const emit = defineEmits<{
     mouseenter: [e: MouseEvent]

@@ -58,4 +58,172 @@
     background: #fff;
     pointer-events: auto;
   }
+
+  // Dragger styles
+  &-resizable-dragger {
+    position: absolute;
+    z-index: 2;
+    pointer-events: auto;
+
+    &:hover {
+      background-color: #1890ff !important;
+    }
+
+    &-dragging {
+      background-color: #1890ff !important;
+    }
+
+    &-left {
+      top: 0;
+      bottom: 0;
+      right: -3px;
+      width: 6px;
+      cursor: ew-resize;
+    }
+
+    &-right {
+      top: 0;
+      bottom: 0;
+      left: -3px;
+      width: 6px;
+      cursor: ew-resize;
+    }
+
+    &-top {
+      left: 0;
+      right: 0;
+      bottom: -3px;
+      height: 6px;
+      cursor: ns-resize;
+    }
+
+    &-bottom {
+      left: 0;
+      right: 0;
+      top: -3px;
+      height: 6px;
+      cursor: ns-resize;
+    }
+  }
+}
+
+// 对应 @v-c `docs/assets/index.less` 的第二个 `.@{prefixCls}` 块（open 态样式）。
+// 未照搬的部分，都与本仓实现冲突，不是遗漏：
+// - root 上的 `width: 0%` / `height: 0%` → `-open` 时的 `100%`（含
+//   `transition: width 0s ease @duration, height 0s ease @duration`）：本仓把宽高写在
+//   `-content-wrapper` 的内联 style 上，动画靠 `drawer-motion.less` 的 transform 位移类；
+//   叠上 root 的 `overflow: hidden`，这套 0% → 100% 会在前 300ms 把面板裁掉，滑入动画就看不到了。
+// - `& &-mask` 的 `opacity: 0; height: 0` 与 `-open` 下的 `opacity: 0.3`：遮罩淡入由
+//   `drawer-motion.less` 的 `.mask-motion` 驱动，这两条 specificity 更高会把 opacity 钉死，
+//   并把遮罩从 rgb(0 0 0 / 50%) 变浅到等效 15%。
+// - `&-handle` / `&-handle-icon`：本组件没有 title / close 按钮，DOM 里没有这些节点。
+// - `z-index: 9999`：@v-c docs 页专用覆盖，本仓用 `@zIndex` 与 `zIndex` prop。
+.@{prefixCls} {
+  overflow: hidden;
+
+  > * {
+    transition:
+      transform @duration @ease-in-out-circ,
+      opacity @duration @ease-in-out-circ,
+      box-shadow @duration @ease-in-out-circ;
+  }
+
+  &.@{prefixCls}-open {
+    transition: transform @duration @ease-in-out-circ;
+  }
+
+  &-content-wrapper {
+    position: absolute;
+    background: #fff;
+  }
+
+  &-content {
+    overflow: auto;
+    z-index: 1;
+    position: relative;
+  }
+
+  &-left,
+  &-right {
+    .@{prefixCls}-content-wrapper,
+    .@{prefixCls}-content {
+      height: 100%;
+    }
+  }
+
+  &-top,
+  &-bottom {
+    .@{prefixCls}-content-wrapper,
+    .@{prefixCls}-content {
+      width: 100%;
+    }
+
+    .@{prefixCls}-content {
+      height: 100%;
+    }
+  }
+
+  &-left {
+    top: 0;
+    left: 0;
+
+    &.@{prefixCls}-open {
+      & .@{prefixCls}-content-wrapper {
+        box-shadow: 2px 0 8px rgb(0 0 0 / 15%);
+      }
+    }
+  }
+
+  &-right {
+    top: 0;
+    right: 0;
+
+    .@{prefixCls}-content-wrapper {
+      right: 0;
+    }
+
+    &.@{prefixCls}-open {
+      & .@{prefixCls}-content-wrapper {
+        box-shadow: -2px 0 8px rgb(0 0 0 / 15%);
+      }
+
+      &.no-mask {
+        // https://github.com/ant-design/ant-design/issues/18607
+        right: 1px;
+        transform: translateX(1px);
+      }
+    }
+  }
+
+  &-top {
+    top: 0;
+    left: 0;
+
+    &.@{prefixCls}-open {
+      & .@{prefixCls}-content-wrapper {
+        box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+      }
+    }
+  }
+
+  &-bottom {
+    bottom: 0;
+    left: 0;
+
+    .@{prefixCls}-content-wrapper {
+      bottom: 0;
+    }
+
+    &.@{prefixCls}-open {
+      & .@{prefixCls}-content-wrapper {
+        box-shadow: 0 -2px 8px rgb(0 0 0 / 15%);
+      }
+
+      &.no-mask {
+        // https://github.com/ant-design/ant-design/issues/18607
+        bottom: 1px;
+        transform: translateY(1px);
+      }
+    }
+  }
 }

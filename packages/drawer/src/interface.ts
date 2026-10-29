@@ -46,25 +46,22 @@ export interface DrawerPopupProps {
     | ((placement: Placement | undefined) => CSSMotionProps)
   maskMotion?: CSSMotionProps
 
-  afterOpenChange?: (open: boolean) => void
-
   classNames?: DrawerClassNames
   styles?: DrawerStyles
-  drawerRender?: (node: any) => any
 
   defaultSize?: number | string
   resizable?:
     | boolean
     | {
         onResize?: (size: number) => void
-        onResizeStart?: () => void
-        onResizeEnd?: () => void
+        onResizeStart?: (size: number) => void
+        onResizeEnd?: (size: number) => void
       }
 }
 
 export interface DrawerProps extends Omit<
   DrawerPopupProps,
-  'prefixCls' | 'inline' | 'afterOpenChange'
+  'prefixCls' | 'inline'
 > {
   prefixCls?: string
   open?: boolean

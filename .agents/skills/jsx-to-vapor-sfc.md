@@ -170,8 +170,8 @@ export default Collapse
 
 ```ts
 import Component from './Component.vue'
-import SubComponent from './SubComponent.vue'
 import { CONST_A, CONST_B } from './interface'
+import SubComponent from './SubComponent.vue'
 
 type ComponentType = typeof Component & {
   Sub: typeof SubComponent
@@ -204,9 +204,9 @@ export default Export
 ### 4.2 通用类型导入
 
 ```ts
+import type { ChangeEventHandler } from '@v-c/util/dist/EventInterface'
 import type { Key, VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
-import type { ChangeEventHandler } from '@v-c/util/dist/EventInterface'
 ```
 
 **注意**：`VueNode` 和 `Key` 是所有组件的通用类型；事件处理函数类型从 `@v-c/util/dist/EventInterface` 导入。
@@ -438,8 +438,8 @@ const emit = defineEmits<{
 **所有 `inheritAttrs: false` 的组件都需要处理 attrs**：
 
 ```ts
-import { useAttrs } from 'vue'
 import omit from '@v-c/util/dist/omit'
+import { useAttrs } from 'vue'
 
 const attrs = useAttrs()
 const restAttrs = computed(() =>
@@ -1104,7 +1104,7 @@ Vapor 运行时的 `resolveDynamicProps` 会将多个来源的 `style` 合并为
 
 ```ts
 const nodeStyle = computed<CSSProperties>(() => ({
-  ...(attrs.style as CSSProperties),     <!-- ❌ 展开 attrs.style，proxy keys 可能包含非样式 key -->
+  ...(attrs.style as CSSProperties), <!-- ❌ 展开 attrs.style，proxy keys 可能包含非样式 key -->
   overflow: 'auto',
 }))
 ```

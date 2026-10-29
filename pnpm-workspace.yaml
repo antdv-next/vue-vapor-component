@@ -26,8 +26,9 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plugin-vue-devtools: latest
   vite-plus: latest
-  vue: 3.6.0-rc.11
+  vue: 3.6.0-rc.13
   vue-tsc: latest
+  playwright-core: latest
 
 overrides:
   make-dir: ^5.1.0

@@ -88,10 +88,10 @@ import App from './App.vue'
 | async-validator | ⭐️   | 🚀   |                                                         |
 | cascader        | ✅   |      |                                                         |
 | checkbox        | ✅   |      | [差异可见组件README](./packages/checkbox/README.md)     |
-| collapse        | ✅   |      |                                                         |
+| collapse        | ✅   |      | [差异可见组件README](./packages/collapse/README.md)     |
 | color-picker    | ✅   |      |                                                         |
 | dialog          | ✅   |      |                                                         |
-| drawer          | ✅   |      |                                                         |
+| drawer          | ✅   |      | [差异可见组件README](./packages/drawer/README.md)       |
 | dropdown        | ✅   |      |                                                         |
 | fast-color      | ⭐️   | 🚀   |                                                         |
 | field-form      | ⭕   |      |                                                         |

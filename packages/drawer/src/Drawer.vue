@@ -21,13 +21,14 @@
     mask: true,
     maskClosable: true,
     destroyOnHidden: false,
+    focusTriggerAfterClose: true,
   })
   const emit = defineEmits<{
     close: [e?: MouseEvent | KeyboardEvent]
-    'after-open-change': [open: boolean]
-    'mouse-enter': [e: MouseEvent]
-    'mouse-over': [e: MouseEvent]
-    'mouse-leave': [e: MouseEvent]
+    afterOpenChange: [open: boolean]
+    mouseenter: [e: MouseEvent]
+    mouseover: [e: MouseEvent]
+    mouseleave: [e: MouseEvent]
     click: [e: MouseEvent]
     keydown: [e: KeyboardEvent]
     keyup: [e: KeyboardEvent]
@@ -93,16 +94,14 @@
     nextTick(() => {
       animatedVisible.value = nextVisible
     })
-    emit('after-open-change', nextVisible)
+    emit('afterOpenChange', nextVisible)
 
     if (
       !nextVisible &&
       mergedProps.value?.focusTriggerAfterClose !== false &&
       lastActiveRef.value
     ) {
-      const panelEl = popupRef.value?.panelRef?.value as
-        | HTMLDivElement
-        | undefined
+      const panelEl = popupRef.value?.panelRef as HTMLDivElement | undefined
       if (panelEl && !panelEl.contains(lastActiveRef.value)) {
         try {
           lastActiveRef.value?.focus?.({ preventScroll: true } as any)
@@ -147,10 +146,21 @@
     >
       <DrawerPopup
         ref="popupRef"
-        v-bind="omit(mergedProps, ['onClose', 'afterOpenChange'])"
-        @mouseenter="e => emit('mouse-enter', e)"
-        @mouseover="e => emit('mouse-over', e)"
-        @mouseleave="e => emit('mouse-leave', e)"
+        v-bind="
+          omit(mergedProps, [
+            'onClose',
+            'onAfterOpenChange',
+            'onMouseenter',
+            'onMouseover',
+            'onMouseleave',
+            'onClick',
+            'onKeydown',
+            'onKeyup',
+          ])
+        "
+        @mouseenter="e => emit('mouseenter', e)"
+        @mouseover="e => emit('mouseover', e)"
+        @mouseleave="e => emit('mouseleave', e)"
         @click="e => emit('click', e)"
         @keydown="e => emit('keydown', e)"
         @keyup="e => emit('keyup', e)"
@@ -166,6 +176,9 @@
         :open="open"
       >
         <slot />
+        <template #drawerRender>
+          <slot name="drawerRender" />
+        </template>
       </DrawerPopup>
     </Portal>
   </template>

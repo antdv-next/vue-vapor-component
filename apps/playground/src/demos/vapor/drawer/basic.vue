@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import Drawer from '@vapor-component/drawer'
 
-  import { useDrawer } from '@/composables/useDrawer.ts'
+  import { useDrawer } from '@/composables/useDrawer'
   import '@/styles/drawer-common.less'
   import '@/styles/drawer-motion.less'
 
@@ -16,7 +16,7 @@
       placement="right"
       width="60%"
       v-bind="motionProps"
-      :after-open-change="
+      @after-open-change="
         c => {
           console.log('transitionEnd: ', c)
         }

@@ -14,7 +14,7 @@
   import useFocusable from './hooks/useFocusable'
   import { parseWidthHeight } from './util'
 
-  defineOptions({ name: 'DrawerPopup' })
+  defineOptions({ name: 'DrawerPopup', inheritAttrs: false })
   const props = withDefaults(defineProps<DrawerPopupProps>(), {
     prefixCls: 'vc-drawer',
     placement: 'right',
@@ -25,7 +25,7 @@
   })
   const emit = defineEmits<{
     close: [e: MouseEvent]
-    'after-open-change': [open: boolean]
+    afterOpenChange: [open: boolean]
     mouseenter: [e: MouseEvent]
     mouseover: [e: MouseEvent]
     mouseleave: [e: MouseEvent]
@@ -166,8 +166,8 @@
     containerRef: wrapperRef,
     currentSize: mergedSize,
     onResize: onInternalResize,
-    onResizeStart: () => resizeConfig?.value?.onResizeStart?.(),
-    onResizeEnd: () => resizeConfig?.value?.onResizeEnd?.(),
+    onResizeStart: (size: number) => resizeConfig?.value?.onResizeStart?.(size),
+    onResizeEnd: (size: number) => resizeConfig?.value?.onResizeEnd?.(size),
   })
 
   const maskMotionProps = computed(() =>
@@ -196,11 +196,20 @@
     }
     return style
   })
+
+  defineExpose({
+    panelRef,
+  })
 </script>
 
 <template>
   <div
-    :class="[prefixCls, `${prefixCls}-${placement}`, rootClassName]"
+    :class="
+      clsx(prefixCls, `${prefixCls}-${placement}`, rootClassName, {
+        [`${prefixCls}-open`]: open,
+        [`${prefixCls}-inline`]: inline,
+      })
+    "
     :style="containerStyle"
     tabindex="-1"
     ref="panelRef"
@@ -218,8 +227,8 @@
 
     <Transition
       v-bind="panelMotionProps"
-      @afterEnter="() => emit('after-open-change', true)"
-      @afterLeave="() => emit('after-open-change', false)"
+      @afterEnter="() => emit('afterOpenChange', true)"
+      @afterLeave="() => emit('afterOpenChange', false)"
     >
       <div
         v-show="open"
@@ -235,16 +244,13 @@
         <template v-if="isResizeable">
           <div v-bind="dragElementProps" />
         </template>
-
-        <template v-if="drawerRender">
-          <component :is="drawerRender" :node="DrawerPanel" />
-        </template>
-        <template v-else>
+        <slot name="drawerRender">
           <DrawerPanel
             :id="id"
             :prefixCls="prefixCls"
             :class="[attrs.class, classNames?.section]"
             :style="[attrs.style, styles?.section]"
+            v-bind="pickAttrs(attrs, { aria: true })"
             @mouseenter="e => emit('mouseenter', e)"
             @mouseover="e => emit('mouseover', e)"
             @mouseleave="e => emit('mouseleave', e)"
@@ -254,7 +260,7 @@
           >
             <slot />
           </DrawerPanel>
-        </template>
+        </slot>
       </div>
     </Transition>
   </div>
