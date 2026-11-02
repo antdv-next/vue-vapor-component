@@ -6,6 +6,8 @@ export type {
   ResizableTextAreaRef,
   TextAreaProps,
   TextAreaRef,
+  TextAreaEmits,
+  TextAreaSlots,
 } from './interface'
 
 export { ResizableTextArea }

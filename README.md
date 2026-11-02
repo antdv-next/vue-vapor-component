@@ -120,7 +120,7 @@ import App from './App.vue'
 | switch          | ✅   |      | [差异可见组件README](./packages/switch/README.md)       |
 | table           | ✅   |      |                                                         |
 | tabs            | ✅   |      |                                                         |
-| textarea        | ✅   |      |                                                         |
+| textarea        | ✅   |      |  [差异可见组件README](./packages/textarea/README.md)    |
 | tooltip         | ✅   |      |                                                         |
 | tour            | ✅   |      |                                                         |
 | tree            | ✅   |      |                                                         |

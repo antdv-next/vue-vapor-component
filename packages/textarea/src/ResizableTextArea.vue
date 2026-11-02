@@ -154,7 +154,7 @@
   })
 
   useResizeObserver(
-    computed(() => !!props.autoSize),
+    computed(() => !!props.autoSize || props.onResize),
     textareaRef,
     onInternalResize,
   )

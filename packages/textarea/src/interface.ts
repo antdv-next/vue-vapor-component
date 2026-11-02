@@ -1,11 +1,5 @@
 import type { InputFocusOptions } from '@v-c/util/dist/Dom/focus'
-import type {
-  ChangeEventHandler,
-  CompositionEventHandler,
-  FocusEventHandler,
-  KeyboardEventHandler,
-  MouseEventHandler,
-} from '@v-c/util/dist/EventInterface'
+import type { MouseEventHandler } from '@v-c/util/dist/EventInterface'
 import type { CSSProperties, TextareaHTMLAttributes } from 'vue'
 
 export type ValueType = TextareaHTMLAttributes['value'] | bigint
@@ -85,6 +79,27 @@ export interface TextAreaProps {
   dataAttrs?: {
     affixWrapper?: DataAttr
   }
+  onResize?: (size: { width: number; height: number }) => void
+}
+
+export interface TextAreaEmits {
+  resize: [size: { width: number; height: number }]
+  change: [e: any]
+  clear: [e: MouseEvent]
+  focus: [e: any]
+  blur: [e: any]
+  keydown: [e: KeyboardEvent]
+  pressEnter: [e: KeyboardEvent]
+  compositionstart: [e: any]
+  compositionend: [e: any]
+}
+
+export interface TextAreaSlots {
+  prefix?: () => any
+  suffix?: () => any
+  addonBefore?: () => any
+  addonAfter?: () => any
+  clearIcon?: () => any
 }
 
 export interface ResizableTextAreaRef {

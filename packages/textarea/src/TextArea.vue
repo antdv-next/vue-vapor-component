@@ -1,5 +1,7 @@
 <script setup vapor lang="ts">
-  import type { TextAreaProps } from './interface'
+  import type { CSSProperties } from 'vue'
+
+  import type { TextAreaEmits, TextAreaProps, TextAreaSlots } from './interface'
 
   import { clsx } from '@v-c/util'
   import { KeyCodeStr } from '@v-c/util/dist/KeyCode'
@@ -15,18 +17,28 @@
   const props = withDefaults(defineProps<TextAreaProps>(), {
     prefixCls: 'vc-textarea',
   })
-  const emit = defineEmits<{
-    resize: [size: { width: number; height: number }]
-    change: [e: any]
-    clear: [e: MouseEvent]
-    focus: [e: any]
-    blur: [e: any]
-    keydown: [e: KeyboardEvent]
-    'press-enter': [e: KeyboardEvent]
-    compositionstart: [e: any]
-    compositionend: [e: any]
-  }>()
+  const emit = defineEmits<TextAreaEmits>()
+  defineSlots<TextAreaSlots>()
   const attrs = useAttrs()
+
+  // attrs.style 是响应式 proxy / union，直接展开会带出非样式 key 或触发类型错误，
+  // 参照 Input.vue 改用 for...in 拷贝
+  const parentStyle = computed<CSSProperties | undefined>(() => {
+    const attrStyle = attrs.style
+    if (
+      attrStyle &&
+      typeof attrStyle === 'object' &&
+      !Array.isArray(attrStyle)
+    ) {
+      const src = attrStyle as Record<string, unknown>
+      const result: Record<string, unknown> = {}
+      for (const key in src) {
+        result[key] = src[key]
+      }
+      return result as CSSProperties
+    }
+    return undefined
+  })
 
   const { count, showCount } = toPropsRefs(props, 'count', 'showCount')
 
@@ -177,7 +189,7 @@
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === KeyCodeStr.Enter && !e.isComposing) {
-      emit('press-enter', e)
+      emit('pressEnter', e)
     }
     emit('keydown', e)
   }
@@ -285,7 +297,7 @@
     @clear="(e: MouseEvent) => emit('clear', e)"
     :class="[attrs.class, isOutOfRange && `${prefixCls}-out-of-range`]"
     :style="{
-      ...attrs.style,
+      ...parentStyle,
       ...(textareaResized && !isPureTextArea ? { height: 'auto' } : {}),
     }"
   >
@@ -321,7 +333,7 @@
       :prefixCls="prefixCls"
       :class="clsx(classNames?.textarea)"
       :style="{
-        resize: attrs.style?.resize,
+        resize: parentStyle?.resize,
         ...styles?.textarea,
       }"
       :autoSize="autoSize"
