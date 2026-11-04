@@ -120,7 +120,7 @@ import App from './App.vue'
 | switch          | ✅   |      | [差异可见组件README](./packages/switch/README.md)       |
 | table           | ✅   |      |                                                         |
 | tabs            | ✅   |      |                                                         |
-| textarea        | ✅   |      |  [差异可见组件README](./packages/textarea/README.md)    |
+| textarea        | ✅   |      | [差异可见组件README](./packages/textarea/README.md)     |
 | tooltip         | ✅   |      |                                                         |
 | tour            | ✅   |      |                                                         |
 | tree            | ✅   |      |                                                         |
@@ -128,4 +128,4 @@ import App from './App.vue'
 | trigger         | ✅   |      |                                                         |
 | upload          | ✅   |      |                                                         |
 | util            | ⭐️   | 🚀   | 部分涉及 VDom 的需兼容 vapor                            |
-| virtual-list    | ✅   |      |                                                         |
+| virtual-list    | ✅   |      | [差异可见组件README](./packages/virtual-list/README.md) |

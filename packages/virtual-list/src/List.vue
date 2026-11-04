@@ -15,6 +15,7 @@
     onUnmounted,
     shallowRef,
     toRaw,
+    toRef,
     unref,
     useAttrs,
     watch,
@@ -22,6 +23,7 @@
 
   import Filler from './Filler.vue'
   import useDiffItem from './hooks/useDiffItem'
+  import useDragEdgeScroll from './hooks/useDragEdgeScroll'
   import useFrameWheel from './hooks/useFrameWheel'
   import { useGetSize } from './hooks/useGetSize'
   import useHeights from './hooks/useHeights'
@@ -434,6 +436,16 @@
   useScrollDrag(inVirtual, componentRef, offset => {
     syncScrollTop(top => top + offset)
   })
+
+  useDragEdgeScroll(
+    inVirtual,
+    componentRef,
+    toRef(() => props.height),
+    toRef(() => props.itemHeight),
+    offset => {
+      syncScrollTop(top => top + offset)
+    },
+  )
 
   // ========================== ScrollBar =========================
   const onScrollBar = (newScrollOffset: number, horizontal?: boolean) => {

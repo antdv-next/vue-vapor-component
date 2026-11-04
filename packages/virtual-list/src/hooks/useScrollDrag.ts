@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 
 import { onUnmounted, watch } from 'vue'
 
-function smoothScrollOffset(offset: number) {
+export function smoothScrollOffset(offset: number) {
   return Math.floor(offset ** 0.5)
 }
 
