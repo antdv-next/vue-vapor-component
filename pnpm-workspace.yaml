@@ -24,9 +24,9 @@ catalog:
   simple-git-hooks: latest
   unplugin-vue: latest
   vite: npm:@voidzero-dev/vite-plus-core@latest
-  vite-plugin-vue-devtools: latest
+  vite-plugin-vue-devtools: 9.0.0-rc.2
   vite-plus: latest
-  vue: 3.6.0-rc.13
+  vue: 3.6.0-rc.14
   vue-tsc: latest
   playwright-core: latest
 

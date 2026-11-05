@@ -1,20 +1,32 @@
 <script setup lang="ts">
+  import Menu from '@vapor-component/menu'
+  import { computed } from 'vue'
   import { useRouter } from 'vue-router'
 
   import { demoManifest } from '@/routes'
   import { currentComponent, currentCase } from '@/shared'
+  import '@/styles/menu.less'
 
   const router = useRouter()
 
-  function navigate(component: string, caseName: string) {
-    router.push(`/${component}/${caseName}`)
-  }
+  const isActive = computed(
+    () => currentComponent.value === '' && currentCase.value === '',
+  )
+
+  // Current route as a single menu key: "<component>/<case>"
+  const activeKeys = computed(() => {
+    const { value: component } = currentComponent
+    const { value: caseName } = currentCase
+    return component && caseName ? [`${component}/${caseName}`] : []
+  })
 
   function goHome() {
     router.push('/')
   }
 
-  const isActive = currentComponent === '' && currentCase === ''
+  function handleMenuClick(info: { key: string }) {
+    router.push(`/${info.key}`)
+  }
 </script>
 
 <template>
@@ -31,22 +43,25 @@
         ></path>
       </svg>
     </div>
-    <div v-for="group in demoManifest" :key="group.component" class="nav-group">
-      <div class="nav-group-title">{{ group.label }}</div>
-      <div
-        v-for="caseItem in group.cases"
-        :key="caseItem.name"
-        class="nav-item"
-        :class="{
-          active:
-            currentComponent === group.component &&
-            currentCase === caseItem.name,
-        }"
-        @click="navigate(group.component, caseItem.name)"
+    <Menu
+      :selectable="false"
+      :selected-keys="activeKeys"
+      @click="handleMenuClick"
+    >
+      <Menu.ItemGroup
+        v-for="group in demoManifest"
+        :key="group.component"
+        :title="group.label"
       >
-        {{ caseItem.label }}
-      </div>
-    </div>
+        <Menu.Item
+          v-for="caseItem in group.cases"
+          :key="caseItem.name"
+          :event-key="`${group.component}/${caseItem.name}`"
+        >
+          {{ caseItem.label }}
+        </Menu.Item>
+      </Menu.ItemGroup>
+    </Menu>
   </div>
 </template>
 
@@ -68,31 +83,14 @@
   .nav-brand.active {
     color: #1890ff;
   }
-  .brand-icon {
-    width: 80px;
-    height: 80px;
+  .nav :deep(.vc-menu) {
+    border: none;
+    box-shadow: none;
   }
-  .nav-group {
-    margin-bottom: 8px;
-  }
-  .nav-group-title {
-    padding: 4px 12px;
-    font-size: 12px;
-    color: #bbb;
-    text-transform: uppercase;
-  }
-  .nav-item {
-    padding: 6px 12px 6px 20px;
-    cursor: pointer;
-    font-size: 13px;
+  .nav :deep(.vc-menu-item) {
     border-left: 2px solid transparent;
   }
-  .nav-item:hover {
-    background: #f5f5f5;
-  }
-  .nav-item.active {
-    background: #e6f7ff;
+  .nav :deep(.vc-menu-item-selected) {
     border-left-color: #1890ff;
-    color: #1890ff;
   }
 </style>

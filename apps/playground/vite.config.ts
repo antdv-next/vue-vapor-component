@@ -13,5 +13,8 @@ export default defineConfig({
       '@': path.resolve(root, 'src'),
     },
   },
+  devtools: {
+    apply: 'serve',
+  },
   plugins: [vue(), vueDevtools()],
 })
