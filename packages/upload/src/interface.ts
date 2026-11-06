@@ -39,6 +39,7 @@ export interface UploadProgressEvent extends Partial<ProgressEvent> {
 
 export interface UploadRef {
   abort: (file?: VcFile) => void
+  retry: (file: VcFile) => void
 }
 
 export interface UploadExpose extends UploadRef {}
@@ -98,4 +99,24 @@ export interface UploadProps {
   }
   hasControlInside?: boolean
   pastable?: boolean
+}
+
+export interface UploadEmits {
+  batchStart: [
+    fileList: {
+      file: VcFile
+      parsedFile: Exclude<BeforeUploadFileType, boolean> | null
+    }[],
+  ]
+  start: [file: VcFile]
+  error: [error: Error, ret: Record<string, unknown>, file: VcFile | null]
+  success: [
+    response: Record<string, unknown>,
+    file: VcFile | null,
+    xhr: XMLHttpRequest,
+  ]
+  progress: [event: UploadProgressEvent, file: VcFile | null]
+  click: [e: MouseEvent | KeyboardEvent]
+  mouseenter: [e: MouseEvent]
+  mouseleave: [e: MouseEvent]
 }

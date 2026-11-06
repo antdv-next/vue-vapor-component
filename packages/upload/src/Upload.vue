@@ -1,6 +1,7 @@
 <script setup vapor lang="ts">
   import type {
     BeforeUploadFileType,
+    UploadEmits,
     UploadProgressEvent,
     UploadProps,
     UploadRequestError,
@@ -37,25 +38,7 @@
     hasControlInside: false,
     pastable: false,
   })
-  const emit = defineEmits<{
-    'batch-start': [
-      fileList: {
-        file: VcFile
-        parsedFile: Exclude<BeforeUploadFileType, boolean> | null
-      }[],
-    ]
-    start: [file: VcFile]
-    error: [error: Error, ret: Record<string, unknown>, file: VcFile | null]
-    success: [
-      response: Record<string, unknown>,
-      file: VcFile | null,
-      xhr: XMLHttpRequest,
-    ]
-    progress: [event: UploadProgressEvent, file: VcFile | null]
-    click: [e: MouseEvent | KeyboardEvent]
-    'mouse-enter': [e: MouseEvent]
-    'mouse-leave': [e: MouseEvent]
-  }>()
+  const emit = defineEmits<UploadEmits>()
   const attrs = useAttrs()
 
   // ==================== State ====================
@@ -90,7 +73,7 @@
 
   const inputStyle = computed(() => ({
     display: 'none',
-    ...(props.styles?.input ?? {}),
+    ...props.styles?.input,
   }))
 
   const captureAttr = computed(() =>
@@ -144,6 +127,7 @@
 
   // ==================== Drop / Drag ====================
   const onFileDrop = (e: DragEvent) => {
+    if (props.disabled) return
     e.preventDefault()
     if (e.type === 'drop' && e.dataTransfer) {
       onDataTransferFiles(e.dataTransfer)
@@ -151,6 +135,7 @@
   }
 
   const onFileDragOver = (e: DragEvent) => {
+    if (props.disabled) return
     e.preventDefault()
   }
 
@@ -248,7 +233,7 @@
 
     Promise.all(postFiles).then(fileList => {
       emit(
-        'batch-start',
+        'batchStart',
         fileList.map(({ origin, parsedFile }) => ({
           file: origin,
           parsedFile,
@@ -279,15 +264,16 @@
         emit('progress', e, parsedFile)
       },
       onSuccess: (ret: any, xhr?: XMLHttpRequest) => {
-        if (xhr) {
-          emit('success', ret, parsedFile, xhr)
-        }
+        emit('success', ret, parsedFile, xhr!)
         delete reqs.value[fileUid]
       },
       onError: (err: UploadRequestError | ProgressEvent, ret?: any) => {
-        if (err instanceof Error) {
-          emit('error', err, ret as Record<string, unknown>, parsedFile)
-        }
+        emit(
+          'error',
+          err as UploadRequestError,
+          ret as Record<string, unknown>,
+          parsedFile,
+        )
         delete reqs.value[fileUid]
       },
     }
@@ -328,6 +314,21 @@
     uid.value = getUid()
   }
 
+  // ==================== Retry ====================
+  const retry = (originFile: VcFile) => {
+    const { uid } = originFile
+    processFile(originFile, [originFile])
+      .then(fileInfo => {
+        if (reqs.value[uid]) {
+          return
+        }
+        if (fileInfo.parsedFile) {
+          post(fileInfo)
+        }
+      })
+      .catch(() => {})
+  }
+
   // ==================== Abort ====================
   const abort = (file?: VcFile) => {
     if (file) {
@@ -348,7 +349,7 @@
     }
   }
 
-  defineExpose({ abort })
+  defineExpose({ abort, retry })
 
   // ==================== Lifecycle ====================
   let prevPastable: boolean | undefined
@@ -385,19 +386,15 @@
 
   const onWrapMouseEnter = (e: MouseEvent) => {
     if (isDisabled.value) return
-    emit('mouse-enter', e)
+    emit('mouseenter', e)
   }
 
   const onWrapMouseLeave = (e: MouseEvent) => {
     if (isDisabled.value) return
-    emit('mouse-leave', e)
+    emit('mouseleave', e)
   }
 
   const onWrapClick = (e: MouseEvent) => {
-    console.log('[Upload] onWrapClick', {
-      isDisabled: isDisabled.value,
-      canOpenFile: canOpenFile.value,
-    })
     if (!isDisabled.value && canOpenFile.value) {
       onClick(e)
     }
@@ -414,8 +411,10 @@
   <div
     :class="cls"
     :style="style"
-    :tabindex="hasControlInside ? undefined : 0"
-    :role="hasControlInside ? undefined : 'button'"
+    :tabindex="
+      !disabled && openFileDialogOnClick && !hasControlInside ? 0 : undefined
+    "
+    :role="openFileDialogOnClick && !hasControlInside ? 'button' : undefined"
     @click="onWrapClick"
     @keydown="onWrapKeyDown"
     @mouseenter="onWrapMouseEnter"
