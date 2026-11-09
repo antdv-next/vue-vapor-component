@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import { Circle, Line } from '@vapor-component/progress'
 
-  import { useProgress } from '@/composables/useProgress.ts'
+  import { useProgress } from '@/composables/useProgress'
   import '@/styles/progress.less'
 
   const { percent, color, changeState, changeIncrease, changeReduce } =

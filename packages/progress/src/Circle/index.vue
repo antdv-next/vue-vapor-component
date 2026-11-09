@@ -3,14 +3,17 @@
 
   import omit from '@v-c/util/dist/omit'
   import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
-  import { computed, onMounted, ref, useAttrs } from 'vue'
+  import { computed, useAttrs } from 'vue'
 
+  import { useTransitionDuration } from '../common'
   import useId from '../hooks/useId'
   import { getIndeterminateCircleStyle } from '../utils/indeterminate'
   import PtgCircle from './PtgCircle.vue'
   import { getCircleStyle, VIEW_BOX_SIZE } from './util'
 
   defineOptions({ name: 'Circle' })
+
+  const emit = defineEmits<{ click: [e: MouseEvent] }>()
 
   const props = withDefaults(defineProps<ProgressProps>(), {
     strokeWidth: 1,
@@ -19,10 +22,12 @@
     gapPosition: 'bottom',
     loading: false,
     strokeLinecap: 'round',
+    percent: 0,
+    strokeColor: '#2db7f5',
   })
 
   const attrs = useAttrs()
-  const { style: attrStyle, restAttrs } = getAttrStyleAndClass(attrs)
+  const { style: attrStyle, className, restAttrs } = getAttrStyleAndClass(attrs)
 
   const halfSize = VIEW_BOX_SIZE / 2
   const mergedId = useId(props.id)
@@ -52,8 +57,9 @@
   })
   const gradient = computed<Record<string, string> | undefined>(() => {
     for (const color of strokeColorList.value) {
-      if (color && typeof color === 'object')
+      if (color && typeof color === 'object') {
         return color as Record<string, string>
+      }
     }
     return undefined
   })
@@ -63,25 +69,7 @@
   )
 
   // ---- transition duration hack (same as source common.ts) ----
-  const pathsRef = ref<(SVGPathElement | SVGCircleElement)[]>([])
-  onMounted(() => {
-    const now = Date.now()
-    let updated = false
-    let prevTimeStamp: number | undefined
-    pathsRef.value.forEach(path => {
-      if (!path) return
-      updated = true
-      const pathStyle = (path as any).style
-      if (!pathStyle) return
-      pathStyle.transitionDuration = '.3s, .3s, .3s, .06s'
-      if (prevTimeStamp && now - prevTimeStamp < 100) {
-        pathStyle.transitionDuration = '0s, 0s'
-      }
-      if (updated) {
-        prevTimeStamp = Date.now()
-      }
-    })
-  })
+  const pathsRef = useTransitionDuration<SVGPathElement | SVGCircleElement>()
 
   // ---- indeterminate ----
   const indeterminateResult = computed(() =>
@@ -185,6 +173,20 @@
     ] as const),
   )
 
+  // ---- refs (store by index, same as source) ----
+  function setStrokePathRef(index: number) {
+    return (el: unknown) => {
+      const c = (el as any)?.getCircle?.()
+      if (c) pathsRef.value[index] = c as SVGPathElement | SVGCircleElement
+    }
+  }
+
+  function setStepCircleRef(index: number) {
+    return (el: unknown) => {
+      if (el) pathsRef.value[index] = el as SVGCircleElement
+    }
+  }
+
   defineExpose({
     getPaths: () => pathsRef.value,
   })
@@ -198,13 +200,12 @@
     :class="[`${prefixCls}-circle`, classNames?.root, className]"
     :viewBox="`0 0 ${VIEW_BOX_SIZE} ${VIEW_BOX_SIZE}`"
     :style="{
-      width: '100%',
-      height: '100%',
       ...styles?.root,
       ...attrStyle,
     }"
     :id="id"
     role="presentation"
+    @click="e => emit('click', e)"
     v-bind="svgRestAttrs"
   >
     <!-- rail -->
@@ -216,19 +217,20 @@
         :cy="halfSize"
         :stroke="railColor"
         :stroke-linecap="mergedStrokeLinecap"
-        :stroke-width="railWidth || strokeWidth"
+        :stroke-width="railWidth ?? strokeWidth"
         :style="{ ...circleStyle, ...styles?.rail }"
       />
     </template>
 
     <!-- stroke paths (non-step) -->
     <template v-if="!stepObj.count">
-      <template v-for="data in strokePathData" :key="data.key">
+      <template v-for="(data, index) in strokePathData" :key="data.key">
         <PtgCircle
+          :ref="setStrokePathRef(index)"
           :color="data.color as string | Record<string, string | boolean>"
           :ptg="data.ptg"
           :radius="radius"
-          :class="[classNames?.track]"
+          :className="classNames?.track"
           :prefixCls="prefixCls"
           :gradientId="gradientId"
           :style="[
@@ -246,8 +248,9 @@
 
     <!-- step stroke paths -->
     <template v-if="stepObj.count">
-      <template v-for="data in stepStrokeData" :key="data.key">
+      <template v-for="(data, index) in stepStrokeData" :key="data.key">
         <circle
+          :ref="setStepCircleRef(index)"
           :class="[`${prefixCls}-circle-path`, classNames?.track]"
           :r="radius"
           :cx="halfSize"

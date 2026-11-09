@@ -6,7 +6,6 @@ export interface ProgressProps {
   id?: string
   strokeWidth?: number
   railWidth?: number
-  className?: string
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>
   percent?: number | number[]

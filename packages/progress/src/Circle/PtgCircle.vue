@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import type { ProgressProps } from '../interface'
 
-  import { computed, defineComponent, h, useAttrs } from 'vue'
+  import { computed, defineComponent, h, shallowRef, useAttrs } from 'vue'
 
   // ---- Block component (used for gradient rendering) ----
   const Block = defineComponent<{ bg: string }>(blockProps => {
@@ -24,7 +24,7 @@
     })
   }
 
-  defineOptions({ name: 'PtgCircle' })
+  defineOptions({ name: 'PtgCircle', inheritAttrs: false })
 
   const props = defineProps<{
     prefixCls: string
@@ -72,16 +72,27 @@
       : `linear-gradient(to top, ${linearColors.value})`,
   )
   const maskId = computed(() => `${props.gradientId}-conic`)
+  const circleRef = shallowRef<SVGCircleElement | null>()
+
+  function setCircleRef(el: unknown) {
+    circleRef.value = (el as SVGCircleElement) ?? null
+  }
+
+  defineExpose({
+    getCircle: () => circleRef.value,
+  })
 </script>
 
 <template>
   <template v-if="isGradient">
     <mask :id="maskId">
       <circle
+        :ref="setCircleRef"
         :class="[`${prefixCls}-circle-path`, className]"
         :r="radius"
         :cx="halfSize"
         :cy="halfSize"
+        :stroke="isGradient ? '#FFF' : undefined"
         :stroke-linecap="strokeLinecap"
         :stroke-width="strokeWidth"
         :opacity="ptg === 0 ? 0 : 1"
@@ -102,10 +113,12 @@
   </template>
   <template v-else>
     <circle
+      :ref="setCircleRef"
       :class="[`${prefixCls}-circle-path`, className]"
       :r="radius"
       :cx="halfSize"
       :cy="halfSize"
+      :stroke="isGradient ? '#FFF' : undefined"
       :stroke-linecap="strokeLinecap"
       :stroke-width="strokeWidth"
       :opacity="ptg === 0 ? 0 : 1"

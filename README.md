@@ -108,7 +108,7 @@ import App from './App.vue'
 | pagination      | ✅   |      |                                                         |
 | picker          | ✅   |      |                                                         |
 | portal          | ✅   |      |                                                         |
-| progress        | ✅   |      |                                                         |
+| progress        | ✅   |      | [差异可见组件README](./packages/progress/README.md)     |
 | qrcode          | ✅   |      | [差异可见组件README](./packages/qrcode/README.md)       |
 | rate            | ✅   |      | [差异可见组件README](./packages/rate/README.md)         |
 | resize-observer | ✅   |      |                                                         |
@@ -126,6 +126,6 @@ import App from './App.vue'
 | tree            | ✅   |      |                                                         |
 | tree-select     | ✅   |      |                                                         |
 | trigger         | ✅   |      |                                                         |
-| upload          | ✅   |      |                                                         |
+| upload          | ✅   |      | [差异可见组件README](./packages/upload/README.md)       |
 | util            | ⭐️   | 🚀   | 部分涉及 VDom 的需兼容 vapor                            |
 | virtual-list    | ✅   |      | [差异可见组件README](./packages/virtual-list/README.md) |

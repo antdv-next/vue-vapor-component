@@ -4,15 +4,17 @@
   import type { ProgressProps, StrokeColorType } from './interface'
 
   import { getAttrStyleAndClass } from '@v-c/util/dist/props-util'
-  import { computed, onMounted, ref, useAttrs } from 'vue'
+  import { computed, useAttrs } from 'vue'
 
+  import { useTransitionDuration } from './common'
   import useId from './hooks/useId'
   import { getIndeterminateLineStyle } from './utils/indeterminate'
 
   defineOptions({ name: 'Line', inheritAttrs: false })
 
+  const emit = defineEmits<{ click: [e: MouseEvent] }>()
+
   const props = withDefaults(defineProps<ProgressProps>(), {
-    id: () => '',
     strokeWidth: 1,
     railWidth: 1,
     percent: 0,
@@ -29,25 +31,7 @@
   const mergedId = useId(props.id)
 
   // ---- transition duration hack (same as source common.ts) ----
-  const pathsRef = ref<SVGPathElement[]>([])
-  onMounted(() => {
-    const now = Date.now()
-    let updated = false
-    let prevTimeStamp: number | undefined
-    pathsRef.value.forEach(path => {
-      if (!path) return
-      updated = true
-      const pathStyle = (path as any).style
-      if (!pathStyle) return
-      pathStyle.transitionDuration = '.3s, .3s, .3s, .06s'
-      if (prevTimeStamp && now - prevTimeStamp < 100) {
-        pathStyle.transitionDuration = '0s, 0s'
-      }
-      if (updated) {
-        prevTimeStamp = Date.now()
-      }
-    })
-  })
+  const pathsRef = useTransitionDuration()
 
   const percentList = computed<number[]>(() =>
     Array.isArray(props.percent) ? props.percent : [props.percent],
@@ -75,6 +59,13 @@
       strokeWidth: strokeWidth.value,
     }),
   )
+
+  // ---- refs (store by index, same as source) ----
+  function setPathRef(index: number) {
+    return (el: unknown) => {
+      if (el) pathsRef.value[index] = el as SVGPathElement
+    }
+  }
 
   const pathData = computed(() => {
     let stackPtg = 0
@@ -117,34 +108,36 @@
     {{ indeterminateResult.animationKeyframes }}
   </style>
   <svg
-    :class="{ [`${prefixCls}-line`]: true, [className as string]: true }"
+    :class="[`${prefixCls}-line`, classNames?.root, attrs?.class]"
     preserveAspectRatio="none"
     :viewBox="viewBoxString"
-    :style="{ width: '100%', height: '100%', ...attrStyle }"
+    :style="{ ...styles?.root, ...attrStyle }"
+    :id="id"
+    role="presentation"
+    :gap-degree="gapDegree"
+    :steps="steps"
+    @click="e => emit('click', e)"
     v-bind="restAttrs"
   >
     <path
-      :class="[`${prefixCls}-line-rail`]"
+      :class="[`${prefixCls}-line-rail`, classNames?.rail]"
       :d="pathString"
       :stroke-linecap="strokeLinecap"
       :stroke="railColor"
-      :stroke-width="railWidth || strokeWidth"
+      :stroke-width="railWidth ?? strokeWidth"
       fill-opacity="0"
+      :style="styles?.rail"
     />
-    <template v-for="data in pathData" :key="data.key">
+    <template v-for="(data, index) in pathData" :key="data.key">
       <path
-        :class="[`${prefixCls}-line-path`]"
+        :class="[`${prefixCls}-line-path`, classNames?.track]"
         :d="pathString"
         :stroke-linecap="strokeLinecap"
         :stroke="data.color"
         :stroke-width="strokeWidth"
         fill-opacity="0"
-        :ref="
-          el => {
-            pathsRef.push(el as SVGPathElement)
-          }
-        "
-        :style="data.pathStyle"
+        :ref="setPathRef(index)"
+        :style="[data.pathStyle, styles?.track]"
       />
     </template>
   </svg>
