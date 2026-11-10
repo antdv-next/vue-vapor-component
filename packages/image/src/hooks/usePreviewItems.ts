@@ -2,10 +2,10 @@ import type { Ref } from 'vue'
 
 import type {
   ImageElementProps,
+  PreviewGroupProps,
   PreviewImageElementProps,
   RegisterImage,
 } from '../interface'
-import type { PreviewGroupProps } from '../previewGroupTypes'
 
 import { computed, shallowRef, watchEffect } from 'vue'
 

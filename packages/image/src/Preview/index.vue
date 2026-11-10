@@ -1,8 +1,11 @@
 <script setup vapor lang="ts">
   import type { CSSProperties } from 'vue'
 
-  import type { ImgInfo } from '../imageTypes'
-  import type { PreviewProps } from './types'
+  import type {
+    TransformAction,
+    TransformType,
+  } from '../hooks/useImageTransform'
+  import type { ImgInfo, PreviewProps } from '../interface'
 
   import { clsx } from '@v-c/util'
   import canUseDom from '@v-c/util/dist/Dom/canUseDom'
@@ -390,6 +393,17 @@
           </slot>
         </div>
 
+        <!-- Close Button -->
+        <button
+          v-if="showClose"
+          :class="clsx(`${prefixCls}-close`, classNames?.close)"
+          :style="styles?.close"
+          type="button"
+          @click="handleCloseBtnClick"
+        >
+          <slot name="closeIcon">x</slot>
+        </button>
+
         <!-- Switch prev or next -->
         <PrevNext
           v-if="showLeftOrRightSwitches"
@@ -411,7 +425,6 @@
         <Footer
           :prefixCls="prefixCls"
           :showProgress="showOperationsProgress"
-          :showClose="showClose"
           :current="current"
           :count="count"
           :showSwitch="showLeftOrRightSwitches"
@@ -420,7 +433,6 @@
           :image="image"
           :transform="transform"
           :icons="icons"
-          :countRender="countRender"
           :scale="transform.scale"
           :minScale="minScale"
           :maxScale="maxScale"
@@ -437,11 +449,8 @@
           <template #actionsRender="actionsProps">
             <slot name="actionsRender" v-bind="actionsProps" />
           </template>
-          <template #closeIcon>
-            <slot name="closeIcon"></slot>
-          </template>
-          <template #countRender>
-            <slot name="countRender"></slot>
+          <template #countRender="slotProps">
+            <slot name="countRender" v-bind="slotProps"></slot>
           </template>
         </Footer>
       </div>

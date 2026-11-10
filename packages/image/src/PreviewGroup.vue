@@ -1,9 +1,9 @@
 <script setup vapor lang="ts">
-  import type { OnGroupPreview } from './interface'
   import type {
     GroupPreviewConfig,
+    OnGroupPreview,
     PreviewGroupProps,
-  } from './previewGroupTypes'
+  } from './interface'
 
   import useMergedState from '@v-c/util/dist/hooks/useMergedState'
   import { computed, shallowRef, toRef, useSlots, watch } from 'vue'
@@ -21,8 +21,6 @@
   const emit = defineEmits<{
     change: [next: number, prev: number]
   }>()
-
-  const slots = useSlots()
 
   const mergedPreviewConfig = computed<GroupPreviewConfig>(() => {
     if (props.preview && typeof props.preview === 'object') {
@@ -115,14 +113,6 @@
     return rest
   })
 
-  const countRender = computed(() => {
-    if (slots.countRender) {
-      return ((currentNum: number, total: number) =>
-        slots.countRender?.(currentNum, total)) as any
-    }
-    return mergedPreviewConfig.value.countRender
-  })
-
   const restPreviewConfig = computed(() => {
     const config = mergedPreviewConfig.value as any
     const {
@@ -152,18 +142,23 @@
     :current="current"
     :count="mergedItems.length"
     @change="onInternalChange"
-    :countRender="countRender"
     :classNames="classNames?.popup"
     :styles="styles?.popup"
   >
-    <template v-for="(_, name) in slots" :key="name" #[name]="slotProps">
-      <slot :name="name" v-bind="slotProps || {}" />
+    <template #actionsRender="actionsProps">
+      <slot name="actionsRender" v-bind="actionsProps" />
     </template>
     <template #prevIcon>
       <slot name="prevIcon" />
     </template>
     <template #nextIcon>
       <slot name="nextIcon" />
+    </template>
+    <template #countRender="slotProps">
+      <slot name="countRender" v-bind="slotProps" />
+    </template>
+    <template #closeIcon>
+      <slot name="closeIcon" />
     </template>
   </Preview>
 </template>

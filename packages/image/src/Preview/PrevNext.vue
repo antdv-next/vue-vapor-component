@@ -1,5 +1,5 @@
 <script setup vapor lang="ts">
-  import type { PrevNextProps } from './prevNextTypes'
+  import type { PrevNextProps } from '../interface'
 
   import { clsx } from '@v-c/util'
   import { computed } from 'vue'
@@ -12,8 +12,6 @@
   }>()
 
   const switchCls = computed(() => `${props.prefixCls}-switch`)
-  const prevIcon = computed(() => props.icons?.prev ?? props.icons?.left)
-  const nextIcon = computed(() => props.icons?.next ?? props.icons?.right)
   const prevDisabled = computed(() => props.current === 0)
   const nextDisabled = computed(() => props.current === props.count - 1)
 

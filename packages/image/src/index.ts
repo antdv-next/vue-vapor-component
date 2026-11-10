@@ -2,22 +2,22 @@ import Image from './Image.vue'
 import PreviewGroup from './PreviewGroup.vue'
 
 export type {
+  Actions,
+  CoverConfig,
+  GroupPreviewConfig,
+  ImageElementProps,
   ImageProps,
   ImgInfo,
-  CoverConfig,
-  PreviewConfig,
-  SemanticName,
-} from './imageTypes'
-export type { PreviewGroupProps, GroupPreviewConfig } from './previewGroupTypes'
-export type {
-  PreviewSemanticName,
-  OperationIcons,
-  Actions,
-  ToolbarRenderInfoType,
   InternalPreviewConfig,
+  OperationIcons,
+  PreviewConfig,
+  PreviewGroupProps,
+  PreviewImageElementProps,
   PreviewProps,
-} from './Preview/types'
-export type { ImageElementProps, PreviewImageElementProps } from './interface'
+  PreviewSemanticName,
+  SemanticName,
+  ToolbarRenderInfoType,
+} from './interface'
 export type { TransformType, TransformAction } from './hooks/useImageTransform'
 
 export { PreviewGroup }

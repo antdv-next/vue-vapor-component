@@ -2,8 +2,12 @@
   import type { VueNode } from '@v-c/util/dist/type'
   import type { CSSProperties } from 'vue'
 
-  import type { CoverConfig, ImageProps, PreviewConfig } from './imageTypes'
-  import type { ImageElementProps } from './interface'
+  import type {
+    CoverConfig,
+    ImageElementProps,
+    ImageProps,
+    PreviewConfig,
+  } from './interface'
 
   import { clsx, omit } from '@v-c/util'
   import useMergedState from '@v-c/util/dist/hooks/useMergedState'
@@ -82,9 +86,7 @@
 
   // ========================= ImageProps =========================
   const isCustomPlaceholder = computed(
-    () =>
-      !!slots.placeholder ||
-      !!(props.placeholder && props.placeholder !== true),
+    () => !!props.placeholder || !!slots.placeholder,
   )
 
   const src = computed(() => previewSrc.value ?? props.src)
@@ -345,12 +347,10 @@
     @close="onPreviewClose"
     :mousePosition="mousePosition"
     :src="src"
-    :alt="imgCommonProps.alt as any"
-    :imageInfo="{ width: width as any, height: height as any }"
+    :alt="imgCommonProps.alt"
+    :imageInfo="{ width: width, height: height }"
     :fallback="fallback"
-    :imgCommonProps="imgCommonProps as any"
-    :imageRender="imageRender as any"
-    :actionsRender="actionsRender as any"
+    :imgCommonProps="imgCommonProps"
     :classNames="classNames?.popup"
     :styles="styles?.popup"
     :rootClassName="clsx(previewRootClassName, rootClassName)"
@@ -361,11 +361,11 @@
     <template #closeIcon>
       <slot name="closeIcon"></slot>
     </template>
-    <template #imageRender>
-      <slot name="imageRender"></slot>
+    <template #imageRender="slotProps">
+      <slot name="imageRender" v-bind="slotProps"></slot>
     </template>
-    <template #countRender>
-      <slot name="countRender"></slot>
+    <template #countRender="slotProps">
+      <slot name="countRender" v-bind="slotProps"></slot>
     </template>
   </Preview>
 </template>

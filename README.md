@@ -95,7 +95,7 @@ import App from './App.vue'
 | dropdown        | ✅   |      |                                                         |
 | fast-color      | ⭐️   | 🚀   |                                                         |
 | field-form      | ⭕   |      |                                                         |
-| image           | ✅   |      |                                                         |
+| image           | ✅   |      | [差异可见组件README](./packages/image/README.md)        |
 | input           | ✅   |      | [差异可见组件README](./packages/input/README.md)        |
 | input-number    | ✅   |      | [差异可见组件README](./packages/input-number/README.md) |
 | listy           | ✅   |      |                                                         |
