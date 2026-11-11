@@ -131,6 +131,8 @@ export interface TabNodeProps {
 
 export type TabPosition = 'left' | 'right' | 'top' | 'bottom'
 
+export type ScrollPosition = 'auto' | 'start' | 'center' | 'end' | number
+
 export type GetIndicatorSize = number | ((origin: number) => number)
 
 export type SemanticName =
@@ -163,6 +165,7 @@ export interface TabNavListProps {
   getPopupContainer?: (node: HTMLElement) => HTMLElement
   popupClassName?: string
   indicator?: IndicatorConfig
+  scrollPosition?: ScrollPosition
   classNames?: Partial<Record<SemanticName, string>>
   styles?: Partial<Record<SemanticName, CSSProperties>>
 }
@@ -184,6 +187,7 @@ export interface TabsProps {
   tabBarStyle?: CSSProperties
   tabPosition?: TabPosition
   destroyOnHidden?: boolean
+  scrollPosition?: ScrollPosition
 
   editable?: EditableConfig
   getPopupContainer?: (node: HTMLElement) => HTMLElement

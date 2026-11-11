@@ -1,7 +1,7 @@
 <script setup vapor lang="ts">
   import type { Ref } from 'vue'
 
-  import type { TabsProps } from './interface'
+  import type { TabNavListProps, TabsProps } from './interface'
 
   import { clsx } from '@v-c/util'
   import useMergedState from '@v-c/util/dist/hooks/useMergedState'
@@ -19,6 +19,7 @@
 
   import useAnimateConfig from './hooks/useAnimateConfig'
   import { provideTabContext } from './TabContext'
+  import TabNavList from './TabNavList/index.vue'
   import TabNavListWrapper from './TabNavList/Wrapper.vue'
   import TabPanelList from './TabPanelList/index.vue'
   import { getUUid, setUUid } from './utils'
@@ -37,6 +38,21 @@
     'tab-click': [activeKey: string, e: MouseEvent | KeyboardEvent]
     'tab-scroll': [info: { direction: 'left' | 'right' | 'top' | 'bottom' }]
     'update:active-key': [activeKey: string]
+  }>()
+
+  defineSlots<{
+    renderTabBar?: (props: {
+      props: TabNavListProps
+      TabNavList: typeof TabNavList
+      onTabClick: (key: string, e: MouseEvent | KeyboardEvent) => void
+      onTabScroll: (info: {
+        direction: 'left' | 'right' | 'top' | 'bottom'
+      }) => void
+      onEdit: (
+        type: 'add' | 'remove',
+        info: { key?: string; event: MouseEvent | KeyboardEvent },
+      ) => void
+    }) => any
   }>()
 
   const attrs = useAttrs()
@@ -143,7 +159,7 @@
   // ======================== Render ========================
   const sharedProps = computed(() => ({
     id: mergedId.value as string,
-    activeKey: mergedActiveKey.value,
+    activeKey: mergedActiveKey.value as string,
     animated: mergedAnimated.value,
     tabPosition: props.tabPosition,
     rtl: rtl.value,
@@ -170,6 +186,7 @@
       getPopupContainer: props.getPopupContainer,
       popupClassName: clsx([props.popupClassName, props.classNames?.popup]),
       indicator: props.indicator,
+      scrollPosition: props.scrollPosition,
       styles: mergedStyles,
       classNames: props.classNames,
     }
@@ -214,12 +231,21 @@
 
 <template>
   <div :id="mergedId!" :class="nodeCls" :style="nodeStyle" v-bind="restAttrs">
-    <TabNavListWrapper
-      v-bind="tabNavBarProps"
-      @tab-click="onInternalTabClick"
-      @tab-scroll="onTabScroll"
-      @edit="onEdit"
-    />
+    <slot
+      name="renderTabBar"
+      :props="tabNavBarProps"
+      :TabNavList="TabNavList"
+      :onTabClick="onInternalTabClick"
+      :onTabScroll="onTabScroll"
+      :onEdit="onEdit"
+    >
+      <TabNavListWrapper
+        v-bind="tabNavBarProps"
+        @tab-click="onInternalTabClick"
+        @tab-scroll="onTabScroll"
+        @edit="onEdit"
+      />
+    </slot>
     <TabPanelList
       :id="sharedProps.id"
       :active-key="sharedProps.activeKey"

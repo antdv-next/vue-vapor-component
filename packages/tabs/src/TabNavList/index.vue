@@ -271,10 +271,34 @@
       top: 0,
     }
 
+    let ratio: number | null = null
+    if (props.scrollPosition === 'start') {
+      ratio = 0
+    } else if (props.scrollPosition === 'center') {
+      ratio = 0.5
+    } else if (props.scrollPosition === 'end') {
+      ratio = 1
+    } else if (
+      typeof props.scrollPosition === 'number' &&
+      !Number.isNaN(props.scrollPosition)
+    ) {
+      ratio = Math.min(1, Math.max(0, props.scrollPosition))
+    }
+
     if (tabPositionTopOrBottom.value) {
       const newTransform = transformLeft
 
-      if (props.rtl) {
+      if (ratio !== null) {
+        newTransform.value = props.rtl
+          ? tabOffset.right +
+            tabOffset.width * ratio -
+            visibleTabContentValue.value * ratio
+          : -(
+              tabOffset.left +
+              tabOffset.width * ratio -
+              visibleTabContentValue.value * ratio
+            )
+      } else if (props.rtl) {
         if (tabOffset.right < transformLeft.value) {
           newTransform.value = tabOffset.right
         } else if (
@@ -302,7 +326,13 @@
     } else {
       const newTransform = transformTop
 
-      if (tabOffset.top < -transformTop.value) {
+      if (ratio !== null) {
+        newTransform.value = -(
+          tabOffset.top +
+          tabOffset.height * ratio -
+          visibleTabContentValue.value * ratio
+        )
+      } else if (tabOffset.top < -transformTop.value) {
         newTransform.value = -tabOffset.top
       } else if (
         tabOffset.top + tabOffset.height >
@@ -559,6 +589,7 @@
   watch(
     [
       computed(() => props.activeKey),
+      computed(() => props.scrollPosition),
       () => transformComputed.value.transformMin,
       () => transformComputed.value.transformMax,
       visibleTabContentValue,
@@ -620,9 +651,8 @@
                 transition: lockAnimation ? 'none' : undefined,
               }"
             >
-              <template v-for="(tab, i) in tabs">
+              <template v-for="(tab, i) in tabs" :key="tab.key">
                 <TabNode
-                  :key="tab.key"
                   :id="id"
                   :prefix-cls="prefixCls"
                   :tab="tab"
