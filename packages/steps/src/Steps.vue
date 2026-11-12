@@ -1,5 +1,5 @@
 <script setup vapor lang="ts">
-  import type { StepsProps } from './interface'
+  import type { StepsEmits, StepsProps, StepsSlots } from './interface'
 
   import { clsx } from '@v-c/util'
   import { computed, useAttrs } from 'vue'
@@ -18,16 +18,10 @@
     current: 0,
     initial: 0,
   })
-  const slots = defineSlots<{
-    iconRender?: () => any
-    itemRender?: () => any
-    itemWrapperRender?: () => any
-  }>()
+  const slots = defineSlots<StepsSlots>()
 
   const attrs = useAttrs()
-  const emit = defineEmits<{
-    change: [current: number]
-  }>()
+  const emit = defineEmits<StepsEmits>()
 
   // ============================= layout =============================
   const isVertical = computed(() => props.orientation === 'vertical')
@@ -116,6 +110,15 @@
         :last="mergedItems.length - 1 === index"
         @click="onStepClick"
       >
+        <template v-if="slots.title" #title="slotProps">
+          <slot name="title" v-bind="slotProps"></slot>
+        </template>
+        <template v-if="slots.subTitle" #subTitle="slotProps">
+          <slot name="subTitle" v-bind="slotProps"></slot>
+        </template>
+        <template v-if="slots.content" #content="slotProps">
+          <slot name="content" v-bind="slotProps"></slot>
+        </template>
         <template v-if="slots.iconRender" #iconRender="slotProps">
           <slot name="iconRender" v-bind="slotProps"></slot>
         </template>

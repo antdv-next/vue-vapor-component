@@ -1,5 +1,5 @@
 <script setup vapor lang="ts">
-  import type { Status, StepItem } from './interface'
+  import type { Status, StepEmits, StepItem, StepSlots } from './interface'
 
   import { clsx } from '@v-c/util'
   import KeyCode from '@v-c/util/dist/KeyCode'
@@ -30,11 +30,11 @@
     {},
   )
 
+  defineSlots<StepSlots>()
+
   const { railFollowPrevStatus } = useUnstableContext()
   const stepsContext = useStepsContext()
-  const emit = defineEmits<{
-    click: [index: number]
-  }>()
+  const emit = defineEmits<StepEmits>()
 
   const {
     prefixCls,
@@ -248,14 +248,14 @@
                 :style="titleStyle"
               >
                 <slot name="title" :title="dataItem.title">
-                  {{ typeof dataItem.title === 'string' ? dataItem.title : '' }}
+                  {{ dataItem.title }}
                 </slot>
               </div>
               <div
                 v-if="hasSubTitle"
                 :title="
-                  typeof dataItem.subTitle === 'string'
-                    ? dataItem.subTitle
+                  dataItem.subTitle != null
+                    ? String(dataItem.subTitle)
                     : undefined
                 "
                 :class="
@@ -267,9 +267,9 @@
                 "
                 :style="subTitleStyle"
               >
-                {{
-                  typeof dataItem.subTitle === 'string' ? dataItem.subTitle : ''
-                }}
+                <slot name="subTitle" :subTitle="dataItem.subTitle">
+                  {{ dataItem.subTitle }}
+                </slot>
               </div>
 
               <Rail
@@ -296,7 +296,9 @@
               "
               :style="contentStyle"
             >
-              {{ typeof mergedContent === 'string' ? mergedContent : '' }}
+              <slot name="content" :content="mergedContent">
+                {{ mergedContent }}
+              </slot>
             </div>
           </div>
         </div>

@@ -6,5 +6,14 @@ export {
   useUnstableContext,
   provideUnstableContext,
 } from './UnstableContextKey'
-export type { StepsProps, StepItem, Status, SemanticName } from './interface'
+export type {
+  StepEmits,
+  StepItem,
+  StepSlots,
+  StepsEmits,
+  StepsProps,
+  StepsSlots,
+  Status,
+  SemanticName,
+} from './interface'
 export default Steps

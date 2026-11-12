@@ -1,4 +1,3 @@
-import type { VueNode } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
 
 export type Status = 'error' | 'process' | 'finish' | 'wait'
@@ -30,13 +29,13 @@ export type ComponentType = string | any
 
 export interface StepItem {
   /** @deprecated Please use `content` instead. */
-  description?: VueNode
-  content?: VueNode
+  description?: string | number
+  content?: string | number
   disabled?: boolean
-  icon?: VueNode
+  icon?: string
   status?: Status
-  subTitle?: VueNode
-  title?: VueNode
+  subTitle?: string | number
+  title?: string | number
   classNames?: Partial<Record<ItemSemanticName, string>>
   styles?: Partial<Record<ItemSemanticName, CSSProperties>>
   onClick?: (e: MouseEvent) => void
@@ -74,4 +73,30 @@ export interface StepsProps {
   current?: number
   initial?: number
   items?: StepItem[]
+}
+
+export interface StepsSlots {
+  title?: (slotProps: { title?: string | number }) => any
+  subTitle?: (slotProps: { subTitle?: string | number }) => any
+  content?: (slotProps: { content?: string | number }) => any
+  iconRender?: (slotProps: RenderInfo & { icon: any }) => any
+  itemRender?: (slotProps: { info: RenderInfo }) => any
+  itemWrapperRender?: (slotProps: { info: RenderInfo }) => any
+}
+
+export interface StepsEmits {
+  change: [current: number]
+}
+
+export interface StepSlots {
+  title?: (slotProps: { title?: string | number }) => any
+  subTitle?: (slotProps: { subTitle?: string | number }) => any
+  content?: (slotProps: { content?: string | number }) => any
+  iconRender?: (slotProps: RenderInfo & { icon: any }) => any
+  itemRender?: (slotProps: { info: RenderInfo }) => any
+  itemWrapperRender?: (slotProps: { info: RenderInfo }) => any
+}
+
+export interface StepEmits {
+  click: [index: number]
 }
