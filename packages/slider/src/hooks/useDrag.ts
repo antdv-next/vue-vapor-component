@@ -61,8 +61,8 @@ export default function useDrag(
   const { onDragStart, onDragChange } = unstableContext
 
   watch(
-    rawValues,
-    val => {
+    [rawValues, draggingIndex],
+    ([val]) => {
       if (draggingIndex.value === -1) {
         cacheValues.value = [...val]
         originValues.value = [...val]
@@ -76,7 +76,7 @@ export default function useDrag(
       document.removeEventListener('mousemove', mouseMoveEventRef.value)
     }
     if (mouseUpEventRef.value) {
-      document.removeEventListener('mouseup', mouseUpEventRef.value)
+      document.removeEventListener('mouseup', mouseUpEventRef.value, true)
     }
     if (touchEventTargetRef.value) {
       touchEventTargetRef.value.removeEventListener(
@@ -219,9 +219,11 @@ export default function useDrag(
     }
 
     const onMouseUp = (event: MouseEvent | TouchEvent) => {
-      event.preventDefault()
+      if (event.type === 'touchend') {
+        event.preventDefault()
+      }
 
-      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mouseup', onMouseUp, true)
       document.removeEventListener('mousemove', onMouseMove)
       if (touchEventTargetRef.value) {
         touchEventTargetRef.value.removeEventListener(
@@ -242,7 +244,7 @@ export default function useDrag(
       draggingDelete.value = false
     }
 
-    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mouseup', onMouseUp, true)
     document.addEventListener('mousemove', onMouseMove)
     ;(e as any).currentTarget.addEventListener('touchend', onMouseUp)
     ;(e as any).currentTarget.addEventListener('touchmove', onMouseMove)

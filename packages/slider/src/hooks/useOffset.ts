@@ -252,10 +252,18 @@ export default function useOffset(
     }
   }
 
-  const needPush = (dist: number) => {
+  const needPush = (startValue: number, endValue: number) => {
+    const dist = endValue - startValue
+    const tolerance =
+      Number.EPSILON *
+      Math.max(
+        Math.abs(startValue),
+        Math.abs(endValue),
+        Math.abs(Number(pushable.value)),
+      )
     return (
       (pushable.value === null && dist === 0) ||
-      (typeof pushable.value === 'number' && dist < pushable.value)
+      (typeof pushable.value === 'number' && dist < pushable.value - tolerance)
     )
   }
 
@@ -280,12 +288,14 @@ export default function useOffset(
     const nextValue = offsetValue(nextValues, offset, valueIndex, mode)
     nextValues[valueIndex] = nextValue
 
-    if (minBound <= maxBound)
+    if (minBound <= maxBound) {
       nextValues[valueIndex] = Math.max(
         minBound,
         Math.min(maxBound, nextValues[valueIndex]),
       )
-    else nextValues[valueIndex] = originValue
+    } else {
+      nextValues[valueIndex] = originValue
+    }
 
     if (!allowCross.value) {
       const pushNum = pushable.value || 0
@@ -310,7 +320,7 @@ export default function useOffset(
       for (let i = valueIndex + 1; i < nextValues.length; i += 1) {
         if (isHandleDisabled(i)) break
         let changed = true
-        while (needPush(nextValues[i] - nextValues[i - 1]) && changed) {
+        while (needPush(nextValues[i - 1], nextValues[i]) && changed) {
           ;({ value: nextValues[i], changed } = offsetChangedValue(
             nextValues,
             1,
@@ -331,7 +341,7 @@ export default function useOffset(
       for (let i = valueIndex; i > 0; i -= 1) {
         if (isHandleDisabled(i - 1)) break
         let changed = true
-        while (needPush(nextValues[i] - nextValues[i - 1]) && changed) {
+        while (needPush(nextValues[i - 1], nextValues[i]) && changed) {
           ;({ value: nextValues[i - 1], changed } = offsetChangedValue(
             nextValues,
             -1,
@@ -352,7 +362,7 @@ export default function useOffset(
       for (let i = nextValues.length - 1; i > 0; i -= 1) {
         if (isHandleDisabled(i) || isHandleDisabled(i - 1)) continue
         let changed = true
-        while (needPush(nextValues[i] - nextValues[i - 1]) && changed) {
+        while (needPush(nextValues[i - 1], nextValues[i]) && changed) {
           ;({ value: nextValues[i - 1], changed } = offsetChangedValue(
             nextValues,
             -1,
@@ -373,7 +383,7 @@ export default function useOffset(
       for (let i = 0; i < nextValues.length - 1; i += 1) {
         if (isHandleDisabled(i) || isHandleDisabled(i + 1)) continue
         let changed = true
-        while (needPush(nextValues[i + 1] - nextValues[i]) && changed) {
+        while (needPush(nextValues[i], nextValues[i + 1]) && changed) {
           ;({ value: nextValues[i + 1], changed } = offsetChangedValue(
             nextValues,
             1,

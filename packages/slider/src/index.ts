@@ -1,5 +1,3 @@
-import type { SliderProps, SliderRef } from './interface'
-
 import { defineComponent, provide } from 'vue'
 
 import Slider from './Slider.vue'
@@ -22,6 +20,9 @@ export const UnstableProvider = defineComponent({
 export type {
   SliderProps,
   SliderRef,
+  SliderEmits,
+  SliderSlots,
+  SliderHandleSlotData,
   SemanticName,
   SliderClassNames,
   SliderStyles,

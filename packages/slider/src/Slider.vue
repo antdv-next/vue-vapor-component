@@ -8,22 +8,22 @@
     OnStartMove,
     RangeConfig,
     SliderContextProps,
+    SliderEmits,
     SliderProps,
+    SliderSlots,
     ValueType,
   } from './interface'
 
-  import { clsx } from '@v-c/util'
+  import { clsx, isVueRenderable } from '@v-c/util'
   import isEqual from '@v-c/util/dist/isEqual'
   import warning from '@v-c/util/dist/warning'
   import {
     computed,
     nextTick,
-    onMounted,
     ref,
     shallowRef,
     toRef,
     useAttrs,
-    useSlots,
     watch,
     watchEffect,
   } from 'vue'
@@ -54,17 +54,10 @@
     track: true,
   })
 
-  const emit = defineEmits<{
-    change: [value: ValueType]
-    'before-change': [value: ValueType]
-    'after-change': [value: ValueType]
-    'change-complete': [value: ValueType]
-    focus: [e: FocusEvent]
-    blur: [e: FocusEvent]
-  }>()
+  const emit = defineEmits<SliderEmits>()
 
   const attrs = useAttrs()
-  const slots = useSlots()
+  const slots = defineSlots<SliderSlots>()
   const containerRef = shallowRef<HTMLDivElement | null>(null)
   const handlesRef = shallowRef<any | null>(null)
 
@@ -149,7 +142,7 @@
 
         return markObj
       })
-      .filter(({ label }) => label || typeof label === 'number')
+      .filter(({ label }) => isVueRenderable(label))
       .sort((a, b) => a.value - b.value)
   })
 
@@ -327,8 +320,12 @@
     })
 
     let focusIndex = valueIndex
+    let valueOffset = 0
 
-    if (
+    if (!rawValues.value.length) {
+      cloneNextValues.push(newValue)
+      focusIndex = 0
+    } else if (
       effectiveRangeEditable.value &&
       valueDist !== 0 &&
       (!maxCount.value || rawValues.value.length < maxCount.value)
@@ -336,8 +333,20 @@
       cloneNextValues.splice(valueBeforeIndex + 1, 0, newValue)
       focusIndex = valueBeforeIndex + 1
     } else {
-      cloneNextValues[valueIndex] = newValue
+      valueOffset = newValue - rawValues.value[valueIndex]
       focusIndex = valueIndex
+    }
+
+    // Align value with step / marks and apply push / allowCross / disabled
+    // boundary constraints, matching the source vdom implementation.
+    if (rawValues.value.length) {
+      const { values: nextValues } = offsetValuesRef.value(
+        cloneNextValues,
+        valueOffset,
+        focusIndex,
+        'dist',
+      )
+      cloneNextValues.splice(0, cloneNextValues.length, ...nextValues)
     }
 
     if (
@@ -492,13 +501,17 @@
   })
 
   // ============================ Auto Focus ============================
-  onMounted(() => {
-    if (props.autoFocus) {
-      nextTick(() => {
-        handlesRef.value?.focus?.(0)
-      })
-    }
-  })
+  watch(
+    () => props.autoFocus,
+    autoFocus => {
+      if (autoFocus) {
+        nextTick(() => {
+          handlesRef.value?.focus?.(0)
+        })
+      }
+    },
+    { immediate: true },
+  )
 
   // ============================ Context ============================
   const sliderContext = computed<SliderContextProps>(() => ({
@@ -515,6 +528,7 @@
     tabIndex: props.tabIndex ?? 0,
     ariaLabelForHandle: props.ariaLabelForHandle,
     ariaLabelledByForHandle: props.ariaLabelledByForHandle,
+    ariaDescribedByForHandle: props.ariaDescribedByForHandle,
     ariaRequired: props.ariaRequired,
     ariaValueTextFormatterForHandle: props.ariaValueTextFormatterForHandle,
     styles: props.styles || {},
@@ -526,7 +540,7 @@
 
   // ============================ ClassName / Style ============================
   const mergedClassName = computed(() =>
-    clsx(props.prefixCls ?? 'vc-slider', props.className, attrs.class as any, {
+    clsx(props.prefixCls ?? 'vc-slider', attrs.class as any, {
       [`${props.prefixCls ?? 'vc-slider'}-disabled`]: disabled.value,
       [`${props.prefixCls ?? 'vc-slider'}-vertical`]: props.vertical,
       [`${props.prefixCls ?? 'vc-slider'}-horizontal`]: !props.vertical,
@@ -536,7 +550,6 @@
   )
 
   const mergedStyle = computed<CSSProperties>(() => ({
-    ...(props.style as CSSProperties),
     ...(attrs.style as CSSProperties),
   }))
 </script>
@@ -581,14 +594,15 @@
       @start-move="onStartMove"
       @offset-change="onHandleOffsetChange"
       @focus="(e: FocusEvent) => emit('focus', e)"
+      @blur="(e: FocusEvent) => emit('blur', e)"
       @delete="effectiveRangeEditable ? onDelete : () => {}"
       @change-complete="finishChange"
     >
-      <template v-if="slots.handle" #handle="data">
-        <slot name="handle" v-bind:data="data" />
+      <template v-if="slots.handleRender" #handleRender="data">
+        <slot name="handleRender" v-bind="data" />
       </template>
-      <template v-if="slots['active-handle']" #active-handle="data">
-        <slot name="active-handle" v-bind:data="data" />
+      <template v-if="slots.activeHandleRender" #activeHandleRender="data">
+        <slot name="activeHandleRender" v-bind="data" />
       </template>
     </Handles>
 

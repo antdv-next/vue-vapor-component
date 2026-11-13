@@ -2,18 +2,17 @@
   import type { CSSProperties } from 'vue'
 
   import { clsx } from '@v-c/util'
-  import { computed } from 'vue'
+  import { computed, useAttrs } from 'vue'
 
   import { useInjectSlider } from '../SliderContextKey'
   import { getDirectionStyle } from '../util'
 
-  defineOptions({ name: 'SliderMark' })
+  defineOptions({ name: 'SliderMark', inheritAttrs: false })
 
   const props = withDefaults(
     defineProps<{
       prefixCls: string
       value: number
-      style?: CSSProperties
     }>(),
     {
       prefixCls: 'vc-slider-mark',
@@ -25,6 +24,7 @@
   }>()
 
   const sliderContext = useInjectSlider()
+  const attrs = useAttrs()
 
   const textCls = computed(() => `${props.prefixCls}-text`)
 
@@ -44,7 +44,7 @@
 
   const mergedStyle = computed<CSSProperties>(() => ({
     ...positionStyle.value,
-    ...props.style,
+    ...(attrs.style as CSSProperties),
   }))
 
   const markTextCls = computed(() =>

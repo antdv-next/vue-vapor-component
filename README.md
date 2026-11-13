@@ -116,7 +116,7 @@ import App from './App.vue'
 | select          | ✅   |      |                                                         |
 | slick           | ✅   |      |                                                         |
 | slider          | ✅   |      |                                                         |
-| steps           | ✅   |      |                                                         |
+| steps           | ✅   |      | [差异可见组件README](./packages/steps/README.md)        |
 | switch          | ✅   |      | [差异可见组件README](./packages/switch/README.md)       |
 | table           | ✅   |      |                                                         |
 | tabs            | ✅   |      |                                                         |

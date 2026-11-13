@@ -29,9 +29,7 @@
   const sliderContext = useInjectSlider()
 
   const trackList = computed(() => {
-    const ctx = sliderContext.value
-    const range = ctx.range
-    const min = ctx.min
+    const { range, min } = sliderContext.value
 
     if (!range) {
       if (props.values.length === 0) {

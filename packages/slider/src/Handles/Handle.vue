@@ -9,12 +9,12 @@
 
   import { clsx } from '@v-c/util'
   import KeyCode from '@v-c/util/dist/KeyCode'
-  import { computed, useSlots, useTemplateRef } from 'vue'
+  import { computed, useAttrs, useSlots, useTemplateRef } from 'vue'
 
   import { useInjectSlider } from '../SliderContextKey'
   import { getDirectionStyle, getIndex } from '../util'
 
-  defineOptions({ name: 'SliderHandle' })
+  defineOptions({ name: 'SliderHandle', inheritAttrs: false })
 
   const props = withDefaults(
     defineProps<{
@@ -26,7 +26,6 @@
       classNames?: SliderClassNames
       styles?: SliderStyles
       mock?: boolean
-      style?: CSSProperties
     }>(),
     {
       prefixCls: 'vc-slider',
@@ -48,6 +47,7 @@
   }>()
 
   const slots = useSlots()
+  const attrs = useAttrs()
   const sliderContext = useInjectSlider()
   const handleNodeRef = useTemplateRef<HTMLDivElement>('handleNode')
 
@@ -85,7 +85,7 @@
 
   const handleStyle = computed<CSSProperties>(() => ({
     ...positionStyle.value,
-    ...(props.style || {}),
+    ...(attrs.style as CSSProperties),
     ...sliderCtx.value.styles?.handle,
   }))
 
@@ -198,7 +198,7 @@
 
 <template>
   <div
-    v-if="!slots.handle"
+    v-if="!slots.handleRender"
     ref="handleNode"
     :class="handleCls"
     :style="handleStyle"
@@ -216,6 +216,11 @@
     :aria-labelledby="
       valueIndex !== null
         ? getIndex(sliderCtx.ariaLabelledByForHandle, valueIndex)
+        : undefined
+    "
+    :aria-describedby="
+      valueIndex !== null
+        ? getIndex(sliderCtx.ariaDescribedByForHandle, valueIndex)
         : undefined
     "
     :aria-required="
@@ -240,5 +245,5 @@
     @keyup="onKeyUp"
     @blur="onInternalBlur"
   />
-  <slot v-else name="handle" v-bind:data="slotData" />
+  <slot v-else name="handleRender" v-bind="slotData" />
 </template>

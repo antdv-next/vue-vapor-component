@@ -33,10 +33,34 @@ export interface RenderProps {
 
 export type ValueType = number | number[]
 
+export interface SliderEmits {
+  change: [value: ValueType]
+  'before-change': [value: ValueType]
+  'after-change': [value: ValueType]
+  'change-complete': [value: ValueType]
+  focus: [e: FocusEvent]
+  blur: [e: FocusEvent]
+}
+
+export interface SliderHandleSlotData {
+  prefixCls: string
+  value: number
+  valueIndex: number | null
+  dragging: boolean
+  draggingDelete: boolean
+  node: HTMLDivElement | undefined
+  className: string
+  style: CSSProperties
+  isPhantom: boolean
+}
+
+export interface SliderSlots {
+  handleRender?: (data: SliderHandleSlotData) => any
+  activeHandleRender?: (data: SliderHandleSlotData) => any
+}
+
 export interface SliderProps<Value extends ValueType = ValueType> {
   prefixCls?: string
-  className?: string
-  style?: CSSProperties
 
   classNames?: SliderClassNames
   styles?: SliderStyles
@@ -69,7 +93,7 @@ export interface SliderProps<Value extends ValueType = ValueType> {
   dotStyle?: CSSProperties | ((dotValue: number) => CSSProperties)
   activeDotStyle?: CSSProperties | ((dotValue: number) => CSSProperties)
 
-  marks?: Record<string | number, any | MarkObj>
+  marks?: Record<string | number, any>
   dots?: boolean
 
   track?: boolean
@@ -77,6 +101,7 @@ export interface SliderProps<Value extends ValueType = ValueType> {
   tabIndex?: number | number[]
   ariaLabelForHandle?: string | string[]
   ariaLabelledByForHandle?: string | string[]
+  ariaDescribedByForHandle?: string | string[]
   ariaRequired?: boolean
   ariaValueTextFormatterForHandle?: AriaValueFormat | AriaValueFormat[]
 }

@@ -94,16 +94,17 @@
       "
       @delete="(i: number) => emit('delete', i)"
       @focus="(e: FocusEvent) => onHandleFocus(e, index)"
+      @blur="(e: FocusEvent) => emit('blur', e)"
       @mouseenter="(_e: MouseEvent) => onHandleMouseEnter(_e, index)"
       @change-complete="() => emit('change-complete')"
     >
-      <template v-if="slots.handle" #handle="data">
-        <slot name="handle" v-bind:data="data" />
+      <template v-if="slots.handleRender" #handleRender="data">
+        <slot name="handleRender" v-bind="data" />
       </template>
     </Handle>
   </template>
   <Handle
-    v-if="slots['active-handle'] && activeVisible"
+    v-if="slots.activeHandleRender && activeVisible"
     :key="'a11y'"
     :prefix-cls="prefixCls"
     :value="activeHandleValue"
@@ -118,10 +119,11 @@
         emit('offset-change', offset, vi)
     "
     @delete="(i: number) => emit('delete', i)"
+    @blur="(e: FocusEvent) => emit('blur', e)"
     @change-complete="() => emit('change-complete')"
   >
-    <template #handle="data">
-      <slot name="active-handle" v-bind:data="data" />
+    <template #handleRender="data">
+      <slot name="activeHandleRender" v-bind="data" />
     </template>
   </Handle>
 </template>

@@ -2,12 +2,12 @@
   import type { CSSProperties } from 'vue'
 
   import { clsx } from '@v-c/util'
-  import { computed } from 'vue'
+  import { computed, useAttrs } from 'vue'
 
   import { useInjectSlider } from '../SliderContextKey'
   import { getOffset } from '../util'
 
-  defineOptions({ name: 'SliderTrack' })
+  defineOptions({ name: 'SliderTrack', inheritAttrs: false })
 
   const props = withDefaults(
     defineProps<{
@@ -16,7 +16,6 @@
       start: number
       end: number
       index?: number
-      style?: CSSProperties
     }>(),
     {
       prefixCls: 'vc-slider',
@@ -28,6 +27,7 @@
   }>()
 
   const sliderContext = useInjectSlider()
+  const attrs = useAttrs()
 
   const trackPrefixCls = computed(() => `${props.prefixCls}-track`)
 
@@ -75,7 +75,7 @@
 
   const mergedStyle = computed<CSSProperties>(() => ({
     ...positionStyle.value,
-    ...props.style,
+    ...(attrs.style as CSSProperties),
   }))
 
   function onInternalStartMove(e: MouseEvent | TouchEvent) {
