@@ -10,6 +10,14 @@
   defineOptions({ name: 'Slick' })
 
   const props = defineProps<SlickProps>()
+  const emit = defineEmits<{
+    edge: [direction: string]
+    init: []
+    lazyLoad: [slidesToLoad: number[]]
+    lazyLoadError: []
+    reInit: []
+    swipe: [direction: string]
+  }>()
   const breakpoint = shallowRef<number | null>(null)
   const innerSliderRef = shallowRef<InnerSliderRef | null>(null)
   const responsiveMediaHandlers: Array<{
@@ -142,7 +150,13 @@
     <InnerSlider
       ref="innerSliderRef"
       :style="style"
-      v-bind="filterSettings(mergedSettings as any) as any"
+      v-bind="filterSettings(mergedSettings)"
+      @edge="emit('edge', $event)"
+      @init="emit('init')"
+      @lazyLoad="(slidesToLoad: number[]) => emit('lazyLoad', slidesToLoad)"
+      @lazyLoadError="emit('lazyLoadError')"
+      @reInit="emit('reInit')"
+      @swipe="emit('swipe', $event)"
     >
       <slot />
     </InnerSlider>

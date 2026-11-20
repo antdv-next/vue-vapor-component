@@ -114,8 +114,8 @@ import App from './App.vue'
 | resize-observer | ✅   |      |                                                         |
 | segmented       | ✅   |      | [差异可见组件README](./packages/segmented/README.md)    |
 | select          | ✅   |      |                                                         |
-| slick           | ✅   |      |                                                         |
-| slider          | ✅   |      |                                                         |
+| slick           | ✅   |      | [差异可见组件README](./packages/slick/README.md)        |
+| slider          | ✅   |      | [差异可见组件README](./packages/slider/README.md)       |
 | steps           | ✅   |      | [差异可见组件README](./packages/steps/README.md)        |
 | switch          | ✅   |      | [差异可见组件README](./packages/switch/README.md)       |
 | table           | ✅   |      |                                                         |

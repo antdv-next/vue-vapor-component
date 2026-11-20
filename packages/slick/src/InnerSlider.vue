@@ -54,9 +54,9 @@
   const emit = defineEmits<{
     edge: [direction: string]
     init: []
-    'lazy-load': [slidesToLoad: number[]]
-    'lazy-load-error': []
-    're-init': []
+    lazyLoad: [slidesToLoad: number[]]
+    lazyLoadError: []
+    reInit: []
     swipe: [direction: string]
   }>()
 
@@ -233,7 +233,7 @@
           image.onload = handler
           image.onerror = () => {
             handler()
-            emit('lazy-load-error')
+            emit('lazyLoadError')
           }
         }
       }
@@ -265,7 +265,7 @@
     }
     if (slidesToLoad.length > 0) {
       setState({ lazyLoadedList: state.lazyLoadedList.concat(slidesToLoad) })
-      emit('lazy-load', slidesToLoad)
+      emit('lazyLoad', slidesToLoad)
     } else if (lazyLoadTimer) {
       clearInterval(lazyLoadTimer)
       lazyLoadTimer = null
@@ -302,7 +302,7 @@
       (newState as any).lazyLoadedList?.filter(
         (value: number) => !state.lazyLoadedList.includes(value),
       ) ?? []
-    if (slidesToLoad.length > 0) emit('lazy-load', slidesToLoad)
+    if (slidesToLoad.length > 0) emit('lazyLoad', slidesToLoad)
     if (!mergedProps.value.waitForAnimate && animationEndCallback) {
       clearTimeout(animationEndCallback)
       animationEndCallback = null
@@ -613,7 +613,7 @@
       const slidesToLoad = getOnDemandLazySlides(getSpec())
       if (slidesToLoad.length > 0) {
         setState({ lazyLoadedList: state.lazyLoadedList.concat(slidesToLoad) })
-        emit('lazy-load', slidesToLoad)
+        emit('lazyLoad', slidesToLoad)
       }
     }
     updateState(getSpec(), true, () => {
@@ -657,12 +657,12 @@
   ) => {
     if (!prevProps) return
     checkImagesLoad()
-    emit('re-init')
+    emit('reInit')
     if (mergedProps.value.lazyLoad) {
       const slidesToLoad = getOnDemandLazySlides(getSpec())
       if (slidesToLoad.length > 0) {
         setState({ lazyLoadedList: state.lazyLoadedList.concat(slidesToLoad) })
-        emit('lazy-load', slidesToLoad)
+        emit('lazyLoad', slidesToLoad)
       }
     }
     adaptHeight()
