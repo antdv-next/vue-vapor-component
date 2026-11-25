@@ -1,7 +1,7 @@
 import type { Key } from '@v-c/util/dist/type'
 import type { CSSProperties } from 'vue'
 
-export type RowKey<T = any> = keyof T | ((item: T) => Key)
+export type RowKey<T = any> = keyof T | ((item: T, index: number) => Key)
 
 export type ScrollAlign = 'top' | 'bottom' | 'auto'
 
@@ -55,6 +55,7 @@ export interface ListyProps {
   itemHeight?: number
   group?: Group
   sticky?: boolean
+  scrollWidth?: number
   direction?: 'ltr' | 'rtl'
   classNames?: ListyClassNames
   styles?: ListyStyles
@@ -68,6 +69,7 @@ export interface ListComponentProps {
   itemHeight?: number
   group?: Group
   sticky?: boolean
+  scrollWidth?: number
   direction?: 'ltr' | 'rtl'
   classNames?: ListyClassNames
   styles?: ListyStyles

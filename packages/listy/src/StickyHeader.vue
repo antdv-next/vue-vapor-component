@@ -27,6 +27,9 @@
     group: Group
     prefixCls: string
     listRef?: ListRef
+    scrollWidth?: number
+    offsetX?: number
+    rtl?: boolean
     headerClassName?: string
     headerStyle?: CSSProperties
   }>()
@@ -85,8 +88,18 @@
     )
   })
 
+  const horizontalStyle = computed<CSSProperties | undefined>(() =>
+    props.scrollWidth
+      ? {
+          width: `${props.scrollWidth}px`,
+          transform: `translateX(${props.rtl ? props.offsetX : -(props.offsetX ?? 0)}px)`,
+        }
+      : undefined,
+  )
+
   const mergedHeaderStyle = computed<CSSProperties>(() => ({
     ...props.headerStyle,
+    ...horizontalStyle.value,
     top: `${top.value}px`,
   }))
 </script>

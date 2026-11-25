@@ -1,5 +1,6 @@
 <script setup vapor lang="ts">
   import type { ListRef as VcListRef } from '@vapor-component/virtual-list'
+  import type { CSSProperties } from 'vue'
 
   import type { ListyRef, ListyScrollToConfig, ScrollAlign } from './interface'
   import type { ListComponentProps } from './interface'
@@ -44,6 +45,16 @@
 
   const getGroupItems = (groupKey: any) =>
     flattenRows.value.groupKeyToItems.get(groupKey) || []
+
+  const itemStyle = computed<CSSProperties | undefined>(() => ({
+    ...props.styles?.item,
+    ...(props.scrollWidth ? { width: `${props.scrollWidth}px` } : {}),
+  }))
+
+  const groupHeaderStyle = computed<CSSProperties | undefined>(() => ({
+    ...props.styles?.groupHeader,
+    ...(props.scrollWidth ? { width: `${props.scrollWidth}px` } : {}),
+  }))
 
   const scrollTo: ListyRef['scrollTo'] = (config?: ListyScrollToConfig) => {
     if (config === null || typeof config === 'number') {
@@ -116,6 +127,7 @@
     :direction="direction"
     :prefix-cls="prefixCls"
     :full-height="false"
+    :scroll-width="scrollWidth"
     item-key="taggedKey"
     virtual
     :class="classNames?.root"
@@ -130,14 +142,14 @@
           :group-items="getGroupItems((row as any).groupKey)"
           :prefix-cls="prefixCls"
           :class-name="classNames?.groupHeader"
-          :style="styles?.groupHeader"
+          :style="groupHeaderStyle"
         />
       </template>
       <template v-else>
         <div
           style="pointer-events: auto"
           :class="`${prefixCls}-item`"
-          :style="styles?.item"
+          :style="itemStyle"
         >
           <slot
             v-bind="{ item: (row as any).item, index: (row as any).index }"
@@ -145,7 +157,9 @@
         </div>
       </template>
     </template>
-    <template #extraRender="{ getSize, scrollTop, virtual: isVirtual }">
+    <template
+      #extraRender="{ getSize, scrollTop, offsetX, rtl, virtual: isVirtual }"
+    >
       <StickyHeader
         v-if="isVirtual && sticky && group && flattenRows.groupKeys.length"
         :get-size="getSize"
@@ -155,6 +169,9 @@
         :group="group"
         :prefix-cls="prefixCls"
         :list-ref="listRef"
+        :scroll-width="scrollWidth"
+        :offset-x="offsetX"
+        :rtl="rtl"
         :header-class-name="classNames?.groupHeader"
         :header-style="styles?.groupHeader"
       />

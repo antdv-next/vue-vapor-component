@@ -75,12 +75,11 @@
             :class-name="classNames?.groupHeader"
             :style="styles?.groupHeader"
           />
-          <template v-for="{ item, index } in groupItems">
-            <div
-              :key="getItemKey(item)"
+          <template v-for="{ item, index } in groupItems" :key="getItemKey(item, index)">
+            <div         
               :class="clsx(`${prefixCls}-item`, classNames?.item)"
               :style="styles?.item"
-              v-bind="getScrollTargetProps(getItemKey(item), 'item')"
+              v-bind="getScrollTargetProps(getItemKey(item, index), 'item')"
             >
               <slot :item="item" :index="index" />
             </div>
@@ -89,9 +88,8 @@
       </template>
     </template>
     <template v-else>
-      <template v-for="(item, index) in data">
+      <template v-for="(item, index) in data" :key="getItemKey(item, index)">
         <div
-          :key="getItemKey(item)"
           :class="clsx(`${prefixCls}-item`, classNames?.item)"
           :style="styles?.item"
           v-bind="getScrollTargetProps(getItemKey(item), 'item')"

@@ -98,7 +98,7 @@ import App from './App.vue'
 | image           | ✅   |      | [差异可见组件README](./packages/image/README.md)        |
 | input           | ✅   |      | [差异可见组件README](./packages/input/README.md)        |
 | input-number    | ✅   |      | [差异可见组件README](./packages/input-number/README.md) |
-| listy           | ✅   |      |                                                         |
+| listy           | ✅   |      | [差异可见组件README](./packages/listy/README.md)        |
 | mentions        | ✅   |      |                                                         |
 | menu            | ✅   |      |                                                         |
 | mini-decimal    | ⭐️   | 🚀   |                                                         |
