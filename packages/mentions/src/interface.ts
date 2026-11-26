@@ -86,6 +86,16 @@ export interface MentionsRef {
 
 export interface MentionsSlots {
   clearIcon?: () => any
+  popupRender?: (scope: PopupRenderScope) => any
+}
+
+export interface PopupRenderScope {
+  options: DataDrivenOptionProps[]
+  prefixCls: string
+  activeIndex: number
+  setActiveIndex: (index: number) => void
+  selectOption: (option: OptionProps) => void
+  notFoundContent: VueNode
 }
 
 export interface KeywordTriggerProps {
@@ -98,7 +108,6 @@ export interface KeywordTriggerProps {
   getPopupContainer?: () => HTMLElement
   popupClassName?: string
   popupStyle?: CSSProperties
-  popupRender?: (menu: VueNode) => VueNode
 }
 
 export interface DropdownMenuProps {

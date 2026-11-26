@@ -99,7 +99,7 @@ import App from './App.vue'
 | input           | ✅   |      | [差异可见组件README](./packages/input/README.md)        |
 | input-number    | ✅   |      | [差异可见组件README](./packages/input-number/README.md) |
 | listy           | ✅   |      | [差异可见组件README](./packages/listy/README.md)        |
-| mentions        | ✅   |      |                                                         |
+| mentions        | ✅   |      | [差异可见组件README](./packages/mentions/README.md)     |
 | menu            | ✅   |      |                                                         |
 | mini-decimal    | ⭐️   | 🚀   |                                                         |
 | mutate-observer | ✅   |      |                                                         |

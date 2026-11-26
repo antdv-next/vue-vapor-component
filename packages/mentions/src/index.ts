@@ -3,6 +3,7 @@ import Option from './Option.vue'
 
 export type {
   DataDrivenOptionProps,
+  PopupRenderScope,
   MentionsProps,
   MentionsRef,
   MentionsSlots,

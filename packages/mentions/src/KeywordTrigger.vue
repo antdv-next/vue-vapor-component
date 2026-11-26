@@ -5,6 +5,7 @@
   import { computed } from 'vue'
 
   import DropdownMenu from './DropdownMenu.vue'
+  import { useMentionsContext } from './MentionsContextKey'
 
   defineOptions({ name: 'MentionsKeywordTrigger', inheritAttrs: false })
 
@@ -43,6 +44,16 @@
     }
     return props.placement === 'top' ? 'topRight' : 'bottomRight'
   })
+
+  const mentionsContext = useMentionsContext()
+  const dropdownScope = computed(() => ({
+    options: props.options,
+    prefixCls: dropdownPrefix.value,
+    activeIndex: mentionsContext?.value?.activeIndex ?? -1,
+    setActiveIndex: mentionsContext?.value?.setActiveIndex,
+    selectOption: mentionsContext?.value?.selectOption,
+    notFoundContent: mentionsContext?.value?.notFoundContent,
+  }))
 </script>
 
 <template>
@@ -60,7 +71,7 @@
       <slot name="default" v-bind="{ trigger, setRef }" />
     </template>
     <template #popup>
-      <slot name="popup">
+      <slot name="popupRender" v-bind="dropdownScope">
         <DropdownMenu
           :prefix-cls="dropdownPrefix"
           :options="options"

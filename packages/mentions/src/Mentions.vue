@@ -135,7 +135,11 @@
       @keyup="(e: KeyboardEvent) => emit('keyup', e)"
       @press-enter="(e: KeyboardEvent) => emit('press-enter', e)"
       @popup-scroll="(e: UIEvent) => emit('popup-scroll', e)"
-    />
+    >
+      <template #popupRender="scope">
+        <slot name="popupRender" v-bind="scope" />
+      </template>
+    </InternalMentions>
 
     <template #clearIcon>
       <slot name="clearIcon" />

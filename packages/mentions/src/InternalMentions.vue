@@ -525,6 +525,9 @@
             {{ mergedMeasurePrefix }}
           </span>
         </template>
+        <template #popupRender="scope">
+          <slot name="popupRender" v-bind="scope" />
+        </template>
       </KeywordTrigger>
       {{ valueAfter }}
     </div>
@@ -569,6 +572,9 @@
           <span v-bind="trigger" :ref="setRef">
             {{ mergedMeasurePrefix }}
           </span>
+        </template>
+        <template #popupRender="scope">
+          <slot name="popupRender" v-bind="scope" />
         </template>
       </KeywordTrigger>
       {{ valueAfter }}
